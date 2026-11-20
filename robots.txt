@@ -1,0 +1,7 @@
+# https://ibrahim-dev.me — Ibrahim Alobaid (إبراهيم العبيد)
+User-agent: *
+Allow: /
+Disallow: /src/
+Disallow: /tools/
+
+Sitemap: https://ibrahim-dev.me/sitemap.xml

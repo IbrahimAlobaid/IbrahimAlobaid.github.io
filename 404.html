@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Page not found — Ibrahim Alobaid</title>
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#0E0D0B" />
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <style>
+    .lost { min-height: 100svh; display: grid; place-items: center; text-align: center; padding: 48px var(--gutter); position: relative; isolation: isolate; }
+    .lost .pattern { position: absolute; inset: 0; opacity: .1; z-index: -1; -webkit-mask-image: radial-gradient(ellipse at center, #000, transparent 70%); mask-image: radial-gradient(ellipse at center, #000, transparent 70%); }
+    .lost .monogram { width: 96px; height: 96px; font-size: 40px; margin-bottom: 36px; }
+    .lost h1 { font-size: clamp(56px, 10vw, 120px); }
+    .lost p { margin-top: 20px; color: var(--text-dim); }
+    .lost .ar { font-family: var(--f-ar-display); color: var(--gilt); font-size: 22px; }
+    .lost .row { margin-top: 40px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <main class="lost">
+    <div class="pattern" aria-hidden="true"></div>
+    <div>
+      <span class="monogram" aria-hidden="true">IA</span>
+      <h1 class="display">Lost, <em>gracefully.</em></h1>
+      <p>This page doesn't exist — but the rest of the site does.</p>
+      <p class="ar" lang="ar" dir="rtl">الصفحة غير موجودة</p>
+      <div class="row">
+        <a class="btn btn--solid" href="/">Home</a>
+        <a class="btn btn--ghost" href="/ar/" lang="ar">الصفحة العربية</a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

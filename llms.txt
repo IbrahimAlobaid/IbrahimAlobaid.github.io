@@ -1,0 +1,21 @@
+# Ibrahim Alobaid (إبراهيم العبيد)
+
+> Syrian AI engineer from Aleppo. Lead AI Engineer for Healthcare AI at Cardiac Rhythm (United States, remote) and founder of the Syrian AI Community, which launched the first and second Syrian AI Camps.
+
+## Profile
+- Name: Ibrahim Alobaid — Arabic: إبراهيم العبيد
+- Role: Lead AI Engineer, Healthcare AI — Cardiac Rhythm (Aug 2026 – present)
+- Community: Founder, Syrian AI Community (2026 – present); Co-Founder, Aleppo Dev Community (2025 – present)
+- Previously: AI Engineer at Amani AI (2025 – 2026) — real-time multilingual voice agents (Arabic, English, Turkish), KYC, AML pipelines across 150+ sources; Computer Vision Engineer, freelance (2023 – 2024); Data Scientist, Omdena (2022 – 2023)
+- Education: B.Eng. Informatics Engineering, Aleppo University (2019 – 2024); M.Sc. Artificial Intelligence, Aleppo University (in progress)
+- Based in: Aleppo, Syria
+- Expertise: Healthcare AI, Voice AI, LLMs, RAG, AI agents, AML compliance, entity resolution, computer vision
+
+## Pages
+- [English profile](https://ibrahim-dev.me/): experience, community, selected work, talks, Q&A
+- [Arabic profile](https://ibrahim-dev.me/ar/): الصفحة العربية
+
+## Contact
+- Email: ibrahim.alobid44@gmail.com
+- LinkedIn: https://www.linkedin.com/in/ibrahimalobaid44/
+- GitHub: https://github.com/IbrahimAlobid2

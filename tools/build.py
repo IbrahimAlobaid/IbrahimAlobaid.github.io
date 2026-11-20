@@ -1,0 +1,175 @@
+"""
+Build the static site from one template.
+
+    python tools/build.py
+
+Reads  src/index.html (English source) + src/ar.json (Arabic strings)
+Writes index.html, ar/index.html and sitemap.xml at the repository root.
+
+Template conventions
+  data-i18n="key"            inner HTML replaced in the Arabic build
+  data-i18n-content="key"    content="" attribute replaced
+  data-i18n-alt="key"        alt="" attribute replaced
+  data-i18n-aria="key"       aria-label="" attribute replaced
+  data-ar-<attr>="value"     <attr> set to a literal value in the Arabic build
+  {{page_url}} {{page_title}} {{lang}} {{date}}   tokens in both builds
+  <!--FAQ_JSONLD-->          replaced by FAQPage JSON-LD built from the visible Q&A
+"""
+from __future__ import annotations
+
+import datetime as dt
+import html
+import json
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+SITE = "https://ibrahim-dev.me"
+TODAY = dt.date.today().isoformat()
+
+OPEN_TAG = re.compile(r"<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*?\bdata-i18n=\"([^\"]+)\"[^>]*>")
+TAG = re.compile(r"<[a-zA-Z][^>]*>")
+
+
+def find_close(src: str, tag: str, start: int) -> int:
+    """Index of the closing tag matching an element whose content starts at `start`."""
+    depth = 1
+    for m in re.finditer(rf"<(/?){tag}\b[^>]*>", src[start:], re.I):
+        if m.group(0).endswith("/>"):
+            continue
+        depth += -1 if m.group(1) else 1
+        if depth == 0:
+            return start + m.start()
+    raise ValueError(f"unclosed <{tag}> at {start}")
+
+
+def translate_inner(src: str, strings: dict, missing: list) -> str:
+    pos = 0
+    while (m := OPEN_TAG.search(src, pos)):
+        tag, key = m.group(1), m.group(2)
+        start = m.end()
+        end = find_close(src, tag, start)
+        if key in strings:
+            value = strings[key]
+            src = src[:start] + value + src[end:]
+            pos = start + len(value)
+        else:
+            missing.append(key)
+            pos = end
+    return src
+
+
+def set_attr(tag_src: str, attr: str, value: str) -> str:
+    value = html.escape(value, quote=True)
+    pattern = re.compile(rf'(\s{re.escape(attr)}=")[^"]*(")')
+    if pattern.search(tag_src):
+        return pattern.sub(lambda m: m.group(1) + value + m.group(2), tag_src, count=1)
+    return tag_src[:-1].rstrip("/").rstrip() + f' {attr}="{value}"' + (" />" if tag_src.endswith("/>") else ">")
+
+
+def translate_attrs(src: str, strings: dict, missing: list) -> str:
+    keyed = {"data-i18n-content": "content", "data-i18n-alt": "alt", "data-i18n-aria": "aria-label"}
+
+    def fix(m: re.Match) -> str:
+        tag_src = m.group(0)
+        for marker, attr in keyed.items():
+            km = re.search(rf'\s{marker}="([^"]+)"', tag_src)
+            if km:
+                key = km.group(1)
+                if key in strings:
+                    tag_src = set_attr(tag_src, attr, html.unescape(TAG.sub("", strings[key])))
+                else:
+                    missing.append(key)
+        for am in re.finditer(r'\sdata-ar-([a-z:-]+)="([^"]*)"', m.group(0)):
+            tag_src = set_attr(tag_src, am.group(1), html.unescape(am.group(2)))
+        return tag_src
+
+    return TAG.sub(fix, src)
+
+
+def text_of(fragment: str) -> str:
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", fragment))).strip()
+
+
+def faq_jsonld(src: str, lang: str) -> str:
+    items = re.findall(
+        r'<summary>\s*<span class="faq__q"[^>]*>(.*?)</span>.*?</summary>\s*<div class="faq__a">(.*?)</div>',
+        src,
+        re.S,
+    )
+    if not items:
+        return ""
+    data = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "inLanguage": lang,
+        "about": {"@id": f"{SITE}/#person"},
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": text_of(q),
+                "acceptedAnswer": {"@type": "Answer", "text": text_of(a)},
+            }
+            for q, a in items
+        ],
+    }
+    body = json.dumps(data, ensure_ascii=False, indent=2)
+    return f'<script type="application/ld+json">\n{body}\n  </script>'
+
+
+def render(template: str, lang: str, strings: dict | None) -> str:
+    missing: list[str] = []
+    out = template
+    url = f"{SITE}/" if lang == "en" else f"{SITE}/ar/"
+    if strings is not None:
+        out = out.replace('<html lang="en" dir="ltr">', '<html lang="ar" dir="rtl">', 1)
+        out = translate_inner(out, strings, missing)
+        out = translate_attrs(out, strings, missing)
+        if missing:
+            sys.exit(f"Missing Arabic strings: {sorted(set(missing))}")
+    title = text_of(re.search(r"<title[^>]*>(.*?)</title>", out, re.S).group(1))
+    out = (
+        out.replace("{{page_url}}", url)
+        .replace("{{page_title}}", title.replace('"', "'"))
+        .replace("{{lang}}", lang)
+        .replace("{{date}}", TODAY)
+    )
+    out = out.replace("<!--FAQ_JSONLD-->", faq_jsonld(out, lang))
+    banner = "<!-- Generated by tools/build.py from src/index.html — edit the source, not this file. -->\n"
+    return out.replace("<!doctype html>\n", "<!doctype html>\n" + banner, 1)
+
+
+def sitemap() -> str:
+    alts = (
+        f'    <xhtml:link rel="alternate" hreflang="en" href="{SITE}/" />\n'
+        f'    <xhtml:link rel="alternate" hreflang="ar" href="{SITE}/ar/" />\n'
+        f'    <xhtml:link rel="alternate" hreflang="x-default" href="{SITE}/" />\n'
+    )
+    urls = "".join(
+        f"  <url>\n    <loc>{SITE}{path}</loc>\n    <lastmod>{TODAY}</lastmod>\n{alts}"
+        f"    <image:image><image:loc>{SITE}/assets/img/ibrahim-alobaid.jpg</image:loc></image:image>\n  </url>\n"
+        for path in ("/", "/ar/")
+    )
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n'
+        '        xmlns:xhtml="http://www.w3.org/1999/xhtml"\n'
+        '        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n'
+        f"{urls}</urlset>\n"
+    )
+
+
+def main() -> None:
+    template = (ROOT / "src" / "index.html").read_text(encoding="utf-8")
+    strings = json.loads((ROOT / "src" / "ar.json").read_text(encoding="utf-8"))
+
+    (ROOT / "index.html").write_text(render(template, "en", None), encoding="utf-8")
+    (ROOT / "ar").mkdir(exist_ok=True)
+    (ROOT / "ar" / "index.html").write_text(render(template, "ar", strings), encoding="utf-8")
+    (ROOT / "sitemap.xml").write_text(sitemap(), encoding="utf-8")
+    print("Built index.html, ar/index.html, sitemap.xml")
+
+
+if __name__ == "__main__":
+    main()

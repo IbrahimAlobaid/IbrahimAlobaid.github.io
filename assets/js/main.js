@@ -1,52 +1,13 @@
 (() => {
-  const root = document.documentElement;
   const nav = document.getElementById("nav");
   const menuBtn = document.getElementById("menu-btn");
-  const langBtn = document.getElementById("lang-toggle");
   const links = [...document.querySelectorAll(".nav__links a")];
 
-  /* ---------------- Language ---------------- */
-  const AR = window.I18N_AR || {};
-  const textNodes = [...document.querySelectorAll("[data-i18n]")];
-  const altNodes = [...document.querySelectorAll("[data-i18n-alt]")];
-  // Snapshot the English markup so switching back is lossless.
-  const EN = {};
-  textNodes.forEach((el) => (EN[el.dataset.i18n] = el.innerHTML));
-  altNodes.forEach((el) => (EN["alt:" + el.dataset.i18nAlt] = el.alt));
-  const titles = {
-    en: document.title,
-    ar: "إبراهيم العبيد — مهندس ذكاء اصطناعي رئيسي وباني مجتمعات",
-  };
-
-  const store = {
-    get() { try { return localStorage.getItem("lang"); } catch { return null; } },
-    set(v) { try { localStorage.setItem("lang", v); } catch { /* storage unavailable */ } },
-  };
-
-  function setLang(lang) {
-    const ar = lang === "ar";
-    root.lang = ar ? "ar" : "en";
-    root.dir = ar ? "rtl" : "ltr";
-    textNodes.forEach((el) => {
-      const key = el.dataset.i18n;
-      const value = ar ? AR[key] : EN[key];
-      if (value != null) el.innerHTML = value;
-    });
-    altNodes.forEach((el) => {
-      const key = el.dataset.i18nAlt;
-      const value = ar ? AR[key] : EN["alt:" + key];
-      if (value != null) el.alt = value;
-    });
-    document.title = titles[ar ? "ar" : "en"];
-    langBtn.innerHTML = ar ? '<span lang="en">EN</span>' : '<span lang="ar">ع</span>';
-    langBtn.setAttribute("aria-label", ar ? "Switch to English" : "التبديل إلى العربية");
-    store.set(root.lang);
+  /* Old links used ?lang=ar — Arabic now lives at /ar/ */
+  if (new URLSearchParams(location.search).get("lang") === "ar" && !location.pathname.startsWith("/ar")) {
+    location.replace("/ar/" + location.hash);
+    return;
   }
-
-  langBtn.addEventListener("click", () => setLang(root.lang === "ar" ? "en" : "ar"));
-  const params = new URLSearchParams(location.search);
-  const initial = params.get("lang") || store.get();
-  if (initial === "ar") setLang("ar");
 
   /* ---------------- Mobile menu ---------------- */
   function closeMenu() {
