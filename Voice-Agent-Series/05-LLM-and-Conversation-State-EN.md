@@ -371,3 +371,6 @@ Only data necessary for the task, permitted by policy, and protected appropriate
 [^owasp]: [OWASP — LLM Prompt Injection Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html): trust boundaries, untrusted content, and external action safeguards.
 
 *Editorial note: All diagrams and examples are educational, not production benchmarking or a complete voice framework implementation. Consult the current SDK docs before integrating provider-specific event APIs.*
+
+
+**Next:** [[06-Cascaded-vs-Speech-to-Speech-EN|Article 06 — Architecture Comparison]]

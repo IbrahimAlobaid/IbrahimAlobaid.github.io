@@ -368,3 +368,6 @@ state.commit_user_turn(
 [^owasp]: [OWASP — LLM Prompt Injection Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html)؛ ضوابط التعامل مع مدخلات غير موثوقة والأفعال الخارجية.
 
 *ملاحظة تحريرية: المخططات والأمثلة أعلاه تعليمية، ولا تعبّر عن قياس أداء أو تطبيق إنتاجي مكتمل. راجع الوثائق الرسمية عند تطبيق واجهات SDK المتغيرة.*
+
+
+**التالي:** [[06-Cascaded-vs-Speech-to-Speech-AR|المقالة السادسة — مقارنة المعماريات]]

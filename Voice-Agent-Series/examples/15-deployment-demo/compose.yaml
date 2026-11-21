@@ -1,0 +1,18 @@
+services:
+  training-diagnostics:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8105:8105"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8105/health/ready', timeout=2).read()"]
+      interval: 30s
+      timeout: 3s
+      retries: 3

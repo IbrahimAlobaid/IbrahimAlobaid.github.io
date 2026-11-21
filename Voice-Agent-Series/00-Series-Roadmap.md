@@ -25,7 +25,7 @@ updated: 2026-11-21
 
 **أسلوب كل مقالة:** سؤال عملي → شرح المفهوم → مخطط → مثال → أخطاء شائعة → تجربة صغيرة → مصادر.
 
-**اللغتان:** المقالات الخمس الأولى متاحة بالعربية والإنجليزية؛ وتُستخدم المصطلحات التقنية الإنجليزية عند أول ظهور لها في النسخة العربية.
+**اللغتان:** المقالات الست عشرة مكتملة بالعربية والإنجليزية؛ وتُستخدم المصطلحات التقنية الإنجليزية عند أول ظهور لها في النسخة العربية.
 
 ## المستوى الأول | Foundations
 
@@ -41,27 +41,27 @@ updated: 2026-11-21
 | # | المقالة / Article | ما ستتعلمه | المخرج العملي |
 |---|---|---|---|
 | 05 | **LLM & Conversation State** | الذاكرة القصيرة، السياق، التعليمات، تصحيح المعلومات والمقاطعات | مدير سياق مع اختبارات Python |
-| 06 | **Cascaded vs. Speech-to-Speech** | STT→LLM→TTS مقابل النماذج الصوتية المباشرة؛ المفاضلات | اختيار معماري مدروس |
-| 07 | **Your First Voice Agent with Python & Pipecat** | بناء Pipeline بسيط وتشغيله | وكيل صوتي محلي يعمل |
-| 08 | **Real-Time Transport: WebRTC & WebSockets** | الصوت المتدفق، Jitter، WebRTC، NAT/STUN/TURN | اتصال صوتي مباشر من المتصفح |
+| 06 | **Cascaded vs. Speech-to-Speech** | Cascaded وRealtime وHybrid؛ الدقة، التأخير، المقاطعات، التكلفة | مقارنة هندسية + مختبر قياس أحداث Python |
+| 07 | **Your First Voice Agent with Python & Pipecat** | إنشاء Cascaded Pipeline وفهم أدوار Pipecat وWebRTC ودورة حياة الجلسة | مسار Quickstart موثّق + كود وكيل متكامل ومختبر أحداث دون API |
+| 08 | **Real-Time Transport: WebRTC & WebSockets** | الصوت المتدفق، ICE/STUN/TURN، Jitter، الفقد، والإحصاءات | تجربة WebSocket صوتية محلية + مختبر شبكة + تشخيص WebRTC |
 
 ## المستوى الثالث | Natural, Real-Time Conversation
 
 | # | المقالة / Article | ما ستتعلمه | المخرج العملي |
 |---|---|---|---|
-| 09 | **VAD, Endpointing & Turn Detection** | متى بدأ المستخدم الكلام؟ متى انتهى؟ | تحسين قرارات تبادل الأدوار |
-| 10 | **Interruptions, Barge-In & Playback State** | إيقاف الصوت، إلغاء العمل الجاري، ضبط السياق | محادثة تقبل المقاطعة |
-| 11 | **Latency & Streaming Optimization** | TTFT/TTFB، التداخل بين المراحل، P50/P95 | لوحة قياس التأخير |
-| 12 | **Robust Voice AI in the Wild** | الضجيج، تردد الكلام، اللهجات، التصحيح، Echo | مجموعة اختبارات واقعية |
+| 09 | **VAD, Endpointing & Turn Detection** | الكلام والصمت مقابل اكتمال دور المستخدم؛ العتبات والمقاطعات | مختبر Python لآلة حالات وأحداث واختبارات |
+| 10 | **Interruptions, Barge-In & Playback State** | تتبع الصوت المُشغّل، إيقاف المقاطعات، إلغاء العمل الجاري، منع الدفعات المتأخرة ومزامنة السياق | مختبر Playback Cursor وBarge-in مع 21 اختبار Python |
+| 11 | **Latency & Streaming Optimization** | قياس أول صوت مسموع، TTFT/TTFB/TTFA، مسار حرج وStreaming، P50/P95/P99 | مختبر 36 دوراً اصطناعياً + 27 اختباراً + 3 رسوم |
+| 12 | **Robust Voice AI in the Wild** | الضجيج، الصدى، تداخل المتحدثين، اللهجات واللغات، إعادة الاتصال | مصفوفة 18 حالة اصطناعية + سياسة تعافٍ + 36 اختباراً + 3 رسوم |
 
 ## المستوى الرابع | Production & Advanced Systems
 
 | # | المقالة / Article | ما ستتعلمه | المخرج العملي |
 |---|---|---|---|
-| 13 | **Tools, RAG & Agent Workflows** | الاستعلامات الخارجية، تأكيد الأفعال، إدارة الأخطاء | وكيل ينفذ مهمة مفيدة |
-| 14 | **Safety, Privacy & Security** | الموافقة، بيانات الصوت، PII، الحماية، ضوابط المجال | قائمة جاهزية أمنية |
-| 15 | **Evaluation, Observability & Deployment** | سيناريوهات التقييم، السجلات، التنبيهات، النشر | حزمة اختبارات ومراقبة |
-| 16 | **Capstone: Production-Grade Multimodal Agent** | تصميم Voice/Video Agent متعدد المكونات، الفشل والاستعادة | مخطط ونموذج مشروع متكامل |
+| 13 | **Tools, RAG & Agent Workflows** | RAG، أدوات القراءة والكتابة، MCP، التأكيد، Idempotency وإدارة الـWorkflows | مختبر Python محلي + 26 اختباراً + 3 رسوم |
+| 14 | **Voice AI Security, Privacy & Safety** | حدود الثقة، إذن الميكروفون، معالجة التسجيلات، صلاحيات الأدوات، Prompt Injection، سياسات الاحتفاظ | مقالتان + 3 رسوم + 32 اختبار سياسة Python |
+| 15 | **Evaluation, Observability & Deployment** | Golden Datasets، جودة المحادثة، P95، Tracing، Logs، Gates، Canary، Docker وCI/CD | مقالتان + 4 رسوم + مختبر 32 حالة اصطناعية + 30 اختباراً + نموذج Docker |
+| 16 | **Capstone: Production-Grade Voice Agent** | Pipeline صوتي بـPipecat، أدوات آمنة، حالة المحادثة، الاختبارات، معايير النشر | مقالتان + 4 صور + نموذج صوتي اختياري + 38 اختبار مجال محلي |
 
 > [!tip] تسلسل التنفيذ
 > تتدرج المقالات من **الفهم → التنفيذ → تحسين التفاعل → الإنتاج**. الأدوات أمثلة قابلة للاستبدال؛ الأساس هو فهم المسؤولية الهندسية لكل مكوّن.
@@ -78,6 +78,28 @@ updated: 2026-11-21
 - [[04-Text-to-Speech-EN|Article 04 — Text-to-Speech & Streaming]]
 - [[05-LLM-and-Conversation-State-AR|المقالة الخامسة — عقل الوكيل الصوتي وإدارة سياق المحادثة]]
 - [[05-LLM-and-Conversation-State-EN|Article 05 — LLM & Conversation State]]
+- [[06-Cascaded-vs-Speech-to-Speech-AR|المقالة السادسة — مقارنة Cascaded وSpeech-to-Speech وHybrid]]
+- [[06-Cascaded-vs-Speech-to-Speech-EN|Article 06 — Cascaded vs Speech-to-Speech Architecture]]
+- [[07-Build-First-Voice-Agent-with-Pipecat-AR|المقالة السابعة — بناء أول وكيل صوتي باستخدام Python وPipecat]]
+- [[07-Build-First-Voice-Agent-with-Pipecat-EN|Article 07 — Build Your First Voice Agent with Python & Pipecat]]
+- [[08-Real-Time-Audio-Transport-AR|المقالة الثامنة — WebRTC مقابل WebSockets ونقل الصوت الآني]]
+- [[08-Real-Time-Audio-Transport-EN|Article 08 — Real-Time Audio Transport]]
+- [[09-VAD-Endpointing-and-Turn-Detection-AR|المقالة التاسعة — VAD وEndpointing وTurn Detection]]
+- [[09-VAD-Endpointing-and-Turn-Detection-EN|Article 09 — VAD, Endpointing & Turn Detection]]
+- [[10-Interruptions-Barge-In-and-Playback-State-AR|المقالة العاشرة — المقاطعات ومزامنة حالة التشغيل]]
+- [[10-Interruptions-Barge-In-and-Playback-State-EN|Article 10 — Interruptions, Barge-In & Playback State]]
+- [[11-Latency-and-Streaming-Optimization-AR|المقالة الحادية عشرة — هندسة التأخير وتحسين Streaming]]
+- [[11-Latency-and-Streaming-Optimization-EN|Article 11 — Latency & Streaming Optimization]]
+- [[12-Robust-Voice-AI-in-the-Wild-AR|المقالة الثانية عشرة — الضجيج والصدى واللهجات والتعافي من الأخطاء]]
+- [[12-Robust-Voice-AI-in-the-Wild-EN|Article 12 — Robust Voice AI in the Wild]]
+- [[13-Tools-RAG-and-Agent-Workflows-AR|المقالة الثالثة عشرة — أدوات الوكيل الصوتي وRAG وسير العمل]]
+- [[13-Tools-RAG-and-Agent-Workflows-EN|Article 13 — Tools, RAG & Agent Workflows]]
+- [[14-Voice-AI-Security-Privacy-and-Safety-AR|المقالة الرابعة عشرة — أمن الوكلاء الصوتيين والخصوصية والسلامة]]
+- [[14-Voice-AI-Security-Privacy-and-Safety-EN|Article 14 — Voice AI Security, Privacy & Safety]]
+- [[15-Evaluation-Observability-and-Deployment-AR|المقالة الخامسة عشرة — تقييم ومراقبة ونشر الوكلاء الصوتيين]]
+- [[15-Evaluation-Observability-and-Deployment-EN|Article 15 — Evaluation, Observability & Deployment]]
+- [[16-Production-Grade-Voice-Agent-Capstone-AR|المقالة السادسة عشرة — مشروع التخرج المتكامل في Voice Agents]]
+- [[16-Production-Grade-Voice-Agent-Capstone-EN|Article 16 — Production-Grade Voice Agent Capstone]]
 
 ## مصادر تأسيسية | Foundational sources
 
