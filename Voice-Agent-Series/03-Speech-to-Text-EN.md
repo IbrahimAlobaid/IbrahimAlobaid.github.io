@@ -33,7 +33,7 @@ cover: "assets/stt-cover.png"
 ![[assets/stt-cover.png]]
 
 > [!abstract] The idea in one minute
-> In many voice-agent architectures, the first step toward “understanding speech” is actually **Automatic Speech Recognition (ASR)**: mapping incoming audio to text. That transcript is not an infallible record. It can change while someone is speaking, and it can misrecognize names, dates, accents, and numbers. This article explains **what STT does, how streaming recognition differs from file transcription, how to handle partial/final events, how to measure quality, and how to run a practical local experiment**.
+> In many voice-agent architectures, “understanding speech” starts with **Automatic Speech Recognition (ASR)**, which maps incoming audio to text. That transcript is not an infallible record: it can change while someone is still speaking, and it can get names, dates, numbers, and accented speech wrong. This article covers what STT does, how streaming recognition differs from file transcription, how to handle partial and final events, how to measure quality, and how to run a local experiment.
 
 ## A single word can change the entire task
 
@@ -42,7 +42,7 @@ Imagine a user speaking to an appointment agent:
 > **User:** “Book an appointment on **Tuesday**.”  
 > **Incorrect transcript:** “Book an appointment on **Thursday**.”
 
-Almost every word is correct, yet the one incorrect word determines the wrong appointment date. Even an excellent LLM cannot reliably recover what the user actually said from a wrong transcript alone.
+Almost every word is right, and the one that is wrong happens to be the appointment date. Given only that transcript, even an excellent LLM has no reliable way to recover what the user actually said.
 
 > [!question] Our guiding question
 > How do we convert a sound wave into usable words, and how do we know when a transcript is provisional, stable, or important enough to verify?
@@ -59,11 +59,11 @@ It helps to separate three responsibilities:
 | **STT / ASR** | What words were spoken? | “Book a slot tomorrow” |
 | **NLU / LLM** | What does the caller want? | Identify date, check calendar, request confirmation |
 
-**Recognizing words is not the same as understanding intent.** STT produces a textual representation that another component can use for reasoning and actions.
+**Recognizing words is not the same as understanding intent.** STT gives you a textual representation; another component does the reasoning and decides on actions.
 
 ## 2. Inside an STT pipeline
 
-In [[02-Digital-Audio-for-Developers-EN|Article 02]], we covered sample rates, PCM, and audio chunks. These are the inputs that make recognition possible.
+In [[02-Digital-Audio-for-Developers-EN|Article 02]], we covered sample rates, PCM, and audio chunks. Those are the inputs a recognizer works with.
 
 ```mermaid
 flowchart LR
@@ -100,7 +100,7 @@ Performance also depends on dialect, technical terminology, recording conditions
 
 ## 3. Batch versus streaming STT
 
-This is one of the first architectural decisions in a real voice agent.
+This is one of the first architecture decisions you make in a real voice agent.
 
 | Dimension | **Batch / file transcription** | **Streaming / live transcription** |
 |---|---|---|
@@ -126,9 +126,9 @@ Suppose someone is saying, “I want to book an appointment on Thursday.” The 
 
 *Figure 3 — The partial hypothesis evolves before finalization; a segment final and a user turn end are separate concepts.*
 
-A **partial** or **interim** result is a revisable hypothesis. A **final** result is, according to that provider's contract, settled for the corresponding audio region. Importantly, **a finalized segment does not necessarily mean that the speaker has finished their entire conversational turn**.
+A **partial** or **interim** result is a revisable hypothesis. A **final** result is, according to that provider's contract, settled for the corresponding audio region. But **a finalized segment does not necessarily mean that the speaker has finished their entire conversational turn**.
 
-For example, Deepgram distinguishes `is_final=true` (segment finalization) from `speech_final=true` (endpointing detected a pause boundary). Google similarly defines a final result for a specific portion of audio. **These field names and semantics are vendor-specific, not a universal schema.**[^deepgram][^google]
+For example, Deepgram distinguishes `is_final=true` (segment finalization) from `speech_final=true` (endpointing detected a pause boundary). Google similarly defines a final result for a specific portion of audio. **These field names and their semantics are vendor-specific; there is no universal schema.**[^deepgram][^google]
 
 ```mermaid
 sequenceDiagram
@@ -164,13 +164,13 @@ Consider “I’d like an appointment on...” followed by a short pause. A reco
 
 ## 6. Why accents and code-switching matter
 
-Speech is not spoken in a single perfectly standardized form. Users speak different dialects, vary in pronunciation, switch languages, and use local names or domain-specific words.
+Nobody speaks a single, perfectly standardized form of a language. Users have different dialects and pronunciations, switch languages, and use local names and domain-specific words.
 
 For example, a user might say in Arabic:
 
 > «بدي أعمل **reschedule** للـ **appointment** تبعي يوم الخميس».
 
-The STT engine might transcribe the English phrases inconsistently, change an Arabic name, or insert boundaries in the wrong place. These failures cannot be judged only by a model's aggregate benchmark.
+The STT engine might transcribe the English phrases inconsistently, change an Arabic name, or insert boundaries in the wrong place. A model's aggregate benchmark score will not tell you how often this happens to your users.
 
 Practical guidelines:
 
@@ -196,7 +196,7 @@ $$
 - Prediction: “Book my appointment on **Thursday**.”
 - One substitution → `WER = 1 / 5 = 20%`.
 
-Yet that single substituted day could invalidate the whole booking. WER can also exceed 100% when many insertions occur; it is not simply “percent of words wrong” in the everyday sense.
+That one substituted day is enough to invalidate the booking. WER can also exceed 100% when many insertions occur; it is not simply “percent of words wrong” in the everyday sense.
 
 **Character Error Rate (CER)** measures edits at character level and can help reveal spelling patterns, but it does not remove language-dependent tokenization and normalization choices.[^hf-cer]
 
@@ -227,7 +227,7 @@ Yet that single substituted day could invalidate the whole booking. WER can also
 
 ## 9. Hands-on lab: three experiments
 
-The pack includes two new Python programs inside `examples/`.
+The `examples/` folder contains two new Python programs for this article.
 
 ### Experiment A — Model partial and final event handling without an API
 
@@ -310,7 +310,7 @@ flowchart TD
 
 *Figure 4 — A cautious action path. Some sophisticated agents may prepare cancellable work before the end of a turn, but speculative preparation must not be mistaken for permission to execute an irreversible action.*
 
-For appointments, identity checks, or clinical workflows, the design should acknowledge that a plausible transcript might still be wrong. **Confirmation of important values and authorization of external actions are separate responsibilities** from recognition accuracy.
+For appointments, identity checks, or clinical workflows, design on the assumption that a plausible transcript can still be wrong. **Confirming important values and authorizing external actions are responsibilities separate** from recognition accuracy.
 
 ## 11. Common mistakes
 
@@ -332,11 +332,11 @@ For appointments, identity checks, or clinical workflows, the design should ackn
 > 5. Write a rule: never confirm or perform a booking solely on a provisional transcript; verify the date with the speaker.
 
 > [!success] What you should now understand
-> An STT engine is not a magical speech-to-fact converter. It is a **probabilistic recognition system with changing hypotheses, timestamps, and event boundaries**. Managing those outputs is essential to reliable voice agents.
+> An STT engine does not turn speech into facts. It is a **probabilistic recognition system that emits changing hypotheses, timestamps, and event boundaries**, and a reliable voice agent depends on handling those outputs carefully.
 
 ## Coming next: Article 04
 
-In the fourth article we reverse the direction with **Text-to-Speech (TTS)**: generating natural voice from an agent's answer, streaming audio early, measuring time to first audio, and understanding how speech synthesis affects turn-taking and interruptions.
+In the fourth article we go the other way with **Text-to-Speech (TTS)**: generating natural-sounding speech from an agent's answer, streaming audio early, measuring time to first audio, and understanding how speech synthesis affects turn-taking and interruptions.
 
 ---
 

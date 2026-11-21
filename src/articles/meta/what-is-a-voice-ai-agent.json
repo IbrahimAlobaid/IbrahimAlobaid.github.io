@@ -1,0 +1,95 @@
+{
+  "slug": "what-is-a-voice-ai-agent",
+  "keywords": [
+    "what is a voice AI agent",
+    "voice agent architecture",
+    "how do voice AI agents work",
+    "STT LLM TTS pipeline",
+    "cascaded vs speech-to-speech voice agent",
+    "barge-in voice agent",
+    "turn detection voice AI",
+    "voice agent latency",
+    "how to evaluate a voice agent"
+  ],
+  "keywords_ar": [
+    "ما هو الوكيل الصوتي الذكي",
+    "وكيل صوتي بالذكاء الاصطناعي",
+    "كيف يعمل المساعد الصوتي الذكي",
+    "تحويل الكلام إلى نص وتحويل النص إلى كلام",
+    "معمارية الوكيل الصوتي",
+    "المقاطعة في المساعد الصوتي",
+    "زمن استجابة الوكيل الصوتي"
+  ],
+  "summary": {
+    "en": [
+      "A voice AI agent receives audio, interprets intent, decides what to do next, and replies in speech while managing timing, context, and interruptions.",
+      "Putting STT and TTS in one app is not enough; a working agent also needs conversation logic, state management, and real-time event handling.",
+      "Cascaded STT → LLM → TTS pipelines favor control, auditing, and precise tool use, while direct speech-to-speech models can cut inter-stage overhead and use vocal cues.",
+      "VAD detects speech activity, but deciding that a user has finished a turn needs timing and linguistic context, because people pause mid-sentence.",
+      "Generated audio is not the same as played audio, so after an interruption the agent must drop unplayed content from its conversation history.",
+      "Evaluate recognition, response quality, time to first audio, interruptions, context recovery, and action reliability separately, and track P50 and P95 latency, not just averages."
+    ],
+    "ar": [
+      "الوكيل الصوتي الذكي يستقبل الصوت، ويفهم المقصود، ويقرر الخطوة التالية، ثم يرد بالكلام، ويدير التوقيت والسياق والمقاطعات في أثناء ذلك.",
+      "وضع STT وTTS في تطبيق واحد لا يكفي؛ فالوكيل العملي يحتاج أيضاً إلى منطق للمحادثة وإدارة للحالة وتعامل مع الأحداث الفورية.",
+      "المسار المتسلسل STT → LLM → TTS يمنح تحكماً وتدقيقاً ودقة في استخدام الأدوات، والنموذج الصوتي المباشر قد يقلل التأخير بين المراحل ويستفيد من نبرة الصوت.",
+      "يكشف VAD وجود الكلام، أما معرفة انتهاء دور المستخدم فتحتاج إلى التوقيت وسياق الكلام، لأن الناس يتوقفون للتفكير في منتصف الجملة.",
+      "الصوت المولَّد ليس هو الصوت الذي شُغّل فعلاً، لذلك يجب بعد المقاطعة حذف الجزء الذي لم يسمعه المستخدم من سجل المحادثة.",
+      "تُقيَّم دقة التعرف وجودة الرد وزمن أول صوت والمقاطعة واستعادة السياق وموثوقية الأفعال كلٌّ على حدة، ويُقاس التأخير بـ P50 وP95 لا بالمتوسط وحده."
+    ]
+  },
+  "faq": {
+    "en": [
+      {
+        "q": "What is a voice AI agent?",
+        "a": "A voice AI agent is an interactive application that uses speech as its main interface. It captures the user's audio, works out what they want, and decides whether to answer, ask a follow-up, or call an authorized tool. It then replies with synthesized speech while keeping track of timing, conversation context, and interruptions. Depending on its permissions, it can range from a spoken FAQ assistant to a multi-step workflow agent."
+      },
+      {
+        "q": "What's the difference between STT, TTS and a voice agent?",
+        "a": "Speech-to-Text (STT) converts spoken audio into text, and Text-to-Speech (TTS) turns text into synthetic speech. A voice agent is the system that orchestrates both, together with an LLM, conversation state, real-time event handling, and tool access. Putting STT and TTS in the same application does not automatically give you a good voice agent; the conversation logic around them matters just as much."
+      },
+      {
+        "q": "How does a voice AI agent work?",
+        "a": "A common design is the cascaded pipeline. Audio from the microphone is streamed in small chunks, STT turns it into text, an LLM decides on a reply or a tool call, and TTS converts the reply into audio for playback. Voice activity detection (VAD) and a conversation orchestrator run alongside to manage turn-taking and interruptions, and streaming lets these stages overlap instead of running strictly one after another."
+      },
+      {
+        "q": "Cascaded STT → LLM → TTS or speech-to-speech: which voice agent architecture is better?",
+        "a": "Neither is better in every case. A cascaded pipeline usually gives more control over each stage, a text trail that is easier to audit, and precise tool use. A direct speech-to-speech model may reduce some inter-stage overhead and can use vocal cues such as tone and rhythm. The right choice depends on the task, language, budget, privacy requirements, auditability, and how tightly external actions must be controlled."
+      },
+      {
+        "q": "What is barge-in in a voice agent?",
+        "a": "Barge-in is when the user starts speaking while the agent is still talking. A well-built voice agent detects it quickly, stops playback, cancels generation that is still in progress, and handles the new input. It also has to avoid false interruptions triggered by background noise or short acknowledgements like “yeah”, and it should remove the unplayed part of its reply from the conversation history."
+      },
+      {
+        "q": "How do you measure the quality of a voice agent?",
+        "a": "Test each dimension separately: speech-recognition accuracy (for example WER on names and numbers), whether responses address the actual request, time from the end of the user's turn to the first audible audio, interruption behavior, context consistency after corrections, and whether only authorized actions run. Report latency as percentiles such as P50 and P95, not just the average, because a few very slow interactions shape how reliable the agent feels."
+      }
+    ],
+    "ar": [
+      {
+        "q": "ما هو الوكيل الصوتي الذكي (Voice AI Agent)؟",
+        "a": "الوكيل الصوتي الذكي تطبيق تفاعلي واجهته الأساسية هي الكلام. يستقبل صوت المستخدم ويفهم ما يريده، ثم يقرر هل يجيب أو يطرح سؤالاً توضيحياً أو يستدعي أداة مسموحاً بها، ويرد بصوت مولَّد. وخلال ذلك يدير التوقيت وسياق المحادثة والمقاطعات. وقد يكون بسيطاً كمساعد يجيب عن الأسئلة الشائعة، أو متقدماً كوكيل ينفذ مهمة من عدة خطوات ضمن صلاحيات محددة."
+      },
+      {
+        "q": "ما الفرق بين تحويل الكلام إلى نص (STT) وتحويل النص إلى كلام (TTS) والوكيل الصوتي؟",
+        "a": "تقنية STT تحوّل الكلام المنطوق إلى نص، وتقنية TTS تحوّل النص إلى كلام مسموع. أما الوكيل الصوتي فهو النظام الذي ينسّق بينهما مع نموذج لغوي (LLM)، ويدير حالة المحادثة والأحداث الفورية والوصول إلى الأدوات. لذلك لا يكفي وضع STT وTTS في تطبيق واحد للحصول على وكيل صوتي جيد، فمنطق المحادثة المحيط بهما لا يقل أهمية عنهما."
+      },
+      {
+        "q": "كيف يعمل الوكيل الصوتي من الداخل؟",
+        "a": "التصميم الشائع هو المسار المتسلسل (Cascaded Pipeline): يُلتقط صوت المستخدم ويُرسل على دفعات صغيرة، فيحوّله STT إلى نص، ثم يقرر LLM الرد أو استدعاء أداة، ويحوّل TTS الرد إلى صوت يُشغَّل للمستخدم. وبالتوازي يعمل كشف النشاط الصوتي (VAD) ومنسّق المحادثة لإدارة تبادل الأدوار والمقاطعات، ويسمح البث (Streaming) بتداخل هذه المراحل بدل تنفيذها واحدة بعد أخرى."
+      },
+      {
+        "q": "أيهما أفضل للوكيل الصوتي: المعمارية المتسلسلة STT → LLM → TTS أم نموذج Speech-to-Speech المباشر؟",
+        "a": "لا توجد معمارية أفضل في كل الحالات. المسار المتسلسل يمنح عادةً تحكماً أكبر في كل مرحلة، وأثراً نصياً يسهّل التدقيق، ودقة أعلى في استخدام الأدوات. أما النموذج الصوتي المباشر فقد يقلل بعض التأخير بين المراحل ويستفيد من نبرة الصوت وإيقاعه. ويتوقف الاختيار على المهمة واللغة والميزانية ومتطلبات الخصوصية وإمكانية التدقيق ومدى الحاجة إلى ضبط الإجراءات الخارجية."
+      },
+      {
+        "q": "ما معنى المقاطعة (Barge-in) في الوكيل الصوتي؟",
+        "a": "المقاطعة أن يبدأ المستخدم بالكلام بينما الوكيل ما زال يتحدث. والوكيل الجيد يكتشفها بسرعة، فيوقف تشغيل الصوت ويلغي التوليد الجاري ويتعامل مع الكلام الجديد. وعليه أيضاً أن يتجنب المقاطعات الخاطئة التي يسببها الضجيج أو كلمات قصيرة مثل «نعم»، وأن يحذف من سياق المحادثة الجزء الذي لم يُشغَّل فعلاً من رده."
+      },
+      {
+        "q": "كيف تُقاس جودة الوكيل الصوتي؟",
+        "a": "يُقيَّم كل بُعد على حدة: دقة التعرف على الكلام (مثل WER للأسماء والأرقام)، وهل يجيب الرد عن الطلب الفعلي، والزمن من نهاية كلام المستخدم حتى أول صوت مسموع، وسلوك المقاطعة، وثبات السياق بعد التصحيح، وتنفيذ الإجراءات المصرح بها فقط. ويُفضَّل قياس التأخير بالمئينات مثل P50 وP95 لا بالمتوسط وحده، لأن قلة من التفاعلات البطيئة جداً تؤثر كثيراً في انطباع المستخدم عن النظام."
+      }
+    ]
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "slug": "evaluation-observability-deployment",
+  "keywords": [
+    "how to evaluate a voice AI agent",
+    "voice agent evaluation metrics",
+    "voice agent observability",
+    "OpenTelemetry tracing for voice agents",
+    "measure voice agent latency P95",
+    "release quality gates for LLM applications",
+    "Pipecat metrics and evals",
+    "liveness vs readiness probe",
+    "canary deployment for voice agents",
+    "voice agent production monitoring SLO"
+  ],
+  "keywords_ar": [
+    "تقييم الوكيل الصوتي",
+    "مراقبة أنظمة الذكاء الاصطناعي الصوتي",
+    "قياس زمن استجابة الوكيل الصوتي",
+    "نشر وكيل صوتي في الإنتاج",
+    "بوابات الجودة قبل النشر",
+    "اختبار Voice Agent",
+    "OpenTelemetry للوكلاء الصوتيين"
+  ],
+  "summary": {
+    "en": [
+      "Voice-agent quality has six separate dimensions: speech, conversation, tools, real-time UX, reliability, and safety and privacy, and no single score can replace them.",
+      "Measure latency at the first audio actually played on the client, not at LLM time to first token, and report P50, P95 and P99 with sample counts.",
+      "A versioned golden dataset should cover noise, accents, code-switching, mid-turn corrections, interruptions, tool approvals and reconnects, built from synthetic or properly de-identified material.",
+      "Telemetry needs an allowlist: avoid per-user or per-session labels in Prometheus, and keep raw audio, full transcripts and secrets out of logs and traces.",
+      "Release gates should block deployment on any unauthorized write or privacy leak flag, however good the average quality scores look.",
+      "A passing liveness or readiness probe only shows the process is up, so roll out through staging and a canary with a tested rollback plan."
+    ],
+    "ar": [
+      "جودة الوكيل الصوتي لها ستة محاور مستقلة: الكلام، والمحادثة، والأدوات، والتجربة الآنية، والموثوقية، والأمان والخصوصية، ولا يختصرها رقم واحد.",
+      "قِس التأخير عند أول صوت يُشغَّل فعلاً لدى العميل، لا عند أول Token من الـLLM، واعرض P50 وP95 وP99 مع حجم العينة.",
+      "ينبغي أن تغطي مجموعة التقييم (Golden Dataset) الضجيج واللهجات وخلط اللغات والتصحيح أثناء الكلام والمقاطعات وموافقات الأدوات وإعادة الاتصال، ببيانات اصطناعية أو منزوعة الهوية.",
+      "تحتاج المراقبة إلى قائمة سماح واضحة: لا تضع معرّف الجلسة أو المستخدم في Labels الخاصة بـPrometheus، ولا تسجّل الصوت الخام أو النصوص الكاملة أو المفاتيح.",
+      "يجب أن تمنع بوابات الإصدار النشر عند وجود أي كتابة غير مصرح بها أو علامة تسريب بيانات، مهما بدا متوسط الجودة جيداً.",
+      "نجاح فحص Liveness أو Readiness يعني فقط أن العملية تعمل؛ لذلك يمر النشر عبر Staging ثم Canary مع خطة Rollback مجرَّبة."
+    ]
+  },
+  "faq": {
+    "en": [
+      {
+        "q": "What should I measure when evaluating a voice AI agent?",
+        "a": "Evaluate a voice agent along six dimensions: speech accuracy (WER, names, numbers), conversation success, correct and authorized tool use, real-time UX such as first played audio and barge-in stop time, reliability when the network or a provider fails, and safety and privacy. A low WER does not mean the agent booked the right slot, and a fast reply can still cross a permission boundary, so one score is never enough."
+      },
+      {
+        "q": "What's the difference between LLM TTFT, TTS TTFB and first audible latency?",
+        "a": "LLM TTFT is the delay until the model produces its first text token. TTS TTFB depends on how the speech provider defines its first output. First audible latency is what the user actually hears, so it also includes network delivery, buffering and client playback. Because pipeline steps overlap, first audible latency is not the sum of component delays. Check each tool's start and stop definitions before comparing numbers."
+      },
+      {
+        "q": "How do I build an evaluation dataset for a voice agent?",
+        "a": "Create a versioned golden dataset in which each case records the environment (quiet, noisy, echoing, low bandwidth, multilingual), the user behavior (corrections, interruptions, cancellations), the expected response or tool, the timing events to capture, and a risk severity. Use synthetic or carefully governed, de-identified material. Deleting names from a transcript does not guarantee anonymity, because the audio itself can carry identifying characteristics."
+      },
+      {
+        "q": "How do I add observability to a voice agent without leaking private data?",
+        "a": "Use metrics for aggregates, minimal event logs, and traces that link the endpointing, STT, LLM, tool, TTS and playback spans of a single turn. Route all telemetry through an allowlist, use opaque session and turn IDs, and avoid per-user or per-session labels in Prometheus. Keep raw audio, full transcripts, API keys and auth headers out of logs, and grant only expiring access to sensitive debugging material."
+      },
+      {
+        "q": "What are release quality gates for a voice agent?",
+        "a": "Release quality gates are hard conditions in the CI/CD pipeline that block a release when they fail. The article's lab uses illustrative values: 20 or more evaluation cases with interruption coverage, at least 95% intent and tool match, P95 first played audio at or below 1,800 ms, P95 barge-in stop at or below 250 ms, and zero unsafe writes or privacy leak flags. Set real thresholds from measured baselines and risk."
+      },
+      {
+        "q": "Why does my voice agent pass health checks but still fail in production?",
+        "a": "A liveness probe only shows that the process responds, and a readiness probe only checks the dependencies it declares. Neither proves the STT provider is reachable, that conversations are correct, or that the agent copes with accents and network stress. Add smoke, integration, load and soak tests, then a canary with clear metrics and rollback criteria. An HTTP 200 response is not evidence of a correct conversation."
+      }
+    ],
+    "ar": [
+      {
+        "q": "ما المقاييس التي أستخدمها لتقييم وكيل صوتي (Voice Agent)؟",
+        "a": "يُقيَّم الوكيل الصوتي على ستة محاور: دقة التعرف على الكلام (WER والأسماء والأرقام)، ونجاح المحادثة، واستدعاء الأداة الصحيحة المصرح بها، والتجربة الآنية مثل زمن أول صوت مُشغَّل وسرعة التوقف عند المقاطعة، والموثوقية عند فشل الشبكة أو المزوّد، ثم الأمان والخصوصية. انخفاض WER لا يعني أن الحجز صحيح، والرد السريع قد يتجاوز حدود الصلاحيات، لذلك لا يكفي رقم واحد."
+      },
+      {
+        "q": "ما الفرق بين LLM TTFT وTTS TTFB وزمن أول صوت مسموع؟",
+        "a": "يقيس LLM TTFT الوقت حتى يُخرج النموذج أول Token نصي، أما TTS TTFB فيرتبط بتعريف خدمة الصوت لبداية مخرجاتها. زمن أول صوت مسموع هو ما يختبره المستخدم فعلاً، ويشمل النقل عبر الشبكة والتخزين المؤقت والتشغيل على جهاز العميل. ولأن المراحل تتداخل، فهذا الزمن ليس مجموع تأخيرات المكونات. راجع تعريف بداية القياس ونهايته في كل أداة قبل مقارنة الأرقام."
+      },
+      {
+        "q": "كيف أبني مجموعة بيانات تقييم (Golden Dataset) لوكيل صوتي؟",
+        "a": "أنشئ مجموعة مرقّمة الإصدارات، تسجّل كل حالة فيها بيئة الاختبار (هادئة، ضجيج، صدى، اتصال ضعيف، لغات مختلطة)، وسلوك المستخدم مثل التصحيح والمقاطعة والإلغاء، والسلوك أو الأداة المتوقعة، والأحداث الزمنية المطلوب قياسها، ودرجة الخطورة. استخدم بيانات اصطناعية أو منزوعة الهوية بعناية. حذف الأسماء من النص لا يضمن إخفاء الهوية، لأن الصوت نفسه قد يكشف صاحبه."
+      },
+      {
+        "q": "كيف أضيف المراقبة (Observability) إلى وكيل صوتي دون تسريب بيانات المستخدمين؟",
+        "a": "استخدم Metrics للأرقام المجمّعة، وLogs قليلة البيانات للأحداث، وTraces تربط مراحل الدور الواحد من Endpointing وSTT وLLM والأدوات وTTS حتى التشغيل. مرّر كل البيانات عبر قائمة سماح، واستخدم معرّفات جلسة ودور لا تكشف الهوية، وتجنب وضع معرّف المستخدم أو الجلسة في Labels الخاصة بـPrometheus. لا تسجّل الصوت الخام أو النصوص الكاملة أو مفاتيح API، واجعل الوصول إلى مواد التشخيص الحساسة مؤقتاً."
+      },
+      {
+        "q": "ما هي بوابات الجودة (Quality Gates) قبل نشر وكيل صوتي؟",
+        "a": "بوابات الجودة شروط مانعة داخل خط CI/CD توقف الإصدار إذا لم تتحقق. يستخدم مختبر المقالة قيماً تعليمية: 20 حالة تقييم على الأقل تشمل المقاطعات، وتطابق النية والأداة بنسبة 95% أو أكثر، وP95 لأول صوت مُشغَّل لا يتجاوز 1,800ms، وP95 للتوقف عند المقاطعة لا يتجاوز 250ms، وصفر كتابات غير آمنة أو علامات تسريب. أما العتبات الفعلية فتُحدَّد من قياسات حقيقية ومستوى المخاطر."
+      },
+      {
+        "q": "لماذا ينجح فحص الصحة (Health Check) للوكيل الصوتي ثم يفشل في الإنتاج؟",
+        "a": "فحص Liveness يثبت فقط أن العملية تستجيب، وفحص Readiness يتحقق من الاعتمادات التي أعلنتها العملية فحسب. لا يثبت أي منهما أن خدمة STT متاحة، أو أن المحادثة صحيحة، أو أن الوكيل يصمد أمام اللهجات وضعف الشبكة. لذلك أضف اختبارات Smoke وIntegration وLoad وSoak، ثم Canary بمقاييس واضحة وقواعد Rollback. استجابة HTTP 200 ليست دليلاً على صحة المحادثة."
+      }
+    ]
+  }
+}

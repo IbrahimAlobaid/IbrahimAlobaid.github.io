@@ -1,0 +1,94 @@
+{
+  "slug": "interruptions-barge-in-playback-state",
+  "keywords": [
+    "barge-in voice agent",
+    "voice agent interruption handling",
+    "how to handle interruptions in voice AI",
+    "OpenAI Realtime conversation.item.truncate",
+    "audio playback state tracking",
+    "stale audio chunks after cancel",
+    "LiveKit interruption handling",
+    "false interruption voice agent",
+    "truncate conversation history on interruption"
+  ],
+  "keywords_ar": [
+    "المقاطعة في الوكيل الصوتي Barge-In",
+    "التعامل مع مقاطعة المستخدم للوكيل الصوتي",
+    "مزامنة سياق المحادثة بعد المقاطعة",
+    "تتبع حالة تشغيل الصوت في الوكيل الصوتي",
+    "إلغاء توليد LLM وTTS عند المقاطعة",
+    "شرح conversation.item.truncate"
+  ],
+  "summary": {
+    "en": [
+      "Handling barge-in requires coordinating generation, TTS, transport, client buffers, and conversation state; calling stop() on the audio player covers only one part.",
+      "Generated, synthesized, transmitted, buffered, and played audio are separate cursors, and only player-acknowledged playback approximates what the user actually heard.",
+      "A two-phase design pauses output quickly on a likely interruption, then confirms intent and either cancels the response or resumes after a false positive.",
+      "Tag every response with a generation_id and a session epoch so the player drops late chunks and stale acknowledgements from cancelled responses.",
+      "After an interruption, keep only the played portion of the response in dialogue history, or mark it as interrupted when alignment is unreliable.",
+      "Cancelling speech does not roll back tool calls such as bookings, so give business operations their own lifecycle with confirmation and idempotency keys."
+    ],
+    "ar": [
+      "التعامل مع المقاطعة يتطلب تنسيق التوليد وTTS والنقل ومخازن العميل وسياق المحادثة، واستدعاء stop() على المشغّل يغطي جزءاً واحداً فقط.",
+      "النص المولّد والصوت المجهّز والمرسَل والمخزّن والمشغَّل مؤشرات منفصلة، وإقرار المشغّل وحده هو الأقرب إلى ما سمعه المستخدم فعلاً.",
+      "يقوم التصميم المقترح على مرحلتين: إيقاف التشغيل بسرعة عند مقاطعة محتملة، ثم تأكيد النية وإلغاء الرد أو استئنافه إن كان الإنذار كاذباً.",
+      "أعطِ كل رد generation_id ورقم epoch للجلسة، حتى يرفض المشغّل الدفعات المتأخرة والإقرارات القديمة القادمة من ردود ملغاة.",
+      "بعد المقاطعة احتفظ في سجل الحوار بالجزء المشغَّل فقط، أو سجّل الرد على أنه منقطع إذا لم تكن المزامنة بين الصوت والكلمات موثوقة.",
+      "إيقاف الكلام لا يتراجع عن عمليات الأدوات مثل حجز موعد، لذا افصل دورة العمليات التجارية عن دورة الصوت واستخدم التأكيد وidempotency keys."
+    ]
+  },
+  "faq": {
+    "en": [
+      {
+        "q": "What is barge-in in a voice agent?",
+        "a": "Barge-in is when the user starts speaking while the agent is still talking and the agent yields the floor. Not every sound during playback counts: backchannels like 'uh-huh', echo of the agent's own voice, coughs, and background noise should usually not stop the agent. Reliable barge-in detection combines VAD with STT, echo cancellation, and adaptive interruption policies."
+      },
+      {
+        "q": "How do I stop a voice agent from talking when the user interrupts?",
+        "a": "Pause client playback as soon as there is convincing evidence of an interruption, without waiting for the full STT or LLM round trip. Then confirm whether the interruption is genuine. If it is, cancel or ignore pending LLM and TTS work, flush unplayed audio from the client queue, reconcile conversation history with what actually played, and start the new turn with a fresh generation ID."
+      },
+      {
+        "q": "Why does my voice agent keep playing old audio after an interruption?",
+        "a": "Usually because audio chunks from the cancelled response were already in flight or queued on the client, and the player enqueued them without checking. Label every response with a unique generation_id plus an increasing session epoch, and have the player accept chunks only from the active generation. When an interruption is confirmed, flush the client output queue as well as cancelling the LLM and TTS tasks."
+      },
+      {
+        "q": "What's the difference between generated audio and played audio in a voice agent?",
+        "a": "Generated text and synthesized audio exist on the server, while transmitted and buffered audio have reached the network or the client queue. None of these proves the user heard anything. Played audio, acknowledged by the output system, is the best available proxy, and even played_ms is an estimate because of hardware queues and output latency. Conversation context should follow the played cursor, not the generated one."
+      },
+      {
+        "q": "What does conversation.item.truncate do in the OpenAI Realtime API?",
+        "a": "In OpenAI Realtime sessions over WebSocket where the client manages playback, conversation.item.truncate tells the server how much of an assistant audio item actually played, using item_id, content_index, and audio_end_ms. The server then removes the unplayed part, including its transcript text, from context. It does not guarantee a word-aligned partial transcript, and managed WebRTC or SIP connections handle truncation differently."
+      },
+      {
+        "q": "How should a voice agent update conversation history after it is interrupted?",
+        "a": "Store only what the user plausibly heard. With reliable word-to-audio alignment, keep the segments that finished playing. Without it, mark the assistant message as interrupted instead of inventing a precise transcript. Otherwise the agent may later say 'as I mentioned' about options the user never heard. LiveKit, for example, truncates conversation history to the played portion automatically, with details depending on the turn-handling mode."
+      }
+    ],
+    "ar": [
+      {
+        "q": "ما هو Barge-In (المقاطعة) في الوكيل الصوتي؟",
+        "a": "Barge-In أن يبدأ المستخدم الكلام بينما الوكيل لا يزال يتحدث، فيتوقف الوكيل ويترك له الدور. لكن ليس كل صوت أثناء التشغيل مقاطعة: كلمات المتابعة مثل «آها»، وصدى صوت الوكيل نفسه، والسعال أو الضجيج، لا ينبغي عادةً أن توقفه. لذلك يُجمع VAD مع STT وإلغاء الصدى وسياسات مقاطعة تكيفية حتى يكون كشف Barge-In موثوقاً."
+      },
+      {
+        "q": "كيف أجعل الوكيل الصوتي يتوقف عن الكلام عندما يقاطعه المستخدم؟",
+        "a": "أوقف تشغيل الصوت على طرف العميل فور ظهور مؤشر مقاطعة مقنع، دون انتظار اكتمال STT أو رد LLM. ثم تحقق هل المقاطعة حقيقية. إن كانت كذلك، ألغِ عمليات LLM وTTS الجارية أو تجاهلها، وفرّغ طابور التشغيل من الصوت غير المشغّل، وحدّث سجل المحادثة وفق ما شُغّل فعلاً، ثم ابدأ الدور الجديد بمعرّف توليد (generation ID) جديد."
+      },
+      {
+        "q": "لماذا يستمر الوكيل الصوتي في تشغيل صوت قديم بعد المقاطعة؟",
+        "a": "غالباً لأن دفعات صوت من الرد الملغى كانت في طريقها عبر الشبكة أو في طابور العميل، فأضافها المشغّل دون تحقق. الحل أن تعطي كل رد generation_id فريداً مع رقم epoch متزايد للجلسة، وأن يقبل المشغّل الدفعات التي تحمل الجيل النشط فقط. وعند تأكيد المقاطعة فرّغ طابور العميل أيضاً، ولا تكتفِ بإلغاء مهمة LLM أو TTS."
+      },
+      {
+        "q": "ما الفرق بين الصوت المولَّد والصوت المشغَّل (Played Audio) في الوكيل الصوتي؟",
+        "a": "النص المولّد والصوت الذي جهّزه TTS موجودان على الخادم، أما الصوت المرسَل والمخزّن فقد وصل إلى الشبكة أو إلى طابور العميل. لا شيء من ذلك يثبت أن المستخدم سمعه. الصوت المشغَّل الذي يقرّ به المشغّل هو أفضل تقدير متاح، ومع ذلك يبقى played_ms تقديراً بسبب مخازن الأجهزة وتأخير الإخراج. لذلك يتبع سياق المحادثة مؤشر التشغيل لا مؤشر التوليد."
+      },
+      {
+        "q": "ما وظيفة conversation.item.truncate في OpenAI Realtime API؟",
+        "a": "في جلسات OpenAI Realtime عبر WebSocket التي يدير فيها العميل التشغيل، يخبر الحدث conversation.item.truncate الخادمَ بالمقدار الذي شُغّل فعلاً من رسالة الوكيل الصوتية، عبر item_id وcontent_index وaudio_end_ms. فيزيل الخادم الجزء غير المشغّل ونصه من السياق. لكنه لا يضمن Transcript مقصوصاً بدقة كلمةً بكلمة، كما أن اتصالات WebRTC أو SIP المُدارة تتعامل مع القص بطريقة مختلفة."
+      },
+      {
+        "q": "كيف أحدّث سجل المحادثة بعد مقاطعة الوكيل الصوتي؟",
+        "a": "احفظ فقط ما يُرجَّح أن المستخدم سمعه. إن توفرت مزامنة موثوقة بين الصوت والكلمات، احتفظ بالمقاطع التي اكتمل تشغيلها. وإن لم تتوفر، فسجّل رسالة الوكيل على أنها منقطعة بدلاً من اختراع نص دقيق. وإلا فقد يقول الوكيل لاحقاً «كما أخبرتك» عن خيارات لم يسمعها المستخدم. ويقص LiveKit مثلاً سجل المحادثة تلقائياً إلى الجزء المشغّل، وتختلف التفاصيل بحسب وضع إدارة الأدوار."
+      }
+    ]
+  }
+}

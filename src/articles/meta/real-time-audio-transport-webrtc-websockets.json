@@ -1,0 +1,95 @@
+{
+  "slug": "real-time-audio-transport-webrtc-websockets",
+  "keywords": [
+    "webrtc vs websockets",
+    "webrtc vs websocket for voice ai",
+    "stun vs turn server",
+    "what is ice in webrtc",
+    "jitter buffer explained",
+    "head-of-line blocking tcp audio",
+    "stream audio over websocket",
+    "webrtc getstats jitter packet loss",
+    "real-time audio streaming for voice agents"
+  ],
+  "keywords_ar": [
+    "الفرق بين WebRTC و WebSocket",
+    "ما هو خادم STUN و TURN",
+    "شرح WebRTC بالعربي",
+    "نقل الصوت في الزمن الحقيقي",
+    "ما هو Jitter وفقدان الحزم",
+    "بث الصوت عبر WebSocket",
+    "تأخير الصوت في الوكيل الصوتي"
+  ],
+  "summary": {
+    "en": [
+      "Model response time is not conversation latency: uplink, downlink and the playback buffer add delay the user hears even when STT, LLM and TTS are fast.",
+      "WebRTC provides real-time media transport with RTP, DTLS-SRTP and ICE, while WebSocket is a generic message channel on which your application defines the audio protocol.",
+      "STUN discovers a public address but does not guarantee connectivity; production systems need tested TURN relay paths for corporate, cellular and filtered networks.",
+      "WebSocket runs over TCP, so one lost segment can delay newer audio through head-of-line blocking, which hurts when fresh audio matters more than old audio.",
+      "A jitter buffer trades delay for smoothness: a larger buffer reduces dropouts but adds latency, while a smaller one is more sensitive to network variation.",
+      "getStats() reports jitter in seconds and RTT per candidate pair, but neither replaces measuring time to first audible output and interruption-to-stop latency."
+    ],
+    "ar": [
+      "زمن استجابة النموذج ليس زمن المحادثة: مسار الرفع والتنزيل ومخزن التشغيل تضيف تأخيراً يسمعه المستخدم حتى لو كانت STT وLLM وTTS سريعة.",
+      "يوفّر WebRTC نقلاً جاهزاً للوسائط الآنية عبر RTP وDTLS-SRTP وICE، أما WebSocket فقناة رسائل عامة يبني التطبيق فوقها بروتوكول الصوت بنفسه.",
+      "يكشف STUN العنوان العام للطرف لكنه لا يضمن الاتصال، ولذلك تحتاج أنظمة الإنتاج إلى مسارات TURN مختبرة لشبكات الشركات والهواتف والشبكات المقيدة.",
+      "يعمل WebSocket فوق TCP، فقد يؤخر فقدُ جزء واحد الصوتَ الأحدث بسبب Head-of-Line Blocking، وهذا يضر حين يكون الصوت الجديد أهم من القديم.",
+      "الـJitter Buffer مقايضة بين التأخير والسلاسة: الحجم الأكبر يقلل التقطع ويزيد التأخير، والأصغر يقلل التأخير لكنه أكثر حساسية لتقلب الشبكة.",
+      "تعرض getStats() قيمة Jitter بالثواني وRTT لزوج المرشحين، لكنها لا تغني عن قياس وقت أول صوت مسموع وزمن توقف التشغيل بعد المقاطعة."
+    ]
+  },
+  "faq": {
+    "en": [
+      {
+        "q": "What's the difference between WebRTC and WebSockets for voice agents?",
+        "a": "WebRTC is a set of standards and browser APIs built for interactive media: it captures audio, negotiates connections with ICE, protects media with DTLS-SRTP and supports playback over imperfect networks. A WebSocket is a bidirectional message channel over TCP. It can carry binary audio, but your application must supply the format, framing, control events, buffering and playback logic. WebRTC is often the stronger default for browser voice calls."
+      },
+      {
+        "q": "Is WebRTC always faster than WebSockets?",
+        "a": "No. WebRTC is not faster in every deployment. It may fall back to TURN over TCP when direct UDP fails, and a carefully engineered WebSocket pipeline can perform well for the workload it was built for. Decide by measuring real users and network paths: P95 latency, reconnect behavior, time to first audible output and how quickly playback stops after an interruption."
+      },
+      {
+        "q": "What is the difference between STUN and TURN servers in WebRTC?",
+        "a": "A STUN server helps a peer learn the public address and port seen from outside its network, which produces server-reflexive (srflx) ICE candidates. That alone does not guarantee a connection. A TURN server relays media when no direct path works, producing relay candidates. TURN improves reachability on corporate, cellular and filtered networks, but it consumes relay bandwidth and may add latency and cost. ICE gathers and checks the candidates."
+      },
+      {
+        "q": "What is head-of-line blocking when streaming audio over WebSocket?",
+        "a": "WebSocket runs over TCP, which delivers bytes reliably and in order. When a TCP segment is lost, the bytes after it are held back until it is retransmitted. That is head-of-line blocking. For live speech, it means newer audio can be delayed by older audio that is no longer useful. Simply dropping lost audio is not enough either; media applications still need concealment and playback scheduling."
+      },
+      {
+        "q": "Why does my voice agent's audio sound choppy even on a fast connection?",
+        "a": "Speed and consistency are different things. Low latency means packets arrive quickly; low jitter means their delays are consistent. A connection with a good average delay can still glitch when arrival times vary widely or packets are lost. A jitter buffer smooths playback by holding a short span of audio, but a larger buffer adds delay. Check jitter and packet loss, not only bandwidth."
+      },
+      {
+        "q": "How do I measure jitter and packet loss in a WebRTC call?",
+        "a": "Call RTCPeerConnection.getStats() and read the inbound-rtp entries for audio. Jitter is reported in seconds, so multiply by 1000 for milliseconds, and packetsLost is cumulative, so compute a rate only over a defined window. The candidate pair's currentRoundTripTime estimates RTT, which is not end-to-end voice latency. Also measure time to first audible output and interruption-to-stop latency in your application."
+      }
+    ],
+    "ar": [
+      {
+        "q": "ما الفرق بين WebRTC وWebSocket في الوكلاء الصوتيين؟",
+        "a": "WebRTC مجموعة معايير وواجهات متصفح صُممت للوسائط التفاعلية: تلتقط الصوت، وتتفاوض على الاتصال عبر ICE، وتحمي الوسائط بـDTLS-SRTP، وتساعد على تشغيل الصوت فوق شبكات غير مستقرة. أما WebSocket فقناة رسائل ثنائية الاتجاه فوق TCP، تستطيع نقل صوت ثنائي (Binary)، لكن على تطبيقك أن يحدد صيغة الصوت وتقطيعه وأحداث التحكم والتخزين المؤقت والتشغيل. لذلك يكون WebRTC غالباً الخيار الأقوى لمكالمات المتصفح الصوتية."
+      },
+      {
+        "q": "هل WebRTC أسرع دائماً من WebSocket؟",
+        "a": "لا. قد يلجأ WebRTC إلى TURN فوق TCP عندما يفشل الاتصال المباشر عبر UDP، وقد يعمل Pipeline مبني بعناية فوق WebSocket جيداً للحمل الذي صُمم له. القرار يُتخذ بالقياس على مستخدمين ومسارات شبكة حقيقية: زمن التأخير عند P95، وسلوك إعادة الاتصال، ووقت أول صوت مسموع، وسرعة توقف التشغيل بعد مقاطعة المستخدم."
+      },
+      {
+        "q": "ما الفرق بين خادم STUN وخادم TURN في WebRTC؟",
+        "a": "يساعد خادم STUN الطرفَ على معرفة عنوانه ومنفذه كما يظهران من خارج شبكته، فينتج مرشحاً من نوع srflx، لكن ذلك وحده لا يضمن نجاح الاتصال. أما خادم TURN فيمرر الوسائط عبره عندما يتعذر المسار المباشر، فينتج مرشحاً من نوع relay. يرفع TURN فرص الوصول في شبكات الشركات والهواتف والشبكات المقيدة، لكنه يستهلك عرض نطاق وقد يزيد التأخير والتكلفة. ويتولى ICE جمع المرشحين وفحصهم."
+      },
+      {
+        "q": "ما هو Head-of-Line Blocking عند بث الصوت عبر WebSocket؟",
+        "a": "يعمل WebSocket فوق TCP الذي يسلّم البيانات كاملة وبالترتيب. إذا فُقد جزء من التدفق، تنتظر البيانات التي بعده إلى أن يُعاد إرساله، وهذا هو Head-of-Line Blocking. في الكلام الحي يعني ذلك أن صوتاً قديماً لم يعد مفيداً قد يؤخر الصوت الأحدث. وفي المقابل، تجاهل الفقد وحده ليس حلاً، فتطبيق الوسائط يحتاج إلى إخفاء الفجوات وجدولة التشغيل."
+      },
+      {
+        "q": "لماذا يتقطع صوت الوكيل الصوتي رغم أن الإنترنت سريع؟",
+        "a": "السرعة شيء والانتظام شيء آخر. انخفاض التأخير (Latency) يعني أن الحزم تصل بسرعة، وانخفاض الـJitter يعني أن تأخيرها متقارب. قد يكون متوسط التأخير جيداً ومع ذلك يتقطع الصوت إذا تفاوتت أزمنة الوصول كثيراً أو فُقدت حزم. يحتفظ الـJitter Buffer بقدر قصير من الصوت ليجعل التشغيل أسلس، لكن تكبيره يضيف تأخيراً. افحص Jitter وPacket Loss، لا عرض النطاق وحده."
+      },
+      {
+        "q": "كيف أقيس Jitter وفقدان الحزم (Packet Loss) في اتصال WebRTC؟",
+        "a": "استدعِ RTCPeerConnection.getStats() واقرأ سجلات inbound-rtp الخاصة بالصوت. قيمة jitter بالثواني، فاضربها في 1000 لتحصل عليها بالميلي ثانية، وقيمة packetsLost تراكمية، فلا تحولها إلى نسبة إلا ضمن نافذة زمنية محددة. يعطي currentRoundTripTime في سجل candidate-pair تقديراً لـRTT، وهو ليس زمن الرد الصوتي من طرف إلى طرف. وقِس أيضاً وقت أول صوت مسموع وزمن التوقف بعد المقاطعة."
+      }
+    ]
+  }
+}

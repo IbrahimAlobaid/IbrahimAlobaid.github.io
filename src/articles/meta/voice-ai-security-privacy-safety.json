@@ -1,0 +1,95 @@
+{
+  "slug": "voice-ai-security-privacy-safety",
+  "keywords": [
+    "voice AI security",
+    "voice agent privacy",
+    "prompt injection voice assistant",
+    "microphone permission vs recording consent",
+    "is voice biometric data GDPR",
+    "WebRTC security DTLS-SRTP",
+    "voice recording retention policy",
+    "LLM tool authorization",
+    "voice agent audit logging"
+  ],
+  "keywords_ar": [
+    "أمن الوكلاء الصوتيين",
+    "خصوصية المساعد الصوتي",
+    "حقن التعليمات Prompt Injection",
+    "هل الصوت بيانات بيومترية",
+    "أمان WebRTC",
+    "سياسة الاحتفاظ بالتسجيلات الصوتية",
+    "حماية مفاتيح API في تطبيقات الذكاء الاصطناعي"
+  ],
+  "summary": {
+    "en": [
+      "Data cannot confer privilege: transcripts, retrieved documents and LLM output may suggest a tool call, but only the trusted backend decides whether it is allowed.",
+      "Browser microphone permission, a lawful basis for processing, permission to retain recordings, and approval to perform an action are four separate decisions.",
+      "Prompt injection reaches voice agents through direct speech, retrieved documents, tool outputs and contaminated history, so a keyword filter cannot be the security boundary.",
+      "DTLS-SRTP or wss:// protects audio in transit, but server-side decryption, STT vendors and storage are new processing boundaries that need their own review.",
+      "Security audit logs should record decisions and generic reasons, not recordings, full prompts, transcripts, tool arguments or access tokens.",
+      "There is no universal safe retention period, and deletion has to reach recordings, transcripts, caches, indexes, backups, observability systems and processor-held copies."
+    ],
+    "ar": [
+      "المعلومات لا تمنح صلاحيات: قد يقترح التفريغ أو الوثيقة المسترجعة أو ناتج LLM استدعاء أداة، لكن الخادم الموثوق وحده يقرر إن كان مسموحاً.",
+      "إذن الميكروفون في المتصفح، والأساس القانوني للمعالجة، والموافقة على حفظ التسجيل، والموافقة على تنفيذ إجراء، أربعة قرارات منفصلة.",
+      "يصل حقن التعليمات إلى الوكيل الصوتي عبر الكلام المباشر والوثائق المسترجعة ونتائج الأدوات والسياق الملوث، لذلك لا يصلح فلتر الكلمات حاجزاً أمنياً.",
+      "يحمي DTLS-SRTP أو wss:// الصوت أثناء النقل فقط، أما فك التشفير على الخادم ومزودو STT والتخزين فمناطق معالجة جديدة تحتاج مراجعة مستقلة.",
+      "يكفي سجل التدقيق الأمني أن يحفظ القرار وسبباً عاماً له، من دون التسجيلات أو الـPrompts الكاملة أو التفريغ أو معطيات الأدوات أو الـTokens.",
+      "لا توجد مدة احتفاظ آمنة تصلح لكل الحالات، والحذف يجب أن يشمل التسجيلات والتفريغ والكاش والفهارس والنسخ الاحتياطية وأنظمة المراقبة ونسخ المزودين."
+    ]
+  },
+  "faq": {
+    "en": [
+      {
+        "q": "Is browser microphone permission the same as consent to record?",
+        "a": "No. The getUserMedia() permission only lets a page capture microphone input in a secure context. It is not by itself a legal basis for recording, analytics, training or unrelated uses of the audio. Processing for a defined purpose, retaining recordings and approving an action are separate decisions. A practical voice AI design keeps persistent recording off by default and separates recording choices from basic microphone use."
+      },
+      {
+        "q": "How does prompt injection affect voice assistants?",
+        "a": "Attacker-controlled instructions can arrive through direct speech, inside retrieved RAG documents, in tool outputs that pretend to be system messages, or through a saved summary carried into a later session. A voice agent should treat all of this as untrusted input. In line with OWASP guidance, apply least privilege, validate parameters and gate privileged operations outside the model, so authorization holds even if malicious text passes every filter."
+      },
+      {
+        "q": "Is a voice recording considered biometric data?",
+        "a": "Voice recordings can be personal data, but not every recording is automatically special-category biometric data. It depends on how voice characteristics are processed: using them to uniquely identify a person can bring additional legal obligations. Requirements vary by jurisdiction, so check with a qualified advisor. Separately, a recognized or familiar voice should never be accepted as sufficient authentication for sensitive actions in a voice agent."
+      },
+      {
+        "q": "Is WebRTC encrypted, and is that enough for voice AI security?",
+        "a": "The standardized WebRTC security architecture uses secured media, including DTLS-SRTP, and does not accept unencrypted RTP/RTCP. That protects audio in transit only. You still have to secure signaling, identity, TURN configuration and credentials, and session authorization. Once the server decrypts audio and sends it to an STT vendor or stores a transcript, those are new processing boundaries that need their own assessment."
+      },
+      {
+        "q": "What should a voice agent log for security auditing?",
+        "a": "A useful security audit log can record the timestamp, the event class, the allowed or denied decision, a restricted tenant reference and a generic reason. It usually does not need the recording, full prompt, transcription, tool arguments, access token or raw model output. The audit logs themselves need access controls and a retention policy, which matches the advice in the OWASP Logging Cheat Sheet."
+      },
+      {
+        "q": "How long should I keep voice recordings and transcripts?",
+        "a": "There is no universal safe number of days. Set purpose-specific retention based on business necessity and applicable law, including GDPR principles such as data minimization and storage limitation where they apply. Deleting the audio alone is not enough, because transcripts and summaries may preserve the same information. A deletion workflow should cover recordings, transcripts, caches, indexes, observability systems, backups and copies held by processors."
+      }
+    ],
+    "ar": [
+      {
+        "q": "هل إذن الميكروفون في المتصفح يعني الموافقة على تسجيل الصوت؟",
+        "a": "لا. إذن getUserMedia() يسمح للصفحة فقط بالتقاط صوت الميكروفون في سياق آمن، ولا يشكّل بحد ذاته أساساً قانونياً للتسجيل أو التحليل أو تدريب النماذج أو أي استخدام آخر للصوت. معالجة الصوت لغرض محدد، وحفظ التسجيلات، والموافقة على تنفيذ إجراء، قرارات منفصلة. والتصميم العملي يجعل التسجيل الدائم معطلاً افتراضياً، ويفصل خيار التسجيل عن تشغيل الميكروفون."
+      },
+      {
+        "q": "كيف يؤثر حقن التعليمات (Prompt Injection) على المساعدات الصوتية؟",
+        "a": "قد تصل تعليمات المهاجم عبر الكلام المباشر، أو داخل وثائق RAG المسترجعة، أو في نتائج أدوات تتظاهر بأنها رسائل نظام، أو عبر ملخص محفوظ ينتقل إلى جلسة لاحقة. على الوكيل الصوتي أن يعامل كل ذلك كمدخلات غير موثوقة. ووفق توصيات OWASP، قلّل الصلاحيات، وتحقق من المعطيات، واجعل العمليات الحساسة تمر عبر ضوابط خارج النموذج، حتى تبقى الحماية قائمة لو مرّ النص الخبيث من كل الفلاتر."
+      },
+      {
+        "q": "هل يُعدّ التسجيل الصوتي بيانات بيومترية (Biometric Data)؟",
+        "a": "قد يكون التسجيل الصوتي بيانات شخصية، لكنه لا يصبح تلقائياً بيانات بيومترية من الفئة الخاصة. يعتمد ذلك على طريقة معالجة خصائص الصوت؛ فاستخدامها للتعرف على شخص بصورة فريدة قد يفرض التزامات قانونية إضافية تختلف من بلد لآخر، لذا راجع جهة قانونية مختصة. وبمعزل عن ذلك، لا ينبغي أن يقبل الوكيل الصوتي صوتاً مألوفاً بديلاً عن مصادقة موثوقة في الإجراءات الحساسة."
+      },
+      {
+        "q": "هل اتصال WebRTC مشفر، وهل يكفي ذلك لأمان الوكيل الصوتي؟",
+        "a": "تستخدم البنية الأمنية المعيارية لـ WebRTC وسائط مؤمّنة، منها DTLS-SRTP، ولا تقبل RTP/RTCP غير المشفّر. لكن هذا يحمي الصوت أثناء النقل فقط. يبقى عليك تأمين Signaling والهوية وإعدادات خدمة TURN وأسرارها وصلاحيات الجلسة. وعندما يفك الخادم تشفير الصوت ويرسله إلى مزوّد STT أو يحفظ تفريغه، فهذه مناطق معالجة جديدة تحتاج إلى مراجعة مستقلة."
+      },
+      {
+        "q": "ماذا يجب أن يسجّل الوكيل الصوتي في سجل التدقيق الأمني (Audit Log)؟",
+        "a": "يكفي سجل التدقيق المفيد أن يحفظ وقت الحدث ونوعه، وقرار السماح أو الرفض، ومرجعاً محدوداً للجهة (Tenant)، وسبباً عاماً. ولا يحتاج عادة إلى التسجيل الصوتي أو الـPrompt الكامل أو التفريغ أو معطيات الأدوات أو رموز الوصول أو ناتج النموذج الخام. كما أن سجلات التدقيق نفسها تحتاج إلى ضوابط وصول وسياسة احتفاظ، وهذا ما توصي به OWASP في دليل Logging."
+      },
+      {
+        "q": "كم من الوقت يجب الاحتفاظ بالتسجيلات الصوتية والتفريغ النصي؟",
+        "a": "لا توجد مدة واحدة آمنة تصلح لكل الحالات. حدد مدة الاحتفاظ حسب الغرض والحاجة الفعلية والقانون المعمول به، مع مراعاة مبادئ GDPR مثل تقليل البيانات (Data Minimization) وتحديد مدة التخزين عند انطباقها. وحذف الملف الصوتي وحده لا يكفي، لأن التفريغ والملخصات قد تحتفظ بالمعلومات نفسها، لذلك يجب أن يشمل الحذف التسجيلات والتفريغ والكاش والفهارس وأنظمة المراقبة والنسخ الاحتياطية ونسخ المزودين."
+      }
+    ]
+  }
+}

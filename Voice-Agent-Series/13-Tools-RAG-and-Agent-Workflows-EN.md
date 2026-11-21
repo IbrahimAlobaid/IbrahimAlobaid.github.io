@@ -34,7 +34,7 @@ cover: "assets/tools-rag-workflows-cover.png"
 ![[assets/tools-rag-workflows-cover.png]]
 
 > [!abstract] The engineering question
-> When a user asks, “What is your cancellation policy?”, an agent needs **reliable evidence**. When they say, “Book an appointment at ten tomorrow,” it needs to **take an action**. How do we separate knowledge retrieval from side-effecting actions, and prevent an incorrect transcript or untrusted document from authorizing a real-world change?
+> When a user asks, “What is your cancellation policy?”, the agent needs reliable evidence. When they say, “Book an appointment at ten tomorrow,” it has to take an action in a real system. This article separates knowledge retrieval from side-effecting actions and shows how to stop a misheard transcript or an untrusted document from authorizing a real-world change.
 
 ## Learning outcomes
 
@@ -42,7 +42,7 @@ By the end of this article, you will be able to distinguish **RAG** from **tool 
 
 ## 1. The transition from talking to doing
 
-The earlier articles covered [[03-Speech-to-Text-EN|STT]], [[05-LLM-and-Conversation-State-EN|conversation state]], [[04-Text-to-Speech-EN|TTS]], [[10-Interruptions-Barge-In-and-Playback-State-EN|interruption handling]], [[11-Latency-and-Streaming-Optimization-EN|latency]], and [[12-Robust-Voice-AI-in-the-Wild-EN|resilience]]. These give us the foundations of a voice conversation. Now we need the ability to interact with external systems.
+The earlier articles covered [[03-Speech-to-Text-EN|STT]], [[05-LLM-and-Conversation-State-EN|conversation state]], [[04-Text-to-Speech-EN|TTS]], [[10-Interruptions-Barge-In-and-Playback-State-EN|interruption handling]], [[11-Latency-and-Streaming-Optimization-EN|latency]], and [[12-Robust-Voice-AI-in-the-Wild-EN|resilience]]. That covers the conversation itself. The next step is letting the agent work with external systems.
 
 Consider two requests:
 
@@ -54,7 +54,7 @@ Consider two requests:
 
 **Well-designed agent:** It checks identity, retrieves real availability, presents precise details, obtains explicit approval, commits **one** booking, verifies the external system's response, and only then says the appointment has been booked.
 
-The difference is not conversational style. It is **external state and responsibility**. A wrong answer is bad; an unauthorized or duplicate transaction can be much worse.
+What changes between these two requests is **external state and responsibility**; the conversational style is much the same. A wrong answer is bad. An unauthorized or duplicate transaction can be much worse.
 
 ## 2. Three related but distinct concepts
 
@@ -111,7 +111,7 @@ A conceptual function definition for read-only appointment lookup:
 }
 ```
 
-**The exact SDK wrapper varies by API.** A strict JSON schema can improve argument structure; it does **not** confer permission. A valid-looking date can still be out of range, and an otherwise well-formed tool request can target a record the caller has no right to access.
+**The exact SDK wrapper varies by API.** A strict JSON schema helps the model produce well-formed arguments, but it grants **no** permission. A valid-looking date can still be out of range, and an otherwise well-formed tool request can target a record the caller has no right to access.
 
 ```mermaid
 sequenceDiagram
@@ -166,7 +166,7 @@ A suitable response is: “I couldn't find an authoritative policy for that spec
 
 **Model Context Protocol (MCP)** provides a standardized way for AI applications to connect to external capabilities and data sources. A server may expose tools such as `search_calendar` or `lookup_customer`; a capable host or client can discover and invoke them according to the protocol.
 
-MCP is **not a replacement for a language model, RAG, or authorization**. It is an integration layer. The application and backend still decide who can call a tool, when approval is required, how arguments are checked, and whether the side effect is permitted. Tool descriptions and metadata annotations must not be mistaken for an access-control system.
+MCP is an integration layer. It **does not replace a language model, RAG, or authorization**. The application and backend still decide who can call a tool, when approval is required, how arguments are checked, and whether the side effect is permitted. Tool descriptions and metadata annotations must not be mistaken for an access-control system.
 
 | User request | RAG | Tool calling | Possible MCP role |
 |---|---|---|---|
@@ -293,7 +293,7 @@ The tests include tenant isolation, empty results, untrusted content handling, a
 
 ### Why isn't there an LLM or vector database?
 
-The lab uses **lexical retrieval**—simple token overlap, not embeddings or a complete semantic RAG stack. It does **not** perform STT, speaker identification, TTS, or real bookings. Its `speaker_verified` parameter is a **simulated trusted gateway signal** controlled by tests, not biometric verification. A production integration must replace it with a genuinely trustworthy identity and consent process. The goal is to make the authorization and workflow boundary observable and testable first.
+The lab uses **lexical retrieval**—simple token overlap, not embeddings or a complete semantic RAG stack. It does **not** perform STT, speaker identification, TTS, or real bookings. Its `speaker_verified` parameter is a **simulated trusted gateway signal** controlled by tests, not biometric verification. A production integration must replace it with a genuinely trustworthy identity and consent process. The point of the lab is to make the authorization and workflow boundary visible and testable before any of those pieces are added.
 
 ## 11. Integrating with Pipecat or LiveKit
 
@@ -347,9 +347,9 @@ Design a read-only `get_order_status` tool and a write-enabled `request_order_ca
 
 ## Conclusion
 
-A capable voice agent is not merely a model that speaks. It is a system responsible for **evidence, authority, and side effects**. RAG supplies grounded context, tools provide capabilities, and workflows enforce the sequence of safe operations. Reliability ultimately comes from clear boundaries between model suggestions and trusted application decisions.
+Once a voice agent can act, it becomes responsible for **evidence, authority, and side effects**, which is a much larger job than speaking well. RAG supplies grounded context, tools add capabilities, and the workflow decides the order in which operations may safely happen. The reliability comes from keeping a clear line between what the model suggests and what trusted application code decides.
 
-**Next:** [[00-Series-Roadmap|Article 14 — Safety, Privacy & Security]]: protecting recordings, data, credentials, tool access, and user privacy.
+**Next:** [[14-Voice-AI-Security-Privacy-and-Safety-EN|Article 14 — Safety, Privacy & Security]]: protecting recordings, data, credentials, tool access, and user privacy.
 
 ## References
 

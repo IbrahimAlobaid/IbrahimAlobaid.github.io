@@ -36,13 +36,13 @@ cover: "assets/real-time-transports-cover.png"
 ![[assets/real-time-transports-cover.png]]
 
 > [!abstract] What you will learn
-> We have covered **STT, LLM, TTS, and conversational pipelines**. But even a perfect model can feel slow or unreliable when audio arrives late or unevenly. The missing component is often the **real-time transport layer**. This article compares **WebRTC and WebSockets**, explains **ICE/STUN/TURN**, demonstrates **jitter and packet loss**, and provides a local WebSocket audio lab plus practical WebRTC diagnostics.
+> A voice agent with good STT, LLM and TTS models can still feel slow or choppy when its audio arrives late or unevenly, and the cause is often the **real-time transport layer**. This article compares **WebRTC and WebSockets** for voice agents, explains **ICE/STUN/TURN**, and shows how **jitter and packet loss** affect what the user hears. It finishes with a local WebSocket audio lab and practical ways to inspect a live WebRTC connection.
 
 ## 1. The network is part of the conversation
 
 Imagine a caller saying, “Move my appointment from Tuesday to Thursday.” Speech recognition completes quickly, the LLM generates a correct answer, and TTS emits audio. Then an unpredictable network queue adds half a second before the first sound reaches the user's headphones. The caller has already started correcting the request.
 
-This reveals an important engineering fact: **model response time is not the same as conversation latency**.
+In other words, **model response time is not the same as conversation latency**.
 
 ```mermaid
 flowchart LR
@@ -56,7 +56,7 @@ flowchart LR
     B --> H[User hears audio]
 ```
 
-Transport affects when user speech reaches the agent, how regularly generated audio reaches the client, and how fast the system can stop speaking after an interruption. It is an **interaction-design decision**, not merely a networking implementation detail.
+Transport affects when user speech reaches the agent, how regularly generated audio reaches the client, and how fast the system can stop speaking after an interruption. That makes it an **interaction-design decision** as much as a networking detail.
 
 > [!important] Two different goals
 > **Low latency** means data arrives quickly. **Low jitter** means arrival delays are consistent. A system can have a good average network delay while still producing audible glitches because packet arrival times vary widely.
@@ -84,7 +84,7 @@ Transport affects when user speech reaches the agent, how regularly generated au
 
 ## 3. What actually happens inside WebRTC?
 
-It helps to separate three distinct responsibilities:
+Keep three responsibilities apart:
 
 1. **Signaling:** The application exchanges SDP offers/answers and ICE candidate messages. This can happen over HTTPS or WebSocket; WebRTC does not prescribe one signaling protocol.
 2. **Connectivity:** ICE discovers and checks candidate network paths, optionally assisted by STUN and TURN servers.
@@ -164,7 +164,7 @@ await peer.setLocalDescription(offer);
 // Receive remote ICE candidates and call addIceCandidate(candidate).
 ```
 
-Frameworks such as **Pipecat SmallWebRTCTransport** help you avoid implementing the full signaling and media stack from scratch. Still, understanding candidate gathering and the distinction between signaling and audio transport is valuable when debugging connection failures.[^pipecat-transport]
+Frameworks such as **Pipecat SmallWebRTCTransport** save you from implementing the full signaling and media stack yourself. When a connection fails, though, you will still need to understand candidate gathering and the split between signaling and audio transport to debug it.[^pipecat-transport]
 
 ## 5. What sending audio over WebSocket requires
 
@@ -188,7 +188,7 @@ flowchart TD
     H --> I[Speaker]
 ```
 
-The central tradeoff is ordering. WebSocket's TCP connection provides ordered, reliable delivery. When a TCP segment is lost, later bytes can be delayed until earlier bytes are retransmitted. This **head-of-line blocking** may be undesirable when old audio is less useful than the newest audio. Conversely, simply allowing lost audio to disappear is not sufficient; media applications need concealment, scheduling, and controls for quality.[^websocket-mdn][^rfc-media]
+The central tradeoff is ordering. WebSocket's TCP connection provides ordered, reliable delivery. When a TCP segment is lost, later bytes can be delayed until earlier bytes are retransmitted. This **head-of-line blocking** hurts when old audio is worth less than the newest audio. Letting lost audio simply vanish is not a fix either: media applications still need concealment, scheduling, and quality controls.[^websocket-mdn][^rfc-media]
 
 ## 6. Latency, jitter, packet loss, and the jitter buffer
 
@@ -204,7 +204,7 @@ These metrics answer different questions:
 
 *Figure 2 — Entirely synthetic packet arrivals: packet 2 is absent, and packet 4 arrives before packet 3.*
 
-A **jitter buffer** holds a short span of received media so the player can output a smoother stream. A larger buffer can reduce dropouts but increases playback delay. A smaller buffer reduces delay, but makes playback more sensitive to network variation. This is why the best buffering policy depends on the user experience, codec, network, and tolerance for glitches.
+A **jitter buffer** holds a short span of received media so the player can output a smoother stream. A larger buffer can reduce dropouts but increases playback delay. A smaller buffer reduces delay but makes playback more sensitive to network variation. So the right buffering policy depends on the user experience, codec, network, and tolerance for glitches.
 
 > [!example] Estimating raw audio bandwidth
 > At **48,000 samples/second**, **Float32 = 32 bits per sample**, and **mono audio**, a **20 ms** frame contains **960 samples × 4 bytes = 3,840 bytes**. Fifty frames per second require **1,536 kbit/s** of *raw audio*, before WebSocket/TCP/TLS overhead. A compressed codec such as Opus can reduce this considerably, with a bitrate depending on settings and source characteristics.
@@ -284,7 +284,7 @@ Visit `http://127.0.0.1:8008`, select **Start microphone loopback**, and approve
 
 ### What about an actual WebRTC experiment?
 
-The voice agent developed in **Article 07** already uses Pipecat with WebRTC. Use that setup, with a compatible running frontend/backend, to observe live ICE and RTP metrics. This WebSocket lab cannot make a claim about WebRTC performance because it does **not establish a WebRTC connection**.
+The voice agent from **Article 07** already uses Pipecat with WebRTC. Run that setup, with a compatible frontend and backend, to observe live ICE and RTP metrics. This WebSocket lab says nothing about WebRTC performance, because it does **not establish a WebRTC connection**.
 
 ## 9. Pure Python exercise: packet arrival and jitter
 
@@ -309,7 +309,7 @@ The deterministic exercise simulates six expected packets, one missing `seq=2`, 
 | A vendor that only exposes streaming over WebSockets | Use WebSocket with deliberate framing, bounded buffering, reconnection, and security |
 | Audio plus video plus interruption handling | Usually start with WebRTC or a managed real-time media service |
 
-**Pipecat** supports several transports, including SmallWebRTC and WebSocket. Select one based on actual service compatibility and performance constraints, not protocol popularity.[^pipecat-transport]
+**Pipecat** supports several transports, including SmallWebRTC and WebSocket. Pick one based on what your services actually support and the performance you need, not on which protocol is more popular.[^pipecat-transport]
 
 ## 11. A production readiness checklist
 
@@ -337,7 +337,7 @@ The deterministic exercise simulates six expected packets, one missing `seq=2`, 
 
 ## Conclusion
 
-Choosing a transport is not just choosing an API. It determines **connectivity, the timing and continuity of speech, responsiveness to interruptions, and recovery from network faults**. WebRTC offers a broad set of native real-time media facilities. WebSocket gives you a generic message channel on top of which you must design your own audio semantics and queue management. Measure at the user's ears, not only at your model's response boundary.
+Picking a transport means more than picking an API. It determines **connectivity, the timing and continuity of speech, responsiveness to interruptions, and recovery from network faults**. WebRTC gives you a broad set of built-in real-time media features. WebSocket gives you a generic message channel on top of which you must design your own audio semantics and queue management. Measure at the user's ears, not only at your model's response boundary.
 
 > [!success] You can now
 > Explain WebRTC versus WebSocket, separate signaling from media, describe ICE/STUN/TURN, reason about jitter and head-of-line blocking, run a local microphone loopback, and begin inspecting WebRTC statistics.

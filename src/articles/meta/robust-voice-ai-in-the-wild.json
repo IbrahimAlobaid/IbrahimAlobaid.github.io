@@ -1,0 +1,96 @@
+{
+  "slug": "robust-voice-ai-in-the-wild",
+  "keywords": [
+    "voice agent background noise",
+    "acoustic echo cancellation voice agent",
+    "noise suppression vs echo cancellation",
+    "speaker diarization vs authentication",
+    "Arabic speech recognition dialects",
+    "code-switching speech recognition",
+    "WER for Arabic ASR",
+    "WebRTC restartIce reconnect",
+    "idempotency keys voice agent",
+    "voice AI error recovery"
+  ],
+  "keywords_ar": [
+    "إلغاء الصدى في الوكيل الصوتي",
+    "تقليل الضجيج في التعرف على الكلام",
+    "التعرف على اللهجات العربية STT",
+    "الخلط بين العربية والإنجليزية Code-Switching",
+    "حساب WER للغة العربية",
+    "التعافي من انقطاع الاتصال في WebRTC",
+    "الفرق بين Diarization والتحقق من الهوية"
+  ],
+  "summary": {
+    "en": [
+      "Many voice agent failures start before the LLM sees any text: noise, echo, competing speakers, clipping, dialects and packet loss all corrupt the input.",
+      "Echo cancellation, noise suppression and speaker isolation solve different problems, and aggressive suppression can remove quiet speech the recognizer needs.",
+      "Diarization assigns anonymous speaker labels; it does not establish identity or authorization, so sensitive actions still need proper authentication.",
+      "Evaluate Arabic dialects and code-switching with one documented normalization policy, and report CER and critical-entity accuracy alongside WER.",
+      "When evidence is weak, waiting, asking for clarification or confirming a critical detail is safer than letting the LLM guess from context.",
+      "After a disconnect, use session generations and idempotency keys, and check the authoritative action status before retrying anything."
+    ],
+    "ar": [
+      "كثير من أعطال الوكيل الصوتي يبدأ قبل وصول أي نص إلى الـLLM: الضجيج والصدى وتداخل المتحدثين والـClipping واللهجات وفقد الحزم كلها تُفسد المدخلات.",
+      "إلغاء الصدى وتقليل الضجيج وعزل المتحدث تعالج مشكلات مختلفة، والتنقية المفرطة قد تحذف مقاطع كلام هادئة يحتاجها نظام التعرف.",
+      "تعطي Diarization تسميات مجهولة للمتحدثين ولا تثبت الهوية أو الصلاحية، لذا تبقى الأفعال الحساسة بحاجة إلى مصادقة مناسبة.",
+      "قيّم اللهجات العربية وCode-Switching بسياسة تطبيع واحدة موثقة، وأضف CER ودقة الكيانات المهمة إلى جانب WER.",
+      "حين يكون الدليل ضعيفاً، فالانتظار أو الاستيضاح أو تأكيد التفصيل المهم أسلم من ترك الـLLM يخمّن من السياق.",
+      "بعد انقطاع الاتصال استخدم أجيال الجلسة ومفاتيح Idempotency، واستعلم عن الحالة الموثوقة للإجراء قبل أي إعادة محاولة."
+    ]
+  },
+  "faq": {
+    "en": [
+      {
+        "q": "What's the difference between echo cancellation and noise suppression?",
+        "a": "Acoustic echo cancellation (AEC) removes the agent's own playback when it leaks back into the user's microphone, and it relies on the output audio as a reference. Noise suppression targets unwanted ambient sound such as fans or traffic, and it may distort quiet parts of the target speech. Neither separates competing human speakers; that is the job of speaker or voice isolation, which can still pick the wrong source."
+      },
+      {
+        "q": "Why does my voice agent respond to its own voice?",
+        "a": "If the microphone picks up the agent's speech from the speakers and echo cancellation does not remove it, VAD and STT treat that playback as new user input. Request echoCancellation in getUserMedia, check the settings the browser actually applied with getSettings(), and test on real devices. If the problem largely disappears when the user wears headphones, playback leaking into the microphone is a likely contributor."
+      },
+      {
+        "q": "Can speaker diarization be used to verify who is speaking?",
+        "a": "No. Speaker diarization splits audio into anonymous labels such as speaker 1 and speaker 2. It does not tell you who owns an account or who is authorized to issue a command. Diarization, voice isolation and probabilistic speaker matching all produce fallible evidence, so in high-impact workflows they cannot replace proper authentication and explicit authorization before sensitive changes are made."
+      },
+      {
+        "q": "How do I evaluate speech recognition for Arabic dialects and code-switching?",
+        "a": "Build a consented or synthetic test set that covers Modern Standard Arabic, the dialects your users actually speak, mixed Arabic and English phrases, names, numbers, dates and realistic background noise. Define one normalization policy before testing, because word segmentation, hamza spelling and mixed scripts can distort WER. Report CER, critical-entity accuracy and task correctness alongside WER, broken down by dialect and environment."
+      },
+      {
+        "q": "How should a voice agent handle uncertain speech recognition?",
+        "a": "Treat waiting, asking for clarification and requesting confirmation as valid outputs. If the transcript is still partial, wait for more audio. If it is final but unintelligible, ask the user to repeat. If a critical detail such as a time, name or number is unclear, confirm it explicitly instead of letting the LLM guess from context, and run identity and permission checks before executing any change."
+      },
+      {
+        "q": "How do I prevent duplicate actions when a voice agent reconnects?",
+        "a": "Keep transport state, conversation state and action state separate. Tag audio and playback with a session generation so packets from an older generation are ignored, and give each logical action an idempotency key. After reconnecting, invalidate pending confirmations, query the authoritative action service for the status of any earlier request, and ask for fresh confirmation if needed. Reconnecting never authorizes repeating an earlier action."
+      }
+    ],
+    "ar": [
+      {
+        "q": "ما الفرق بين إلغاء الصدى (Echo Cancellation) وتقليل الضجيج (Noise Suppression)؟",
+        "a": "يزيل إلغاء الصدى (AEC) صوت الوكيل نفسه حين يرجع من السماعة إلى ميكروفون المستخدم، ويعتمد على صوت الإخراج مرجعاً. أما تقليل الضجيج فيستهدف أصوات الخلفية غير المرغوبة مثل المروحة أو المرور، وقد يشوّه الأجزاء الهادئة من الكلام. ولا يفصل أيٌّ منهما بين أصوات أشخاص متعددين؛ فتلك مهمة Speaker Isolation، الذي قد يخطئ هو أيضاً في اختيار المتحدث."
+      },
+      {
+        "q": "لماذا يرد الوكيل الصوتي على صوته هو؟",
+        "a": "إذا التقط الميكروفون صوت الوكيل من السماعات ولم يُزله إلغاء الصدى، فسيعامل VAD وSTT هذا الصوت كأنه كلام جديد من المستخدم. اطلب echoCancellation في getUserMedia، وتحقق من الإعدادات المطبّقة فعلاً عبر getSettings()، واختبر على أجهزة حقيقية. وإذا اختفت المشكلة تقريباً حين يستخدم المستخدم سماعات الرأس، فرجوع صوت الإخراج إلى الميكروفون سبب مرجّح."
+      },
+      {
+        "q": "هل يمكن استخدام فصل المتحدثين (Diarization) للتحقق من هوية المستخدم؟",
+        "a": "لا. تقسم Diarization التسجيل إلى تسميات مجهولة مثل «متحدث 1» و«متحدث 2»، ولا تحدد صاحب الحساب أو الشخص المخوّل بإصدار الأمر. ونتائج Diarization وعزل الصوت ومطابقة الصوت الاحتمالية كلها أدلة قد تخطئ، لذلك لا تغني في العمليات الحساسة عن المصادقة المناسبة والموافقة الصريحة قبل تنفيذ أي تغيير."
+      },
+      {
+        "q": "كيف أقيّم التعرف على الكلام (STT) للهجات العربية والخلط بين العربية والإنجليزية؟",
+        "a": "أنشئ مجموعة اختبار مأذوناً بها أو اصطناعية تغطي الفصحى واللهجات التي يستخدمها جمهورك فعلاً، وجملاً تمزج العربية بالإنجليزية، وأسماء وأرقاماً وتواريخ، مع ضجيج واقعي. حدّد سياسة تطبيع واحدة قبل الاختبار، لأن فصل الكلمات والهمزات والكتابة المختلطة تؤثر في WER. وأضف CER ودقة الكيانات المهمة ونجاح المهمة، مع تقسيم النتائج حسب اللهجة والبيئة."
+      },
+      {
+        "q": "كيف يتصرف الوكيل الصوتي عندما يكون التعرف على الكلام غير مؤكد؟",
+        "a": "الانتظار والاستيضاح وطلب التأكيد كلها مخرجات مشروعة. إذا كان النص ما زال جزئياً فانتظر مزيداً من الصوت، وإذا كان نهائياً لكنه غير مفهوم فاطلب من المستخدم أن يعيد كلامه. وإذا كان تفصيل مهم مثل الوقت أو الاسم أو الرقم ملتبساً، فاطلب تأكيده صراحة بدل أن يخمّنه الـLLM من السياق، ثم تحقق من الهوية والصلاحيات قبل التنفيذ."
+      },
+      {
+        "q": "كيف أمنع تكرار تنفيذ الإجراء عند إعادة اتصال الوكيل الصوتي؟",
+        "a": "افصل حالة النقل عن حالة المحادثة وعن حالة تنفيذ الأفعال. ضع على الصوت والتشغيل رقم جيل الجلسة (generation) كي تُتجاهل الحزم القادمة من جيل أقدم، وأعطِ كل إجراء منطقي مفتاح Idempotency. بعد إعادة الاتصال أبطل التأكيدات المعلّقة، واستعلم من خدمة التنفيذ الموثوقة عن حالة أي طلب سابق، واطلب تأكيداً جديداً عند الحاجة. فإعادة الاتصال لا تبرر تكرار إجراء سابق تلقائياً."
+      }
+    ]
+  }
+}

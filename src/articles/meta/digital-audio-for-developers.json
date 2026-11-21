@@ -1,0 +1,95 @@
+{
+  "slug": "digital-audio-for-developers",
+  "keywords": [
+    "PCM audio explained",
+    "sample rate for speech recognition",
+    "16 kHz vs 48 kHz audio",
+    "bit depth and quantization",
+    "PCM vs WAV vs Opus",
+    "audio chunk size for streaming STT",
+    "calculate PCM audio size",
+    "audio format for speech to text",
+    "read WAV file with Python wave module"
+  ],
+  "keywords_ar": [
+    "ما هو الصوت الرقمي",
+    "شرح صيغة PCM",
+    "معدل العينات Sample Rate",
+    "عمق البت Bit Depth",
+    "الفرق بين WAV وPCM",
+    "حساب حجم الملف الصوتي",
+    "معالجة الصوت بلغة بايثون"
+  ],
+  "summary": {
+    "en": [
+      "Before speech reaches an STT model it is a sequence of numbers, defined by sample rate, bit depth, channel count, encoding, and byte order.",
+      "Changing a sample-rate label does not resample audio; sending 48 kHz samples labelled as 16 kHz distorts timing and breaks recognition.",
+      "One second of 16 kHz, mono, 16-bit PCM is 32,000 bytes, and a 20 ms chunk of the same format is 640 bytes.",
+      "PCM, WAV, and Opus sit at different layers: sample representation, file container, and compressed codec, so a .wav extension alone proves little.",
+      "Smaller chunks can lower first-audio latency but add per-message overhead; the right size depends on the STT/TTS interface, transport, and latency targets.",
+      "Peak and RMS help monitor signal level and spot possible clipping, but neither can tell speech from noise; that is a job for VAD."
+    ],
+    "ar": [
+      "قبل أن يصل الكلام إلى نموذج STT يصبح سلسلة أرقام تحددها خصائص مثل معدل العينات وعمق البت وعدد القنوات والترميز وترتيب البايتات.",
+      "تغيير قيمة معدل العينات في الترويسة لا يعيد أخذ العينات، وإرسال صوت 48 kHz على أنه 16 kHz يفسد التوقيت والتعرف على الكلام.",
+      "ثانية واحدة من PCM بمعدل 16 kHz وقناة واحدة ودقة 16-bit تساوي 32,000 بايت، ودفعة مدتها 20 ms منها تساوي 640 بايتاً.",
+      "PCM وWAV وOpus طبقات مختلفة: تمثيل للعينات، وحاوية ملف، ومُرمِّز ضاغط، وامتداد .wav وحده لا يكشف ما في الملف.",
+      "الدفعات الأصغر قد تقلل زمن أول صوت لكنها تزيد أعباء الرسائل، والحجم المناسب يتوقف على واجهة STT/TTS والنقل وأهداف التأخير.",
+      "يساعد Peak وRMS على مراقبة مستوى الإشارة واكتشاف احتمال Clipping، لكنهما لا يميزان الكلام من الضجيج، وهذه مهمة VAD."
+    ]
+  },
+  "faq": {
+    "en": [
+      {
+        "q": "What is PCM audio?",
+        "a": "PCM (Pulse-Code Modulation) is the uncompressed digital representation of a sampled signal: a sequence of numeric sample values. Bit depth sets how many bits store each sample, so 16-bit PCM uses two bytes per sample. A description such as “PCM, 16-bit, mono, 16 kHz” gives the sample format, channel count, and sample rate a speech model expects; byte order (endianness) may also need stating."
+      },
+      {
+        "q": "What sample rate should I use for speech recognition?",
+        "a": "16 kHz mono is common in many speech-processing paths, but it is not a universal STT requirement. Use the sample rate your STT provider documents, and label the stream with its real rate. A higher rate such as 192 kHz gives more samples but not necessarily better recognition. If you need a different rate, run actual resampling with proper filtering instead of editing the metadata."
+      },
+      {
+        "q": "Why does my audio sound too fast or slow after sending it to STT?",
+        "a": "The usual cause is a misinterpreted sample rate. If 48 kHz audio is labelled as 16 kHz, the receiver reads the same samples on the wrong timeline, so speech is distorted and recognition fails. Changing a sample_rate field does not convert anything. Check the source rate, the rate the endpoint expects, and whether a real resampling step sits between them."
+      },
+      {
+        "q": "How big is one second of 16 kHz, 16-bit mono PCM audio?",
+        "a": "It is 32,000 bytes: 16,000 samples per second × 1 channel × 2 bytes per sample. The general formula for fixed-width integer PCM is duration × sample rate × channels × (bits per sample ÷ 8). A 20 ms chunk of the same format holds 320 sample frames, or 640 bytes. These figures cover raw PCM only and exclude WAV headers, transport overhead, and compressed codecs such as Opus."
+      },
+      {
+        "q": "What's the difference between PCM, WAV and Opus?",
+        "a": "They belong to different layers. PCM is the raw sample representation, WAV is a file container that commonly wraps PCM along with metadata, and Opus is a codec that compresses audio for transport or playback. A .wav extension alone does not prove the file holds signed 16-bit samples, and a WebM file may carry Opus rather than raw PCM, so check what your endpoint actually accepts."
+      },
+      {
+        "q": "What audio chunk size should a voice agent use for streaming?",
+        "a": "A voice agent streams audio in short chunks (the examples in this article use 20 ms) so STT can start before the user finishes speaking. Smaller chunks are not automatically faster: they add processing callbacks, network messages, and scheduling work, while larger chunks reduce that overhead but can increase buffering delay. Choose the size based on your STT/TTS interface, transport, network conditions, and latency goals."
+      }
+    ],
+    "ar": [
+      {
+        "q": "ما هو الصوت بصيغة PCM؟",
+        "a": "صيغة PCM (Pulse-Code Modulation) هي التمثيل الرقمي غير المضغوط للإشارة بعد أخذ العينات، أي سلسلة من القيم الرقمية. ويحدد عمق البت (Bit Depth) عدد البتات في كل عينة، فعينة 16-bit تشغل بايتين. وعبارة مثل «PCM, 16-bit, mono, 16 kHz» تصف صيغة العينات وعدد القنوات ومعدل العينات الذي يتوقعه النموذج، وقد يلزم أيضاً تحديد ترتيب البايتات (Endianness)."
+      },
+      {
+        "q": "ما معدل العينات (Sample Rate) المناسب للتعرف على الكلام؟",
+        "a": "معدل 16 kHz بقناة واحدة شائع في كثير من مسارات معالجة الكلام، لكنه ليس شرطاً لكل خدمات STT. استخدم المعدل الذي توثّقه الخدمة التي تتعامل معها، وصِف الصوت بمعدله الحقيقي. والمعدل الأعلى مثل 192 kHz يعطي عينات أكثر لكنه لا يعني بالضرورة تعرفاً أفضل على الكلام. وإذا احتجت إلى معدل آخر فاستخدم Resampling فعلياً مع ترشيح مناسب، لا مجرد تعديل الترويسة."
+      },
+      {
+        "q": "لماذا يبدو الصوت سريعاً أو بطيئاً بعد إرساله إلى خدمة STT؟",
+        "a": "السبب في الغالب تفسير خاطئ لمعدل العينات. فإذا أُرسل صوت مسجّل بمعدل 48 kHz على أنه 16 kHz، تقرأ الخدمة العينات نفسها على خط زمني خاطئ، فيتشوه الكلام ويفشل التعرف عليه. وتغيير قيمة sample_rate في الطلب لا يحوّل الصوت. تحقق من معدل المصدر، والمعدل الذي تتوقعه الواجهة، ووجود خطوة Resampling حقيقية بينهما."
+      },
+      {
+        "q": "كم حجم ثانية واحدة من صوت PCM بمعدل 16 kHz ودقة 16-bit وقناة واحدة؟",
+        "a": "حجمها 32,000 بايت، أي 16,000 عينة في الثانية × قناة واحدة × بايتان لكل عينة. والقاعدة العامة لصوت PCM بأعداد صحيحة ثابتة العرض هي: المدة × معدل العينات × عدد القنوات × (بتات العينة ÷ 8). ودفعة مدتها 20 ms بالصيغة نفسها تضم 320 إطار عينة، أي 640 بايتاً. هذه الأرقام للبيانات الخام فقط، ولا تشمل ترويسة WAV ولا تكلفة النقل ولا الترميز المضغوط مثل Opus."
+      },
+      {
+        "q": "ما الفرق بين PCM وWAV وOpus؟",
+        "a": "هي ثلاث طبقات مختلفة: PCM تمثيل لقيم العينات الخام، وWAV حاوية ملف تضم عادةً بيانات PCM مع بيانات وصفية، وOpus مُرمِّز (Codec) يضغط الصوت للنقل أو التشغيل. ولا يكفي امتداد .wav وحده لمعرفة أن الملف يحتوي عينات 16-bit موقّعة، وقد يحمل ملف WebM صوتاً بترميز Opus لا PCM خاماً، لذلك راجع ما تقبله الواجهة فعلاً."
+      },
+      {
+        "q": "ما حجم الدفعة الصوتية (Chunk) المناسب للبث في الوكيل الصوتي؟",
+        "a": "يرسل الوكيل الصوتي الصوت على دفعات قصيرة (أمثلة هذه المقالة تستخدم 20 ms) كي يبدأ STT العمل قبل أن ينهي المستخدم كلامه. لكن الدفعة الأصغر ليست أسرع دائماً، فهي تزيد عدد الاستدعاءات والرسائل وأعباء الجدولة، أما الدفعات الأكبر فتقلل هذه الأعباء وقد تزيد زمن الانتظار في المخزن المؤقت. ويتحدد الحجم المناسب بحسب واجهة STT/TTS والنقل وظروف الشبكة وأهداف التأخير."
+      }
+    ]
+  }
+}

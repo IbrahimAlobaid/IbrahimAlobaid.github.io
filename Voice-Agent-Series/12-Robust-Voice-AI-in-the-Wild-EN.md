@@ -34,7 +34,7 @@ cover: "assets/robust-voice-ai-cover.png"
 ![[assets/robust-voice-ai-cover.png]]
 
 > [!abstract] The central question
-> Your voice agent works beautifully with a headset in a quiet demo room. Then someone tests it near a road, a second person speaks, the agent's own output leaks into the microphone, the user switches languages mid-sentence, or the network drops just as a reservation is being confirmed. **How do you engineer a system that behaves correctly when the signal, network, and interpretation are imperfect?**
+> A voice agent that works well with a headset in a quiet demo room can break down once someone uses it near a road, a second person speaks, its own output leaks into the microphone, the user switches languages mid-sentence, or the network drops just as a reservation is being confirmed. This article looks at how to build a system that still behaves correctly when the signal, the network, and the interpretation are imperfect.
 
 ## 1. Working software is not necessarily reliable software
 
@@ -46,13 +46,13 @@ Consider an appointment assistant in a shared living room:
 
 At that moment, the microphone picks up the agent's own speech from the speakers. A second person in the room calls, “Six would be better!” The network then disappears for two seconds. Should the agent reschedule? Who authorized that change? Did the user hear the confirmation before the connection failed?
 
-This is not only a speech-recognition problem. It is a **conversation reliability** problem. The application needs evidence about who was speaking, whether a transcript is stable, whether a request authorizes an action, and whether session state remained consistent during recovery.
+Speech recognition is only part of this; the real issue is **conversation reliability**. The application needs evidence about who was speaking, whether a transcript is stable, whether a request authorizes an action, and whether session state remained consistent during recovery.
 
-We previously covered [[03-Speech-to-Text-EN|STT]], [[08-Real-Time-Audio-Transport-EN|audio transport]], [[09-VAD-Endpointing-and-Turn-Detection-EN|turn detection]], [[10-Interruptions-Barge-In-and-Playback-State-EN|interruptions]], and [[11-Latency-and-Streaming-Optimization-EN|latency]]. Now we connect those pieces with the principles of **resilience engineering**: detect degraded input, avoid unsafe guesses, preserve consistent state, and recover without making up what happened.
+We previously covered [[03-Speech-to-Text-EN|STT]], [[08-Real-Time-Audio-Transport-EN|audio transport]], [[09-VAD-Endpointing-and-Turn-Detection-EN|turn detection]], [[10-Interruptions-Barge-In-and-Playback-State-EN|interruptions]], and [[11-Latency-and-Streaming-Optimization-EN|latency]]. This article ties those pieces together using ideas from **resilience engineering**: detect degraded input, avoid unsafe guesses, preserve consistent state, and recover without making up what happened.
 
 ## 2. A taxonomy of real-world failure modes
 
-When an agent misbehaves, blaming the LLM is often misleading: the error may have occurred before the LLM ever received text.
+When an agent misbehaves, it is tempting to blame the LLM, but the error often happens before the LLM receives any text at all.
 
 | Failure source | What can go wrong? | First engineering response |
 |---|---|---|
@@ -85,7 +85,7 @@ flowchart LR
 
 ## 3. Noise is not a single phenomenon
 
-Steady fan noise, traffic, music, and **another human voice** are different interference sources. The last can be especially difficult because it resembles input the assistant might legitimately act upon.
+Steady fan noise, traffic, music, and **another human voice** are different interference sources. The last can be especially difficult because it resembles input the assistant might legitimately act on.
 
 ![[assets/robustness-noise-mixture.png]]
 
@@ -110,7 +110,7 @@ A microphone signal that repeatedly reaches the maximum representable amplitude 
 
 ## 4. Echo cancellation, noise suppression, and speaker isolation are different
 
-These technologies solve related but non-equivalent problems.
+The three solve related but different problems.
 
 | Technology | Primary target | Important limitation |
 |---|---|---|
@@ -151,7 +151,7 @@ console.log(track.getSettings()); // inspect actual selected settings
 
 Imagine a user asking a question while another person nearby answers their own phone. The agent's VAD may detect both voices, and STT may emit fragments from both. Reducing VAD sensitivity alone is a poor general solution: you might suppress legitimate user interruptions too.
 
-A more robust design has four layers:
+A sturdier design uses four layers:
 
 1. **Audio processing:** reduce background voices without removing the user's speech.
 2. **Source evidence:** determine, when reliably possible, whether the utterance was addressed to the assistant.
@@ -168,7 +168,7 @@ Consider these two utterances:
 - “بدي أغيّر الموعد لبكرا الساعة خمسة.”
 - “ممكن تعمل schedule للـmeeting يوم Friday؟”
 
-A strong system should preserve the user's intended words and key entities, including the code-switched segments. The challenge is not merely classifying the language; it includes dialect vocabulary, names, spelling conventions, numbers, and the downstream pronunciation that TTS will use.[^openai-transcription][^livekit-stt]
+A good system should preserve the user's intended words and key entities, including the code-switched segments. Identifying the language is only the start: the system also has to handle dialect vocabulary, names, spelling conventions, numbers, and the pronunciation TTS will use downstream.[^openai-transcription][^livekit-stt]
 
 ### Evaluate with realistic utterances
 
@@ -187,7 +187,7 @@ Create a consented or synthetic test set that includes:
 
 ## 7. Turning uncertain input into safe behavior
 
-A robust agent does not always need to answer immediately. Waiting, clarifying, and requesting confirmation are valid outputs when the evidence is insufficient.
+A well-designed agent does not always have to answer immediately. Waiting, clarifying, and requesting confirmation are valid outputs when the evidence is insufficient.
 
 ![[assets/robustness-decision-policy.png]]
 
@@ -226,7 +226,7 @@ The policy reduces unsafe assumptions. It does not replace identity checks, perm
 
 ## 8. A dropped network connection is more than added latency
 
-On disconnection, several separate questions appear:
+A disconnection raises several separate questions:
 
 - Did the server receive the user's final audio packet?
 - Was the agent's reply actually played on the user's device?
@@ -322,7 +322,7 @@ accent               n= 2 WER=0.143
 code-switch          n= 2 WER=0.222
 ```
 
-> [!warning] What these results do—and do not—mean
+> [!warning] What these results mean, and what they don't
 > Matching 18/18 expectations simply means the Python policy produced the **decisions we predefined** in the dataset. It is not speech-recognition accuracy, a speaker-detection score, or a live-model benchmark. The word-error function uses simple whitespace tokenization; Arabic morphological segmentation and code-switching can change the score. WER can exceed 100% when insertions are numerous.
 
 ### Code illustration
@@ -341,7 +341,7 @@ print(decide(input_evidence).action.value)
 # confirm_sensitive_details
 ```
 
-The distinction is crucial: **understanding an utterance is not the same as having authorization to carry out its implied action**.
+Keep this distinction in mind: **understanding an utterance does not give the agent authorization to carry out the action it implies**.
 
 ## 11. Six production controls that matter
 
@@ -398,7 +398,7 @@ flowchart TD
 5. Design a fallback when spoken input is unintelligible: repeat request, text input, or human handoff. Document how the user is informed.
 
 > [!success] Key takeaway
-> A reliable voice agent is not the system that understands every word in a perfect demo. It is the system that **recognizes uncertainty, does not attribute stray speech to the user, does not execute sensitive actions without appropriate authorization, and never blindly replays old actions after disconnection**. Reliability comes from audio quality, explicit policy, consistent state, and systematic evaluation—not merely a larger language model.
+> Understanding every word in a perfect demo does not make a voice agent reliable. A reliable agent **recognizes uncertainty, does not attribute stray speech to the user, does not execute sensitive actions without appropriate authorization, and never blindly replays old actions after disconnection**. That reliability comes from audio quality, explicit policy, consistent state, and systematic evaluation; a larger language model alone will not provide it.
 
 ## Sources and further reading
 

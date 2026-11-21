@@ -1,0 +1,93 @@
+{
+  "slug": "llm-conversation-state",
+  "keywords": [
+    "llm conversation state",
+    "voice agent conversation context",
+    "llm context window vs memory",
+    "how to manage chat history for llm",
+    "voice assistant interruption handling",
+    "llm memory in voice agents",
+    "structured task state llm slot filling",
+    "voice agent barge-in conversation history"
+  ],
+  "keywords_ar": [
+    "إدارة سياق المحادثة في النماذج اللغوية",
+    "حالة المحادثة في الوكيل الصوتي",
+    "الفرق بين نافذة السياق والذاكرة",
+    "ذاكرة النموذج اللغوي الكبير LLM",
+    "التعامل مع المقاطعة في المساعد الصوتي",
+    "بناء وكيل صوتي بالذكاء الاصطناعي"
+  ],
+  "summary": {
+    "en": [
+      "The LLM interprets the user and proposes replies or tool requests, while application logic owns current facts, authorization and the outcome of external actions.",
+      "The model, its context window and application memory are separate things, and a model only knows earlier turns if they are sent to it.",
+      "Store corrected details in validated task state, and reset any earlier approval whenever the details it covered change.",
+      "Interim transcripts are not final and generated replies are not necessarily heard, so commit only final user turns and audio segments confirmed as played.",
+      "Long conversations need a recent window, structured state and reviewed summaries instead of the full history in every prompt.",
+      "Report a booking or any other action as successful only after a trusted API confirms it, never on the model's word alone."
+    ],
+    "ar": [
+      "يفسّر النموذج اللغوي طلب المستخدم ويقترح الرد أو استدعاء الأداة، أما الحقائق الحالية والصلاحيات ونتيجة الإجراءات الخارجية فيحددها منطق التطبيق.",
+      "النموذج ونافذة السياق وذاكرة التطبيق ثلاثة أشياء مختلفة، ولا يعرف النموذج الأدوار السابقة إلا إذا أُرسلت إليه.",
+      "تُحفظ التفاصيل المصحَّحة في حالة مهمة متحقَّق منها، وتُلغى أي موافقة سابقة كلما تغيّرت التفاصيل التي شملتها.",
+      "النص المؤقت من STT ليس نهائياً، والرد المولَّد ليس بالضرورة مسموعاً، لذلك نثبّت فقط أدوار المستخدم النهائية والمقاطع التي تأكد تشغيلها.",
+      "المحادثات الطويلة تحتاج إلى نافذة من الأدوار الأخيرة وحالة منظمة وملخصات مراجَعة، لا إلى إرسال السجل كاملاً مع كل طلب.",
+      "لا يُخبَر المستخدم بنجاح الحجز أو أي إجراء آخر إلا بعد أن تؤكده API موثوقة، وكلام النموذج وحده لا يكفي."
+    ]
+  },
+  "faq": {
+    "en": [
+      {
+        "q": "What is conversation state management in a voice agent?",
+        "a": "Conversation state management is how a voice agent's application tracks the current call: committed user turns, assistant speech the user actually heard, structured task fields such as date and time, approval flags, and verified tool results. The LLM reads this state when it writes a reply, but the application owns it, validates it, and decides what counts as fact, such as whether a booking API really succeeded."
+      },
+      {
+        "q": "Is an LLM's context window the same as memory?",
+        "a": "No. The context window is the bounded set of instructions, messages and data sent to the model for the current turn. A model does not remember earlier, unrelated requests unless the application or API supplies that history. Persistent user memory, meaning what is stored, for how long, who can access it and with what consent, is a separate product and engineering decision."
+      },
+      {
+        "q": "What are the four layers of context for an LLM voice agent?",
+        "a": "The four layers are instructions (role, tone, limits and escalation), recent committed conversation turns, structured task state (validated fields, approvals and action status), and verified external facts such as calendar availability, policies and tool results. Each layer carries a different level of trust. Content retrieved from webpages or untrusted tools is treated as data and is never promoted into trusted instructions."
+      },
+      {
+        "q": "How should a voice agent handle a correction like “make it three instead of ten”?",
+        "a": "Replace the field in the structured task state, for example time from 10:00 to 15:00, reset any approval given for the old details, and ask the user to confirm the new value. Appending the correction to the chat history and hoping the model notices is fragile. Approval for one set of details should never carry over automatically to a changed set."
+      },
+      {
+        "q": "Why does my voice agent assume the user heard a reply they interrupted?",
+        "a": "Usually because the whole generated reply was saved to history as soon as the LLM produced it. In an interruptible system, generated text, synthesized audio, transmitted audio and confirmed playback are separate events. Commit only the segments that playback acknowledgments confirm were played, and drop the unplayed remainder, so the model never assumes the user heard information that never reached them."
+      },
+      {
+        "q": "Should I send the entire chat history to the LLM on every turn?",
+        "a": "Usually not. Sending every message in every prompt raises cost and can bring in outdated or contradictory statements. Combine a recent window of committed turns, validated task state kept outside that window, and a reviewed summary of older background when needed. Do not treat a free-form summary as proof of a date, an amount, consent or a completed action."
+      }
+    ],
+    "ar": [
+      {
+        "q": "ما المقصود بإدارة حالة المحادثة (Conversation State) في الوكيل الصوتي؟",
+        "a": "إدارة حالة المحادثة هي الطريقة التي يتتبّع بها التطبيق المكالمة الجارية: أدوار المستخدم النهائية، وكلام الوكيل الذي تأكد أن المستخدم سمعه، وحقول المهمة المنظمة مثل التاريخ والوقت، وحالة الموافقة، ونتائج الأدوات المتحقَّق منها. يقرأ النموذج اللغوي (LLM) هذه الحالة عند صياغة الرد، لكن التطبيق هو من يملكها ويتحقق منها، ويقرر مثلاً هل نجح الحجز فعلاً."
+      },
+      {
+        "q": "هل نافذة السياق (Context Window) في النموذج اللغوي هي نفسها الذاكرة؟",
+        "a": "لا. نافذة السياق هي التعليمات والرسائل والبيانات التي تصل إلى النموذج في الطلب الحالي ضمن حد محدود. ولا يتذكر النموذج طلبات سابقة منفصلة إلا إذا أرسلها التطبيق أو حفظتها الواجهة المستخدمة. أما ذاكرة المستخدم الدائمة، أي ما يُخزَّن ولأي مدة ومن يصل إليه وبأي موافقة، فهي قرار منفصل على مستوى المنتج والهندسة."
+      },
+      {
+        "q": "ما طبقات السياق الأربع في وكيل صوتي يعتمد على LLM؟",
+        "a": "الطبقات الأربع هي: التعليمات (الدور والنبرة والحدود ومتى يُحال الطلب إلى إنسان)، والأدوار الأخيرة المثبّتة من المحادثة، وحالة المهمة المنظمة (الحقول المتحقَّق منها والموافقات وحالة الإجراء)، والبيانات الخارجية المتحقَّق منها مثل توافر المواعيد والسياسات ونتائج الأدوات. لكل طبقة درجة ثقة مختلفة، ويُعامَل المحتوى القادم من صفحات الويب أو الأدوات غير الموثوقة بوصفه بيانات لا تعليمات."
+      },
+      {
+        "q": "كيف يتعامل الوكيل الصوتي مع تصحيح مثل «اجعلها الثالثة بدل العاشرة»؟",
+        "a": "يستبدل التطبيق قيمة الحقل في حالة المهمة المنظمة، فيتغير الوقت مثلاً من 10:00 إلى 15:00، ويلغي أي موافقة أُعطيت على التفاصيل القديمة، ثم يطلب من المستخدم تأكيد القيمة الجديدة. أما الاكتفاء بإضافة التصحيح إلى سجل المحادثة على أمل أن ينتبه النموذج فطريقة هشة، والموافقة على تفاصيل معينة لا تنتقل تلقائياً إلى تفاصيل معدّلة."
+      },
+      {
+        "q": "لماذا يفترض الوكيل الصوتي أن المستخدم سمع رداً قاطعه؟",
+        "a": "السبب في الغالب أن الرد المولَّد حُفظ كاملاً في السجل بمجرد أن أنتجه النموذج. في نظام يقبل المقاطعة، النص المولَّد والصوت المركَّب والصوت المرسَل والتشغيل المؤكد أحداث مختلفة. لذلك ثبّت في السجل فقط المقاطع التي أكدت طبقة التشغيل (Playback ACK) أنها شُغّلت، واحذف الباقي، حتى لا يفترض النموذج أن المستخدم سمع معلومات لم تصله."
+      },
+      {
+        "q": "هل أرسل سجل المحادثة كاملاً إلى النموذج اللغوي في كل دور؟",
+        "a": "غالباً لا. إرسال كل الرسائل مع كل طلب يرفع التكلفة وقد يُدخل معلومات قديمة أو متعارضة. الأفضل أن تجمع نافذة من الأدوار الأخيرة المثبّتة، وحالة مهمة متحقَّقاً منها تبقى محفوظة خارج هذه النافذة، وملخصاً مراجَعاً للسياق الأقدم عند الحاجة. ولا تعتمد على ملخص حر دليلاً على تاريخ أو مبلغ أو موافقة أو إجراء مكتمل."
+      }
+    ]
+  }
+}

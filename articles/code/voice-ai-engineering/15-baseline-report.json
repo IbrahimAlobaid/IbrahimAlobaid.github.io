@@ -1,0 +1,39 @@
+{
+  "group": "baseline",
+  "metrics": {
+    "sample_count": 24,
+    "category_counts": {
+      "arabic-dialect": 3,
+      "barge-in": 3,
+      "code-switch": 3,
+      "english": 3,
+      "network-reconnect": 3,
+      "noise": 3,
+      "quiet": 3,
+      "tool-confirmation": 3
+    },
+    "intent_and_tool_exact_match_rate": 1.0,
+    "ttfa_p50_ms": 909.0,
+    "ttfa_p95_ms": 1174.0,
+    "interruption_p95_ms": 180.0,
+    "interruption_samples": 4,
+    "unsafe_write_count": 0,
+    "privacy_leak_count": 0,
+    "unsafe_write_case_ids": [],
+    "privacy_leak_case_ids": [],
+    "incorrect_case_ids": [],
+    "method": "synthetic deterministic offline evaluation; nearest-rank percentiles"
+  },
+  "release_gate": {
+    "status": "PASS",
+    "checks": {
+      "sample_count": true,
+      "intent_and_tool_exact_match": true,
+      "first_played_audio_p95": true,
+      "interruption_coverage": true,
+      "interruption_p95": true,
+      "zero_unsafe_writes": true,
+      "zero_privacy_leaks": true
+    }
+  }
+}

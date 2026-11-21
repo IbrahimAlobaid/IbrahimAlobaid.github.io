@@ -1,0 +1,96 @@
+{
+  "slug": "text-to-speech",
+  "keywords": [
+    "text to speech",
+    "what is text to speech",
+    "streaming text to speech",
+    "TTS latency",
+    "time to first audio TTS",
+    "real-time factor TTS",
+    "Piper TTS python",
+    "text normalization for TTS",
+    "prosody in speech synthesis",
+    "Arabic text to speech"
+  ],
+  "keywords_ar": [
+    "تحويل النص إلى كلام",
+    "تحويل النص إلى صوت بالعربي",
+    "توليد الكلام TTS",
+    "تحويل النص إلى صوت بايثون",
+    "التنغيم في توليد الكلام",
+    "تأخير تحويل النص إلى كلام",
+    "Streaming TTS للوكيل الصوتي"
+  ],
+  "summary": {
+    "en": [
+      "In a voice agent, TTS must be intelligible, natural, quick to start and stoppable on interruption; a pleasant-sounding audio file is only part of the job.",
+      "Normalize dates, times, amounts and abbreviations in application code before synthesis, because a fluent voice cannot make ambiguous or wrong input facts correct.",
+      "Send TTS linguistically coherent phrases with a maximum wait rather than individual LLM tokens, which can break prosody, add request overhead and cause gaps.",
+      "First generated chunk, first byte received and first sound played are different moments; only the last tells you when the user actually hears speech.",
+      "RTF divides synthesis time by generated audio duration and measures throughput, not first-audio latency, so state whether model loading and other overhead are included.",
+      "On interruption, cancel pending synthesis and clear queued playback; tagging chunks with a turn ID lets the player reject stale audio that arrives late."
+    ],
+    "ar": [
+      "لا يكفي في الوكيل الصوتي أن يكون الصوت جميلاً؛ يجب أن يكون مفهوماً وطبيعياً، يبدأ بسرعة ويتوقف عند المقاطعة.",
+      "طبّع التواريخ والأوقات والمبالغ والاختصارات في منطق التطبيق قبل TTS، فالنطق السلس لا يصحح بيانات ملتبسة أو خاطئة.",
+      "أرسل إلى TTS عبارات مكتملة مع حد أعلى للانتظار، لا رموز LLM منفردة تقطع الإيقاع وتزيد الطلبات وتُحدث فجوات مسموعة.",
+      "أول دفعة مولَّدة وأول بايت يصل وأول صوت يُشغَّل لحظات مختلفة، وآخرها وحده يخبرك متى بدأ المستخدم يسمع الكلام.",
+      "يقسم RTF زمن التوليد على مدة الصوت المولَّد ويقيس الإنتاجية لا زمن أول صوت، لذا وثّق هل يشمل القياس تحميل النموذج.",
+      "عند المقاطعة ألغِ التوليد المتبقي ونظّف طابور التشغيل، وربط الدفعات بمعرّف الدور يمنع تشغيل صوت قديم يصل متأخراً."
+    ]
+  },
+  "faq": {
+    "en": [
+      {
+        "q": "What is text-to-speech (TTS) in a voice agent?",
+        "a": "Text-to-speech (TTS) generates a speech audio signal from text, delivered as PCM, compressed audio, a whole file or a sequence of chunks. In a cascaded voice agent it speaks the LLM's answer. Sounding pleasant is not enough: it must pronounce names and numbers correctly, start quickly, stream audio incrementally and stop when the user interrupts. Some speech-to-speech systems generate audio directly without a separate TTS stage."
+      },
+      {
+        "q": "What is text normalization in TTS?",
+        "a": "Text normalization converts written forms into the words a voice should actually say before synthesis: \"10:30 AM\" becomes \"ten thirty in the morning\", and \"12/05/2026\" needs a defined day/month convention. The application, not the TTS engine, should resolve ambiguous dates, amounts and abbreviations. This matters in Arabic as well, where dates, abbreviations and unvowelled words are easy to mispronounce without normalization."
+      },
+      {
+        "q": "What is prosody in speech synthesis?",
+        "a": "Prosody is the pattern of pauses, stress, speaking rate, pitch movement, rhythm and emphasis in speech. It is a large part of what makes synthetic speech sound natural, and the same words can sound warm, reassuring, cold or awkward depending on delivery. More pitch movement is not automatically better. Before tuning a voice's style controls, edit the text itself, because audio styling cannot reliably rescue confusing wording."
+      },
+      {
+        "q": "What's the difference between batch and streaming TTS?",
+        "a": "Batch TTS synthesizes a complete passage and usually returns a finished result, so playback may wait for the whole output. Streaming TTS emits audio while later audio is still being generated, so playback can start sooner, at the cost of extra buffer, scheduling and cancellation logic. Sending a finished file over HTTP in chunks is not the same thing. Feed the engine coherent phrases, not individual LLM tokens."
+      },
+      {
+        "q": "What does time to first audio mean in TTS, and how is it different from RTF?",
+        "a": "Time to first audio depends on where you measure: the first text segment from the LLM, the first chunk the TTS engine generates, the first byte the client receives, or the first sound played on the device. Only the last reflects what the user hears. The real-time factor (RTF), synthesis time divided by generated audio duration, measures throughput; an RTF of 0.2 says nothing about first-audio latency."
+      },
+      {
+        "q": "Why does my voice agent keep talking after the user interrupts?",
+        "a": "Usually because only synthesis was cancelled, while audio already queued in the player or still in flight on the network kept playing. On interruption, cancel pending synthesis, stop or clear queued playback, and record what was actually played where possible. Tagging audio chunks with a response or turn ID lets the player discard stale chunks that arrive late. This is a design pattern, not a field every TTS provider offers."
+      }
+    ],
+    "ar": [
+      {
+        "q": "ما هو تحويل النص إلى كلام (Text-to-Speech) في الوكيل الصوتي؟",
+        "a": "تحويل النص إلى كلام (TTS) هو توليد إشارة صوتية منطوقة من نص مكتوب، في صورة PCM أو صوت مضغوط، ملفاً كاملاً أو دفعات متتابعة. وفي الوكيل الصوتي المتسلسل ينطق إجابة النموذج اللغوي. ولا يكفي أن يكون الصوت جميلاً: يجب أن ينطق الأسماء والأرقام صحيحة، ويبدأ بسرعة، ويُبث تدريجياً، ويتوقف حين يقاطعه المستخدم. وبعض أنظمة Speech-to-Speech تولّد الصوت مباشرة دون مرحلة TTS منفصلة."
+      },
+      {
+        "q": "ما هي تهيئة النص (Text Normalization) قبل توليد الكلام؟",
+        "a": "تهيئة النص هي تحويل الصيغ المكتوبة إلى الكلمات التي يجب أن تُنطق فعلاً قبل التوليد: فـ «10:30 AM» تصبح «العاشرة والنصف صباحاً»، و«12/05/2026» تحتاج إلى تحديد اصطلاح اليوم والشهر أولاً. ومنطق التطبيق، لا محرك TTS، هو المسؤول عن حسم التواريخ والمبالغ والاختصارات الملتبسة. وتزداد أهمية ذلك في العربية، إذ يسهل أن تُلفظ التواريخ والاختصارات والكلمات غير المشكولة خطأً."
+      },
+      {
+        "q": "ما هو التنغيم والإيقاع (Prosody) في توليد الكلام؟",
+        "a": "يشمل Prosody الوقفات والنبر وسرعة الكلام وحركة طبقة الصوت والإيقاع والتأكيد. وهو جزء كبير مما يجعل الصوت المولَّد طبيعياً، فالجملة نفسها قد تبدو مطمئنة أو باردة أو مملة بحسب طريقة نطقها. ولا يعني تغيّر الطبقة الأكبر صوتاً أفضل دائماً. وقبل تعديل إعدادات أسلوب الصوت، حسّن النص نفسه بجمل أقصر وفواصل طبيعية، لأن المؤثرات الصوتية لا تنقذ صياغة مربكة."
+      },
+      {
+        "q": "ما الفرق بين Batch TTS و Streaming TTS؟",
+        "a": "في Batch TTS يُولَّد الصوت لفقرة مكتملة ويُرجع غالباً نتيجة كاملة، فقد ينتظر التشغيل حتى نهاية التوليد. أما Streaming TTS فيُخرج دفعات صوتية أثناء توليد البقية، فيبدأ الاستماع أبكر، مقابل منطق إضافي للتخزين المؤقت والجدولة والإلغاء. وإرسال ملف جاهز على دفعات عبر HTTP ليس الشيء نفسه. ومن الأفضل أن ترسل إلى المحرك عبارات مكتملة، لا رموز LLM منفردة."
+      },
+      {
+        "q": "ماذا يعني زمن أول صوت في TTS، وما الفرق بينه وبين RTF؟",
+        "a": "يعتمد زمن أول صوت على نقطة القياس: أول نص يُخرجه LLM، أو أول دفعة يولّدها محرك TTS، أو أول بايت يصل إلى العميل، أو أول صوت يُشغَّل على جهاز المستخدم، والأخير وحده يعكس ما يسمعه المستخدم. أما معامل الزمن الحقيقي (RTF) فهو زمن التوليد مقسوماً على مدة الصوت المولَّد، ويقيس الإنتاجية؛ فقيمة 0.2 لا تخبرك متى يبدأ المستخدم بالسماع."
+      },
+      {
+        "q": "لماذا يواصل الوكيل الصوتي الكلام بعد أن يقاطعه المستخدم؟",
+        "a": "غالباً لأن النظام أوقف التوليد فقط، بينما بقي صوت في طابور التشغيل أو في الطريق عبر الشبكة. عند المقاطعة يجب إلغاء التوليد المتبقي، وإيقاف الصوت المخزن للتشغيل أو تنظيفه، وتسجيل ما شُغّل فعلاً حيث أمكن. وربط الدفعات الصوتية بمعرّف الرد أو الدور (turn_id) يسمح للمشغّل برفض الدفعات القديمة المتأخرة. وهذه آلية تصميم مقترحة، لا حقل يوفره كل مزود."
+      }
+    ]
+  }
+}

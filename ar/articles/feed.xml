@@ -4,15 +4,103 @@
   <title>مقالات إبراهيم العبيد</title>
   <link>https://ibrahim-dev.me/ar/articles/</link>
   <atom:link href="https://ibrahim-dev.me/ar/articles/feed.xml" rel="self" type="application/rss+xml" />
-  <description>سلسلة هندسية متدرجة لبناء وكلاء صوتيين أذكياء يتحدثون بطبيعية ويتعاملون مع المقاطعة وجاهزين للإنتاج — من الصوت الرقمي والتعرف على الكلام إلى إدارة حالة المحادثة.</description>
+  <description>دليل هندسي متكامل من ١٦ مقالة لبناء الوكلاء الصوتيين: الصوت الرقمي، وتحويل الكلام إلى نص وبالعكس، وحالة المحادثة، والنقل الفوري، وكشف نهاية الدور، والمقاطعة، وزمن الاستجابة، والأدوات وRAG، والأمان، والتقييم، ومشروع ختامي جاهز للإنتاج.</description>
   <language>ar</language>
-  <lastBuildDate>Sat, 21 Nov 2026 02:10:47 +0000</lastBuildDate>
+  <lastBuildDate>Sat, 21 Nov 2026 04:24:14 +0000</lastBuildDate>
+  <item>
+    <title>مشروع التخرج: هندسة وكيل صوتي متكامل من المتصفح إلى الإنتاج</title>
+    <link>https://ibrahim-dev.me/ar/articles/production-voice-agent-capstone/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/production-voice-agent-capstone/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>تناولنا في المقالات السابقة الصوت الرقمي وSTT وTTS ونماذج اللغة، وتعلمنا التعامل مع المقاطعات والنقل الشبكي والتقييم والأمان. في هذه المقالة الأخيرة نجمع هذه الأجزاء في وكيل صوتي لحجز مواعيد تجريبية: يسمع عبر المتصفح، ويبحث في معلومات افتراضية، ويعرض أوقاتاً متاحة، ثم يسجل طلب حجز غير ملزم.</description>
+    <category>هندسة الوكلاء الصوتيين</category>
+  </item>
+  <item>
+    <title>كيف نقيس جودة الوكيل الصوتي ونراقبه وننشره بأمان؟</title>
+    <link>https://ibrahim-dev.me/ar/articles/evaluation-observability-deployment/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/evaluation-observability-deployment/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>أول نسخة من Voice Agent تعمل على حاسوب المطوّر ليست جاهزة للمستخدمين بعد. قد ينجح العرض التجريبي في جلسة واحدة، ثم يفشل في المكالمات الحقيقية بسبب انقطاع WebRTC أو تأخر رد TTS أو اختلاط جلسات المستخدمين أو تنفيذ أداة دون تأكيد.</description>
+    <category>هندسة الوكلاء الصوتيين</category>
+  </item>
+  <item>
+    <title>أمن الوكلاء الصوتيين وخصوصيتهم: من إذن الميكروفون إلى تنفيذ الأدوات بأمان</title>
+    <link>https://ibrahim-dev.me/ar/articles/voice-ai-security-privacy-safety/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/voice-ai-security-privacy-safety/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>يسمع الوكيل كلام المستخدم، ويرسل الصوت إلى مزوّد STT، ويستعيد معلومات من قاعدة معرفة، ثم ينفذ أمراً عبر API. حماية الصوت والبيانات والصلاحيات في هذا المسار لا يكفي لها تشفير الاتصال، ولا System Prompt يقول «لا تكشف أسراراً».</description>
+    <category>هندسة الوكلاء الصوتيين</category>
+  </item>
+  <item>
+    <title>من المحادثة إلى التنفيذ: Tools وRAG وAgent Workflows في الوكلاء الصوتيين</title>
+    <link>https://ibrahim-dev.me/ar/articles/tools-rag-agent-workflows/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/tools-rag-agent-workflows/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>عندما يسأل المستخدم: «شو سياسة الإلغاء؟» نحتاج إلى معلومة موثوقة، وعندما يقول: «احجز لي بكرا الساعة عشرة» نحتاج إلى إجراء حقيقي في نظام خارجي. في هذه المقالة نفصل هندسياً بين جلب المعرفة وتنفيذ الأوامر.</description>
+    <category>هندسة الوكلاء الصوتيين</category>
+  </item>
+  <item>
+    <title>الوكيل الصوتي في العالم الحقيقي: الضجيج والصدى واللهجات والتعافي من الأخطاء</title>
+    <link>https://ibrahim-dev.me/ar/articles/robust-voice-ai-in-the-wild/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/robust-voice-ai-in-the-wild/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>قد يعمل الوكيل الصوتي جيداً في غرفة هادئة مع ميكروفون احترافي، ثم يتعثر في أول استخدام حقيقي: ضجيج شارع، أو صوت الوكيل نفسه يعود إلى الميكروفون، أو شخص ثانٍ يتكلم، أو مستخدم يخلط العربية بالإنجليزية، أو اتصال ينقطع أثناء تأكيد حجز.</description>
+    <category>هندسة الوكلاء الصوتيين</category>
+  </item>
+  <item>
+    <title>هندسة السرعة في الوكلاء الصوتيين: قياس Latency وتحسين Streaming</title>
+    <link>https://ibrahim-dev.me/ar/articles/latency-streaming-optimization/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/latency-streaming-optimization/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>قد يُنتج الـLLM أول Token في أقل من نصف ثانية، وقد يُرجع TTS أول دفعة صوت بسرعة، ومع ذلك يشعر المستخدم أن الوكيل بطيء. في هذه المقالة نحدد الزمن الذي يهم المستخدم فعلاً، ونتتبع أين تتراكم فترات الانتظار، ونشرح كيف يحسّن Streaming التجربة من دون أن يُفسد جودة المحادثة.</description>
+    <category>هندسة الوكلاء الصوتيين</category>
+  </item>
+  <item>
+    <title>عندما يقاطعنا المستخدم: هندسة المقاطعات ومزامنة الصوت في الوكلاء الصوتيين</title>
+    <link>https://ibrahim-dev.me/ar/articles/interruptions-barge-in-playback-state/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/interruptions-barge-in-playback-state/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>عندما يبدأ المستخدم الكلام بينما الوكيل لا يزال يتحدث، لا يكفي استدعاء stop() على مشغّل الصوت. علينا أن نوقف عدة عمليات غير متزامنة، ونمنع تسرّب صوت قديم، ونضبط ذاكرة الوكيل وفق ما شُغّل فعلاً، ثم نتابع المحادثة دون تناقض. تشرح هذه المقالة هذا التنسيق خطوة بخطوة، وتبني مختبر Python صغيراً لاختباره.</description>
+    <category>هندسة الوكلاء الصوتيين</category>
+  </item>
+  <item>
+    <title>كيف يعرف الوكيل الصوتي متى نتحدث ومتى ننتهي؟ VAD وEndpointing وTurn Detection</title>
+    <link>https://ibrahim-dev.me/ar/articles/vad-endpointing-turn-detection/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/vad-endpointing-turn-detection/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>يعرف الوكيل الصوتي متى يلتقط الميكروفون كلاماً، لكن ذلك وحده لا يخبره هل أنهى المستخدم فكرته أم لا. نفصل في هذه المقالة بين Voice Activity Detection (VAD) وEndpointing وTurn Detection، ونرى كيف تعقّد التوقفات الطبيعية والمقاطعات كلّاً منها.</description>
+    <category>هندسة الوكلاء الصوتيين</category>
+  </item>
+  <item>
+    <title>كيف ينتقل الصوت في الزمن الحقيقي؟ WebRTC مقابل WebSockets في هندسة الوكلاء الصوتيين</title>
+    <link>https://ibrahim-dev.me/ar/articles/real-time-audio-transport-webrtc-websockets/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/real-time-audio-transport-webrtc-websockets/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>قد يولّد وكيل صوتي مبني على STT → LLM → TTS إجابات صحيحة، ومع ذلك يصل صوته إلى المستخدم متأخراً أو متقطعاً، والسبب في حالات كثيرة ليس النموذج بل نقل الصوت عبر الشبكة. نشرح في هذه المقالة الفرق بين WebRTC وWebSockets، وأدوار ICE/STUN/TURN، وأثر Jitter وPacket Loss في ما يسمعه المستخدم.</description>
+    <category>هندسة الوكلاء الصوتيين</category>
+  </item>
+  <item>
+    <title>ابنِ أول وكيل صوتي باستخدام Python وPipecat: من الفكرة إلى محادثة تعمل</title>
+    <link>https://ibrahim-dev.me/ar/articles/build-first-voice-agent-pipecat/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/build-first-voice-agent-pipecat/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>نربط في هذه المقالة تحويل الكلام إلى نص (STT) ونموذج اللغة (LLM) وتحويل النص إلى كلام (TTS) في أول وكيل صوتي يعمل من المتصفح: تتكلم في الميكروفون، فيحوّل الوكيل كلامك إلى نص، ويولّد رداً، ثم ينطقه لتسمعه. نستخدم Pipecat لتنسيق المكونات وWebRTC لنقل الصوت بين المتصفح والوكيل.</description>
+    <category>هندسة الوكلاء الصوتيين</category>
+  </item>
+  <item>
+    <title>كيف نختار معمارية الوكيل الصوتي؟ Cascaded vs Speech-to-Speech</title>
+    <link>https://ibrahim-dev.me/ar/articles/cascaded-vs-speech-to-speech/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/cascaded-vs-speech-to-speech/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>تناولنا في المقالات السابقة التعرف على الكلام (STT)، وتوليد الرد بالنموذج اللغوي (LLM)، وتحويل النص إلى صوت (TTS)، لكن الوكيل الصوتي لا يحتاج دائماً إلى ثلاثة نماذج منفصلة موصولة ببعضها. نقارن في هذه المقالة بين ثلاث معماريات: Cascaded وRealtime Speech-to-Speech وHybrid.</description>
+    <category>هندسة الوكلاء الصوتيين</category>
+  </item>
   <item>
     <title>عقل الوكيل الصوتي: كيف يفهم LLM المحادثة ويحافظ على سياقها؟</title>
     <link>https://ibrahim-dev.me/ar/articles/llm-conversation-state/</link>
     <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/llm-conversation-state/</guid>
     <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
-    <description>بعد تعلم تحويل الكلام إلى نص وتحويل النص إلى كلام، نصل إلى قلب الوكيل: النموذج اللغوي الكبير (LLM). وظيفته أن يفهم طلب المستخدم ويقرر الرد المناسب؛ لكن المحادثة الطبيعية تتطلب أكثر من إرسال آخر جملة إلى النموذج.</description>
+    <description>تناولنا في المقالتين السابقتين تحويل الكلام إلى نص وتحويل النص إلى كلام، وبينهما يقع النموذج اللغوي الكبير (LLM) الذي يفهم طلب المستخدم ويقرر الرد المناسب. غير أن المحادثة الطبيعية تحتاج إلى أكثر من إرسال آخر جملة إلى النموذج: تحتاج إلى تعليمات واضحة، وسجل محادثة، وحالة مهمة منظمة…</description>
     <category>هندسة الوكلاء الصوتيين</category>
   </item>
   <item>
@@ -20,7 +108,7 @@
     <link>https://ibrahim-dev.me/ar/articles/text-to-speech/</link>
     <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/text-to-speech/</guid>
     <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
-    <description>تعلمنا في المقالة الثالثة كيف يُحوَّل الكلام إلى نص. الآن نعكس العملية: كيف تتحول إجابة الوكيل المكتوبة إلى صوت واضح، طبيعي، قليل التأخير، وقابل للإيقاف عند المقاطعة؟ ليست المهمة مجرد إنشاء ملف MP3؛ فالتطبيق الحقيقي يحتاج إلى ضبط النطق والإيقاع، وتوليد الصوت على دفعات، وإرساله وتشغيله وإدارة حالته.</description>
+    <description>رأينا في المقالة الثالثة كيف يتحول الكلام إلى نص، وفي هذه المقالة نسير في الاتجاه المعاكس: كيف تتحول إجابة الوكيل المكتوبة إلى صوت واضح وطبيعي، قليل التأخير، يتوقف حين يقاطعه المستخدم.</description>
     <category>هندسة الوكلاء الصوتيين</category>
   </item>
   <item>
@@ -28,7 +116,7 @@
     <link>https://ibrahim-dev.me/ar/articles/speech-to-text/</link>
     <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/speech-to-text/</guid>
     <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
-    <description>عندما نقول إن الوكيل الصوتي «يفهم كلام المستخدم»، فإن الخطوة الأولى في كثير من الأنظمة ليست الفهم الدلالي، بل التعرف على الكلام آلياً (ASR): تحويل الإشارة الصوتية إلى تسلسل كلمات. لا يُعد النص الناتج حقيقة مطلقة؛ فقد يتغير أثناء الكلام، وقد يخطئ في الأسماء والأرقام واللهجات.</description>
+    <description>حين نقول إن الوكيل الصوتي «يفهم كلام المستخدم»، فالخطوة الأولى في كثير من الأنظمة هي التعرف الآلي على الكلام (ASR)، أي تحويل الإشارة الصوتية إلى تسلسل كلمات، وليس الفهم الدلالي. والنص الناتج ليس حقيقة مطلقة: قد يتغير والمستخدم ما زال يتكلم، وقد يخطئ في الأسماء والأرقام وفي كلام اللهجات.</description>
     <category>هندسة الوكلاء الصوتيين</category>
   </item>
   <item>
@@ -44,7 +132,7 @@
     <link>https://ibrahim-dev.me/ar/articles/what-is-a-voice-ai-agent/</link>
     <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/what-is-a-voice-ai-agent/</guid>
     <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
-    <description>الوكيل الصوتي الذكي (Voice AI Agent) ليس مجرد نموذج يتعرف على الكلام، ولا مجرد صوت يقرأ إجابة مولّدة. إنه نظام متكامل يستقبل صوت المستخدم، ويفهم المقصود، ويقرر ما الذي ينبغي فعله، ثم يستجيب صوتياً، مع إدارة التوقيت والسياق والمقاطعات.</description>
+    <description>الوكيل الصوتي الذكي (Voice AI Agent) نظام متكامل يستقبل صوت المستخدم، ويفهم ما يريده، ويقرر الخطوة التالية، ثم يرد بالكلام، ويدير في أثناء ذلك التوقيت والسياق والمقاطعات. فهو أكبر من نموذج يتعرف على الكلام أو صوت يقرأ إجابة مولّدة. وتُقاس جودته بطبيعية الحوار واعتماديته، لا بذكاء الإجابة وحده.</description>
     <category>هندسة الوكلاء الصوتيين</category>
   </item>
 </channel>

@@ -1,0 +1,96 @@
+{
+  "slug": "latency-streaming-optimization",
+  "keywords": [
+    "voice agent latency",
+    "reduce voice AI latency",
+    "streaming TTS latency",
+    "TTS time to first byte vs time to first audio",
+    "LLM time to first token voice agent",
+    "end-to-end latency voice assistant",
+    "P95 latency voice agent",
+    "endpointing delay voice AI",
+    "how to measure voice agent latency",
+    "Pipecat latency metrics"
+  ],
+  "keywords_ar": [
+    "تقليل زمن استجابة الوكيل الصوتي",
+    "قياس Latency في الوكلاء الصوتيين",
+    "Streaming TTS وتقليل التأخير",
+    "زمن أول Token في نماذج اللغة",
+    "تحسين سرعة المساعد الصوتي",
+    "ما هو P95 في قياس الأداء",
+    "تأخير نهاية الدور Endpointing"
+  ],
+  "summary": {
+    "en": [
+      "Measure end-to-first-audible latency, from the end of user speech to the start of client playback, rather than the LLM's first token alone.",
+      "Endpointing and STT finalization often overlap, so summing per-stage durations double-counts time; trace the critical path instead.",
+      "Streaming lets TTS start on the first speakable phrase, but very small chunks can hurt prosody, multiply requests and cause awkward pauses.",
+      "Track P50, P95 and P99 for each scenario, because a mean can hide the occasional two-second stalls that users actually notice.",
+      "Never subtract timestamps from unsynchronized browser and server clocks; use monotonic clocks and a per-turn identifier to correlate events.",
+      "Change one variable at a time and keep guardrails on turn-taking errors, transcription quality and task success while you optimize."
+    ],
+    "ar": [
+      "قِس الزمن من نهاية كلام المستخدم حتى بدء تشغيل الرد على جهازه، ولا تكتفِ بزمن أول Token من الـLLM.",
+      "تتداخل مرحلتا Endpointing وإنهاء STT غالباً، لذا يؤدي جمع أزمنة المراحل إلى عدّ الوقت نفسه مرتين؛ تتبّع المسار الحرج بدلاً من ذلك.",
+      "يسمح Streaming ببدء TTS عند أول عبارة قابلة للنطق، لكن المقاطع الصغيرة جداً قد تُفسد التنغيم وتزيد عدد الطلبات وتسبب توقفات غير طبيعية.",
+      "راقب P50 وP95 وP99 لكل سيناريو على حدة، فالمتوسط قد يخفي حالات التأخر المتقطعة التي يلاحظها المستخدم فعلاً.",
+      "لا تطرح طوابع زمنية من ساعتي المتصفح والخادم دون محاذاة؛ استخدم ساعات monotonic ومعرّفاً لكل دور لربط الأحداث.",
+      "غيّر متغيراً واحداً في كل تجربة، وراقب أخطاء تبادل الأدوار وجودة التفريغ ونجاح المهام طوال عملية التحسين."
+    ]
+  },
+  "faq": {
+    "en": [
+      {
+        "q": "What is end-to-first-audible latency in a voice agent?",
+        "a": "End-to-first-audible latency is the time from the moment the user stops speaking to the moment the client starts playing the first useful part of the agent's reply. It is closer to what users perceive than LLM time to first token or TTS time to first byte, but it is still a playback-side estimate: the system cannot confirm that the person actually heard the sound."
+      },
+      {
+        "q": "Why does my voice agent feel slow when the LLM is fast?",
+        "a": "A fast LLM time to first token covers only one stage. Delay can also come from endpointing that waits too long, STT finalization, collecting the full LLM answer before sending text to TTS, synthesizing a complete audio file, or buffering too much audio on the client. Record every stage on a shared timeline, find the critical path, and fix the largest bottleneck first."
+      },
+      {
+        "q": "What's the difference between TTS TTFB and TTFA?",
+        "a": "TTS TTFB (time to first byte) runs from the TTS request to the first audio chunk the provider returns. TTFA, which Pipecat reports separately, ends at the first non-silent synthesized sample, so it also captures any leading silence. A provider can show a low TTFB while the user still hears nothing for a moment, which is why both metrics are worth tracking."
+      },
+      {
+        "q": "How does streaming reduce voice agent latency?",
+        "a": "In a streaming pipeline each stage forwards partial work as soon as the next stage has enough trustworthy input. STT emits partial transcripts, the LLM streams tokens, a text chunker sends speakable phrases to streaming TTS, and playback starts while later sentences are still being generated. The trade-offs are real: tiny text chunks can damage prosody, and speculative work may need cancelling when an interim transcript changes."
+      },
+      {
+        "q": "Why should I track P95 latency instead of average latency?",
+        "a": "An average can look acceptable while a noticeable share of turns stall for two seconds. P95 latency shows the slow tail: roughly 95% of observations fall at or below it. Report P50, P95 and P99 separately for each scenario, document how the percentiles are computed, and collect enough samples. With only 12 samples, nearest-rank P95 equals the maximum, and P99 needs far more data to be stable."
+      },
+      {
+        "q": "How do I measure latency correctly across the browser and the server?",
+        "a": "Give every turn a turn_id and record clearly defined events on both sides, using a monotonic clock such as Python's time.monotonic_ns() on the server and performance.now() in the browser. Do not subtract raw timestamps taken from independent clocks; align the clocks, use an explicit correlation method, or compare durations measured locally. Capture first audio arrival and first audible playback on the client itself."
+      }
+    ],
+    "ar": [
+      {
+        "q": "ما هو زمن أول صوت مسموع (End-to-first-audible latency) في الوكيل الصوتي؟",
+        "a": "هو الزمن من لحظة توقف المستخدم عن الكلام حتى يبدأ جهازه بتشغيل أول جزء مفيد من رد الوكيل. وهو أقرب إلى ما يشعر به المستخدم من زمن أول Token في الـLLM أو أول byte من TTS، لكنه يبقى تقديراً من جهة التشغيل، لأن النظام لا يستطيع التأكد من أن الشخص سمع الصوت فعلاً."
+      },
+      {
+        "q": "لماذا يبدو الوكيل الصوتي بطيئاً مع أن نموذج اللغة (LLM) سريع؟",
+        "a": "سرعة أول Token تغطي مرحلة واحدة فقط. قد يأتي التأخير من Endpointing ينتظر أكثر من اللازم، أو من انتظار التفريغ النهائي من STT، أو من جمع جواب الـLLM كاملاً قبل إرساله إلى TTS، أو من توليد ملف صوتي كامل، أو من تخزين كمية كبيرة من الصوت في المتصفح قبل التشغيل. سجّل أحداث كل مرحلة على خط زمني واحد، وابدأ بأكبر عنق زجاجة."
+      },
+      {
+        "q": "ما الفرق بين TTFB وTTFA في تحويل النص إلى كلام (TTS)؟",
+        "a": "يقيس TTFB الزمن من إرسال طلب TTS حتى وصول أول دفعة صوت من الخدمة. أما TTFA، الذي يقيسه Pipecat على حدة، فينتهي عند أول عينة صوتية غير صامتة، أي أنه يشمل أي صمت في بداية المقطع. لذلك قد يكون TTFB منخفضاً بينما لا يسمع المستخدم شيئاً لبرهة، ومن المفيد مراقبة المقياسين معاً."
+      },
+      {
+        "q": "كيف يقلل البث المتدفق (Streaming) زمن استجابة الوكيل الصوتي؟",
+        "a": "في تصميم Streaming تمرر كل مرحلة عملها الجزئي إلى المرحلة التالية حين يتوفر لها مدخل كافٍ وموثوق: يُخرج STT نصوصاً جزئية، ويبث الـLLM الـTokens تباعاً، ويرسل مقسّم النص عبارات قابلة للنطق إلى TTS، فيبدأ التشغيل بينما تُولَّد الجمل اللاحقة. لكن لهذا كلفة: المقاطع الصغيرة جداً تضر بالتنغيم، وقد يلزم إلغاء العمل المبكر إذا تغيّر النص المؤقت."
+      },
+      {
+        "q": "لماذا أراقب P95 بدلاً من متوسط زمن الاستجابة (Latency)؟",
+        "a": "قد يبدو المتوسط مقبولاً بينما يتأخر عدد ملحوظ من الأدوار ثانيتين. يكشف P95 الذيل البطيء، إذ تقع قرابة 95% من القياسات عنده أو دونه. اعرض P50 وP95 وP99 لكل سيناريو على حدة، ووثّق طريقة حساب النسب المئوية، واجمع عينات كافية؛ فمع 12 عينة فقط يساوي P95 وفق Nearest-Rank القيمة القصوى، ويحتاج P99 إلى بيانات أكثر بكثير."
+      },
+      {
+        "q": "كيف أقيس زمن الاستجابة بين المتصفح والخادم بطريقة صحيحة؟",
+        "a": "أعطِ كل دور معرّف turn_id، وسجّل أحداثاً واضحة التعريف على الطرفين باستخدام ساعة monotonic، مثل time.monotonic_ns() في Python على الخادم وperformance.now() في المتصفح. لا تطرح طوابع زمنية خاماً من ساعتين مستقلتين؛ إما أن تحاذي الساعات، أو تستخدم طريقة ربط صريحة، أو تقارن فترات مقيسة محلياً. وسجّل وصول أول صوت وبدء تشغيله على جهاز العميل نفسه."
+      }
+    ]
+  }
+}

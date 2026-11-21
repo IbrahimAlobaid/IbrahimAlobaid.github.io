@@ -25,13 +25,13 @@ cover: "assets/capstone-voice-agent-cover.png"
 ![[assets/capstone-voice-agent-cover.png]]
 
 > [!abstract] The central idea
-> Over the preceding 15 articles, we explored audio fundamentals, STT, LLMs, TTS, WebRTC, interruptions, tool execution, privacy, and production evaluation. This final article brings those pieces together in a **fictional scheduling voice assistant**. It listens in a browser, retrieves approved demo information, lists synthetic appointment slots, and creates a **nonbinding appointment proposal**. A real write operation must happen only after a separate, trusted application confirmation—not merely because an LLM says it was approved.
+> Over the previous 15 articles we covered audio fundamentals, STT, LLMs, TTS, WebRTC, interruptions, tool execution, privacy and production evaluation. This final article puts those pieces together in a **fictional scheduling voice assistant** that listens in a browser, answers from approved demo information, lists synthetic appointment slots and creates a **nonbinding appointment proposal**. A real write happens only after a separate, trusted confirmation in the application, never just because the LLM says the user approved it.
 
 > [!warning] What is implemented, and what remains unverified
-> - The local domain logic, tests, and CLI work **offline and without provider credentials**; the tests have been run in this workspace.
-> - `capstone_voice_agent.py` assembles a genuine Pipecat 1.x-style STT → LLM → TTS pipeline using APIs confirmed in official example code. **We have not verified a live microphone-to-speaker session here**, nor installed and tested specific versions of all provider SDKs.
+> - The local domain logic, tests, and CLI work **offline and without provider credentials**. I have run the tests locally.
+> - `capstone_voice_agent.py` assembles a genuine Pipecat 1.x-style STT → LLM → TTS pipeline using APIs confirmed in official example code. **I have not yet verified a live microphone-to-speaker session**, and I have not installed and tested specific versions of every provider SDK.
 > - Knowledge and appointments are **fictional and kept in process memory**. There is no live calendar, authenticated public user interface, production database, or real transaction.
-> - “Production-grade” describes the **engineering design and acceptance criteria**. This package itself is not certified or ready for production users.
+> - “Production-grade” describes the **engineering design and acceptance criteria**. The sample code itself is not certified or ready for production users.
 
 ## 1. The system we will build
 
@@ -79,9 +79,9 @@ flowchart LR
   TrustedUI -.-> SimulatedCommit[Offline simulated commit]
 ```
 
-The responsibilities remain distinct: the transport moves media, STT recognizes speech, VAD and turn detection help manage dialogue rhythm, the LLM selects and describes actions, TTS generates speech, and the backend enforces **permissions and business invariants**. An LLM is never a substitute for authorization.
+Each part keeps its own job: the transport moves media, STT recognizes speech, VAD and turn detection help manage dialogue rhythm, the LLM selects and describes actions, TTS generates speech, and the backend enforces **permissions and business invariants**. An LLM is never a substitute for authorization.
 
-The correct place to re-read the foundational pieces is [[07-Build-First-Voice-Agent-with-Pipecat-EN|Article 07]] for the pipeline, [[10-Interruptions-Barge-In-and-Playback-State-EN|Article 10]] for interruptions, and [[13-Tools-RAG-and-Agent-Workflows-EN|Article 13]] for tool boundaries.
+To revisit the foundations, see [[07-Build-First-Voice-Agent-with-Pipecat-EN|Article 07]] for the pipeline, [[10-Interruptions-Barge-In-and-Playback-State-EN|Article 10]] for interruptions, and [[13-Tools-RAG-and-Agent-Workflows-EN|Article 13]] for tool boundaries.
 
 ## 3. Technology decisions
 
@@ -119,7 +119,7 @@ Voice-Agent-Series/
     └── 16-CAPSTONE-README.md
 ```
 
-All files are provided alongside the earlier articles; Obsidian internal links remain usable when the folder is kept intact.
+The files sit next to the earlier articles, so Obsidian internal links keep working as long as the folder stays intact.
 
 ## 5. Run the offline reference workflow first
 
@@ -138,7 +138,7 @@ The CLI demonstrates a synthetic FAQ answer, synthetic slot lookup, proposal cre
 
 ## 6. Run the voice-enabled Pipecat example
 
-The attached `capstone_voice_agent.py` extends the learning approach from Article 07 and aligns with Pipecat's official voice-agent and function-calling examples [^pvoice] [^ptools]. It wires together Deepgram, OpenAI, Cartesia, and Silero, and registers only safe demo tools.
+`capstone_voice_agent.py` builds on the approach from Article 07 and follows Pipecat's official voice-agent and function-calling examples [^pvoice] [^ptools]. It wires together Deepgram, OpenAI, Cartesia, and Silero, and registers only safe demo tools.
 
 ### Requirements
 
@@ -165,7 +165,7 @@ python capstone_voice_agent.py
 For the standard Pipecat development runner, the browser client is commonly hosted at `http://localhost:7860/client/`. Follow the address and instructions shown by your installed version. Do not commit credentials.
 
 > [!note] Voice runtime validation is still required
-> We checked Python syntax and executed the offline domain tests. We **did not run an actual WebRTC/ASR/TTS call** in this environment, and did not validate exact provider versions. Passing unit tests does not prove voice functionality.
+> I checked the Python syntax and ran the offline domain tests. I **have not run an actual WebRTC/ASR/TTS call** with this code, and I have not validated exact provider versions; the voice runtime still needs real provider credentials to verify. Passing unit tests does not prove voice functionality.
 
 ### The pipeline itself
 
@@ -181,7 +181,7 @@ pipeline = Pipeline([
 ])
 ```
 
-Placing the assistant aggregator after outbound audio mirrors the official example. But it is not equivalent to an exact, authoritative record of what reached the listener's ears. For fine-grained playback state, implement appropriate client audio-playback acknowledgments and interruption reconciliation as discussed in [[10-Interruptions-Barge-In-and-Playback-State-EN|Article 10]].
+Placing the assistant aggregator after outbound audio mirrors the official example. It does not, however, give you an exact, authoritative record of what reached the listener's ears. For fine-grained playback state, implement appropriate client audio-playback acknowledgments and interruption reconciliation as discussed in [[10-Interruptions-Barge-In-and-Playback-State-EN|Article 10]].
 
 ## 7. Tool calls and trusted execution
 
@@ -193,11 +193,11 @@ The voice-enabled agent registers only three functions:
 | `find_slots` | List fictional slots on an ISO calendar date | None |
 | `propose_slot` | Create an expiring in-memory request | No booking is committed |
 
-**Importantly, `confirm_from_trusted_ui()` is not an LLM tool.** Even if the model misunderstands an utterance or encounters prompt injection inside retrieved content, it cannot call a write function through its registered tools. The actual authenticated approval path is deliberately left outside the voice sample.
+**`confirm_from_trusted_ui()` is not an LLM tool.** Even if the model misunderstands an utterance or encounters prompt injection inside retrieved content, it cannot call a write function through its registered tools. The actual authenticated approval path is deliberately left outside the voice sample.
 
 ### Does this implementation include full RAG?
 
-No. The demo FAQ is an allowlisted Python dictionary, chosen for reproducibility. A real retrieval system needs a controlled corpus, indexing, citations, access-control filtering, untrusted-source handling, and evaluation of retrieval quality. Those design requirements are addressed in [[13-Tools-RAG-and-Agent-Workflows-EN|Article 13]].
+No. The demo FAQ is an allowlisted Python dictionary, chosen for reproducibility. A real retrieval system needs a controlled corpus, indexing, citations, access-control filtering, untrusted-source handling, and evaluation of retrieval quality. [[13-Tools-RAG-and-Agent-Workflows-EN|Article 13]] covers those design requirements.
 
 ## 8. Booking proposals, state, and safe retries
 
@@ -221,7 +221,7 @@ stateDiagram-v2
 
 The offline domain module enforces several invariants:
 
-1. An authenticated tenant, session, and subject are fixed by the application—not by LLM input.
+1. An authenticated tenant, session, and subject are fixed by the application, not by LLM input.
 2. Approval details are generated server-side and are not included in the tool response.
 3. An approval is bound to a session generation, state revision, and expiry time.
 4. Cancelation or reconnect invalidates a pending proposal.
@@ -251,7 +251,7 @@ sequenceDiagram
 
 Pipecat includes mechanisms for handling interrupted speech, but end-to-end correctness still depends on your particular transport, provider streams, playback buffering, and user experience. Measure false interruption rates, stop latency, and actual playback acknowledgment; do not equate generated text with audible text.
 
-In our offline domain, reconnect invalidates pending approval and advances `generation`. Therefore an approval from the old session state cannot be committed later. A real deployment must additionally reauthenticate the connection and restore only authorized, durable conversation state—never blindly replay unconfirmed tool operations.
+In our offline domain, reconnect invalidates pending approval and advances `generation`. Therefore an approval from the old session state cannot be committed later. A real deployment must additionally reauthenticate the connection and restore only authorized, durable conversation state. It must never blindly replay unconfirmed tool operations.
 
 ## 10. Evaluation evidence and release readiness
 
@@ -298,7 +298,7 @@ Before exposing a system to real users, you need at least:
 - **Observability:** non-sensitive trace identifiers, service/error metrics, alerts, and clearly defined SLOs.
 - **Human evaluation:** real speakers, representative accents, background noise, overlapping speech, interruptions, and accessibility testing.
 
-Article 15 includes an educational Docker and CI example, but that diagnostic service is **not** the voice bot deployed here.
+Article 15 includes an educational Docker and CI example, but that diagnostic service is **not** a deployment of this voice agent.
 
 ## 12. Common failure patterns
 
@@ -319,13 +319,13 @@ Article 15 includes an educational Docker and CI example, but that diagnostic se
 - **Level 4:** Add access-controlled retrieval, privacy-preserving OpenTelemetry instrumentation, and staging/canary release gates.
 
 > [!success] What counts as a successful capstone?
-> Not merely that the model replies: you should be able to show **what speech was received, how a request was understood, which tool was used, who authorized the action, what was actually executed, and how failures are detected and recovered from without compromising privacy**.
+> A model that replies is not enough. You should be able to show **what speech was received, how a request was understood, which tool was used, who authorized the action, what was actually executed, and how failures are detected and recovered from without compromising privacy**.
 
 ## Conclusion: a voice agent is an engineered system
 
-The series began with the question, “What is a voice agent?” It concludes with a design in which real-time media, conversational intelligence, tool access, transaction safety, network reliability, observability and deployment are treated as connected engineering responsibilities. A convincing demonstration is a beginning; a reliable product requires **evidence**, not assumptions.
+The series began with the question, “What is a voice agent?” It concludes with a design in which real-time media, conversational intelligence, tool access, transaction safety, network reliability, observability and deployment are treated as connected engineering responsibilities. A convincing demo is only the starting point. A reliable product has to rest on **evidence** rather than assumptions.
 
-The final project is intentionally small enough to understand and test, and explicitly identifies everything that needs to be built before handling real customers. That distinction is part of sound AI engineering.
+The final project is deliberately small enough to understand and test, and it states plainly what still has to be built before it can handle real customers.
 
 ---
 

@@ -179,6 +179,20 @@ def main() -> None:
     (ROOT / "ar" / "index.html").write_text(
         render(template.replace("<!--WRITING_CARDS-->", cards["ar"]), "ar", strings), encoding="utf-8"
     )
+    # llms.txt — keep the article list in sync for AI search engines
+    llms = ROOT / "llms.txt"
+    lines = [
+        "## Articles — Voice AI Engineering: the complete 16-part guide (English / العربية)",
+        f"- [Series hub]({SITE}/articles/) · [صفحة السلسلة]({SITE}/ar/articles/)",
+        f"- [Voice AI glossary]({SITE}/articles/glossary/) · [مصطلحات الوكلاء الصوتيين]({SITE}/ar/articles/glossary/)",
+    ]
+    for i, (t_en, u_en, t_ar, u_ar) in enumerate(info["llms"], 1):
+        lines.append(f"- [{i:02d} · {t_en}]({u_en}) · [{t_ar}]({u_ar})")
+    lines.append(f"- RSS: {SITE}/articles/feed.xml · {SITE}/ar/articles/feed.xml")
+    text = llms.read_text(encoding="utf-8")
+    text = re.sub(r"## Articles.*?(?=\n## Contact)", "\n".join(lines) + "\n", text, flags=re.S)
+    llms.write_text(text, encoding="utf-8")
+
     pages = [("/", "/ar/", "/assets/img/ibrahim-alobaid.jpg")] + info["pages"]
     (ROOT / "sitemap.xml").write_text(sitemap(pages), encoding="utf-8")
     print(f"Built home (en/ar), {len(info['urls'])} article/hub pages, sitemap.xml ({len(pages) * 2} URLs)")

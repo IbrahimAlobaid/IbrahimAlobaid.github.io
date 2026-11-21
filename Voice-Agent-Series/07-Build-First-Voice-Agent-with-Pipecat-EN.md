@@ -34,22 +34,22 @@ cover: "assets/first-pipecat-agent-cover.png"
 ![[assets/first-pipecat-agent-cover.png]]
 
 > [!abstract] What will you build?
-> We now know what **STT**, **LLM**, **TTS**, and conversation state do. This article connects those components into a **first browser-based voice agent**: speak into a microphone, transcribe speech, generate an answer, synthesize audio, and hear it back. We will use **Pipecat** for orchestration and **WebRTC** for browser communication. You will get two distinct learning paths: a live agent that needs configured services, and a standalone timing lab that runs without any APIs.
+> This article wires speech-to-text (**STT**), a language model (**LLM**) and text-to-speech (**TTS**) into a **first browser-based voice agent**: you speak into the microphone, and the agent transcribes what you said, generates an answer and speaks it back. We use **Pipecat** to orchestrate the pipeline and **WebRTC** to carry audio between the browser and the bot. There are two hands-on paths: a live agent that needs API keys for its cloud services, and a standalone timing lab that runs without any APIs.
 
 ## 1. Why three API calls are not a conversation
 
-A basic proof of concept often looks like this: record a WAV file, transcribe it, send the text to an LLM, synthesize the response, and play the result. That demonstrates the model chain, but it does not yet create a **natural, continuous voice conversation**.
+A basic proof of concept often looks like this: record a WAV file, transcribe it, send the text to an LLM, synthesize the response, and play the result. That proves the models can be chained together. It is still a long way from a **natural, continuous voice conversation**.
 
 Suppose you ask, “What is the difference between RAM and an SSD?” The agent starts answering, but you interrupt: “Wait. Explain it to a ten-year-old.” If your code waits for the entire TTS output, the interruption arrives too late. If it discards audio but keeps the entire generated answer in history, the agent may incorrectly assume you heard the whole explanation.
 
-A real voice agent must coordinate streaming input and output, turns, connection events, shared context, cancellations, and errors. **Pipecat is an orchestration framework** for these interactions, not a built-in replacement for every speech or language model.[^pipecat-intro]
+A real voice agent has to coordinate streaming input and output, turns, connection events, shared context, cancellations, and errors. **Pipecat is an orchestration framework** for that coordination. It does not replace the speech and language models themselves.[^pipecat-intro]
 
 > [!question] The engineering question
 > How do we connect independently useful AI services into one **observable, controllable audio pipeline**?
 
 ## 2. The architecture we will build
 
-For a first implementation, use a **cascaded** architecture. Its stages are explicit and individually debuggable:
+For a first implementation, use a **cascaded** architecture. Every stage is explicit, so you can debug each one on its own:
 
 ```mermaid
 flowchart LR
@@ -83,7 +83,7 @@ flowchart LR
 
 ## 3. Pipecat's core building blocks
 
-Pipecat is an open-source Python framework for realtime voice and multimodal agents. It connects **processors** that exchange **frames** in a pipeline. Instead of placing networking, model inference, audio playback, and turn logic into one large function, each component has a clearer responsibility.[^pipecat-intro]
+Pipecat is an open-source Python framework for realtime voice and multimodal agents. It connects **processors** that exchange **frames** in a pipeline. Rather than one large function that handles networking, model inference, audio playback, and turn logic, each component gets a narrower job.[^pipecat-intro]
 
 - **Frame:** An item of data or control information flowing through a pipeline; it might represent audio, text, or a lifecycle signal.
 - **Processor:** A stage that handles frames and produces downstream frames.
@@ -93,7 +93,7 @@ Pipecat is an open-source Python framework for realtime voice and multimodal age
 - **Worker and Runner:** Components used to run and manage the active pipeline.
 
 > [!warning] Watch the Pipecat version
-> Older Pipecat examples often use `PipelineTask` and earlier context aggregator APIs. The accompanying example follows the **Pipecat 1.x-style `PipelineWorker` and `LLMContextAggregatorPair`** shown by the official getting-started code reviewed on November 21, 2026. Avoid mixing examples from different major versions; always verify the installed package and current official example.[^pipecat-example]
+> Older Pipecat examples often use `PipelineTask` and earlier context aggregator APIs. The accompanying example follows the **Pipecat 1.x-style `PipelineWorker` and `LLMContextAggregatorPair`** shown by the official getting-started code reviewed on November 21, 2026. Don't mix examples from different major versions, and check the installed package against the current official example.[^pipecat-example]
 
 ## 4. What you need
 
@@ -110,7 +110,7 @@ Your live voice agent requires:
 
 ## 5. Start with the official project generator
 
-Because framework APIs evolve, the least fragile way to begin is the **current Pipecat CLI quickstart** rather than hand-assembling dependencies from an old article. We will inspect the generated project after it works.[^pipecat-quickstart]
+Framework APIs change, so the least fragile starting point is the **current Pipecat CLI quickstart**, not a set of dependencies copied by hand from an old article. Once the generated project runs, we will read through it.[^pipecat-quickstart]
 
 ### Step 1 — Scaffold the project
 
@@ -153,7 +153,7 @@ Open **http://localhost:7860/client** in your browser, allow microphone access, 
 
 ## 6. Read the central pipeline
 
-Once the quickstart runs, open its `bot.py` and find the pipeline. In modern Pipecat, its main idea resembles the following abbreviated snippet from our companion file:
+Once the quickstart runs, open its `bot.py` and find the pipeline. In current Pipecat versions, the core of it looks like this abbreviated snippet from our companion file:
 
 ```python
 pipeline = Pipeline([
@@ -205,7 +205,7 @@ sequenceDiagram
 
 **VAD** is useful for detecting speech activity, but not for understanding what was said. **Turn detection** decides when the system should treat a user's contribution as complete, using the available evidence and configured rules. This tutorial uses Silero VAD in the user aggregator, but it does not claim perfect endpointing, speaker detection, or interruption handling.[^pipecat-example]
 
-Echo from speakers, noise, hesitation, network jitter, and overlapping voices can all complicate turn decisions. Evaluate their effects with real input rather than trusting a clean diagram.
+Echo from speakers, noise, hesitation, network jitter, and overlapping voices all make turn decisions harder. Test with real input; a clean diagram tells you nothing about how the agent copes with them.
 
 ## 8. Try the companion bot implementation
 
@@ -246,7 +246,7 @@ These are **conceptual states**, not a claim that Pipecat exposes events with ex
 
 ## 10. A functional test plan
 
-Hearing the greeting is a beginning, not a complete validation. Test these situations:
+Hearing the greeting is only the first check. Test these situations as well:
 
 | Scenario | What to observe |
 |---|---|
@@ -321,9 +321,9 @@ In this deliberately artificial trace, response latency is **840 ms** and interr
 
 ## What you have learned
 
-You have moved from isolated services to an integrated **voice pipeline**. The important engineering achievement is knowing where audio enters, how a completed user turn reaches the LLM, what gets converted to speech, how audio reaches the browser, and how the session ends. Once those boundaries are visible and testable, you have a foundation for systematically improving the agent.
+You have moved from isolated services to an integrated **voice pipeline**. What matters more than the code itself is that you now know where audio enters, how a completed user turn reaches the LLM, what gets converted to speech, how audio gets back to the browser, and how the session ends. Once you can see and test those boundaries, you can improve the agent one stage at a time.
 
-**[[08-Real-Time-Audio-Transport-EN|Next (Article 08): Real-Time Audio Transport — WebRTC vs WebSockets]]**. We will explore how audio travels across networks, including jitter, packet loss, STUN/TURN, and the difference between a local browser demo and a remote voice session.
+**[[08-Real-Time-Audio-Transport-EN|Next (Article 08): Real-Time Audio Transport — WebRTC vs WebSockets]]**. It covers how audio travels across networks, including jitter, packet loss, STUN/TURN, and the difference between a local browser demo and a remote voice session.
 
 ## References
 

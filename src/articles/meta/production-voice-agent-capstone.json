@@ -1,0 +1,95 @@
+{
+  "slug": "production-voice-agent-capstone",
+  "keywords": [
+    "build a voice AI agent end to end",
+    "Pipecat voice agent tutorial",
+    "production voice agent architecture",
+    "Pipecat Deepgram OpenAI Cartesia pipeline",
+    "voice agent tool calling safety",
+    "voice appointment booking agent Python",
+    "idempotent tool calls for LLM agents",
+    "WebRTC voice agent in the browser",
+    "voice agent capstone project"
+  ],
+  "keywords_ar": [
+    "بناء وكيل صوتي متكامل",
+    "مشروع Voice Agent بلغة Python",
+    "وكيل صوتي لحجز المواعيد",
+    "شرح Pipecat بالعربي",
+    "أمان استدعاء الأدوات في نماذج اللغة",
+    "معمارية الوكيل الصوتي",
+    "تجهيز وكيل صوتي للإنتاج"
+  ],
+  "summary": {
+    "en": [
+      "The capstone combines a browser WebRTC transport, Silero VAD, Deepgram STT, an OpenAI LLM and Cartesia TTS in one Pipecat pipeline for a fictional scheduling assistant.",
+      "The LLM gets only three tools, read_faq, find_slots and propose_slot, and none of them commits a booking or causes an external side effect.",
+      "Confirmation is deliberately not an LLM tool; a real write must come from a separate, authenticated application approval bound to session generation, revision and expiry.",
+      "Reconnects and cancellations invalidate pending proposals, and retrying the same valid approval returns the earlier simulated receipt instead of creating a second booking.",
+      "Offline unit tests cover tenant isolation, expired approvals, stale sessions and idempotent retries, but they do not prove that live audio, providers or WebRTC work.",
+      "Before real users, the design still needs a transactional database, secret management, authenticated approval endpoints, privacy controls, staging, a canary rollout and tested rollback."
+    ],
+    "ar": [
+      "يجمع المشروع النهائي WebRTC في المتصفح وSilero VAD وDeepgram STT ونموذج OpenAI وCartesia TTS في Pipeline واحد من Pipecat لمساعد مواعيد تجريبي.",
+      "لا يملك الـLLM إلا ثلاث أدوات: read_faq وfind_slots وpropose_slot، ولا تنفذ أي منها حجزاً أو أثراً خارجياً.",
+      "التأكيد ليس أداة متاحة للنموذج عن قصد؛ فالكتابة الفعلية تحتاج موافقة موثوقة من التطبيق بعد المصادقة، مرتبطة بجيل الجلسة وإصدار الحالة ووقت الانتهاء.",
+      "يُبطَل الطلب المعلّق عند الإلغاء أو إعادة الاتصال، وتكرار الموافقة الصحيحة نفسها يعيد النتيجة السابقة بدلاً من إنشاء حجز ثانٍ.",
+      "تغطي اختبارات Unit المحلية عزل الـTenant وانتهاء الموافقات والجلسات القديمة ومنع التكرار، لكنها لا تثبت عمل الصوت الحي أو المزوّدين أو WebRTC.",
+      "قبل استقبال مستخدمين حقيقيين يحتاج التصميم إلى قاعدة بيانات بمعاملات، وإدارة للأسرار، وواجهات موافقة موثّقة، وضوابط خصوصية، وStaging وCanary وRollback مجرَّب."
+    ]
+  },
+  "faq": {
+    "en": [
+      {
+        "q": "How do I build an end-to-end voice AI agent with Pipecat?",
+        "a": "The capstone wires a cascaded Pipecat pipeline: transport input, Deepgram STT, a user context aggregator with Silero VAD, an OpenAI LLM, Cartesia TTS, transport output, then the assistant aggregator. Install pipecat-ai with the deepgram, openai, cartesia, silero, runner and webrtc extras, put the three provider API keys in a local .env file, and open the browser client that the Pipecat runner prints, commonly at localhost:7860/client/."
+      },
+      {
+        "q": "How do I stop an LLM voice agent from booking without the user's approval?",
+        "a": "Keep proposals and commits apart. In the capstone, the LLM can only call propose_slot, which creates an expiring in-memory request. The confirmation function is not registered as a tool, so a misheard yes or a prompt injection inside retrieved content cannot trigger a write. A real booking needs an authenticated, out-of-band approval in the application, which the backend checks against session generation, state revision and expiry."
+      },
+      {
+        "q": "What's the difference between a booking proposal and a confirmed booking in a voice agent?",
+        "a": "A proposal is a pending, expiring request the agent creates after the user picks a slot, and it has no external side effect. A confirmed booking requires a trusted application approval with valid proof, followed by an idempotent commit. If the user asks whether the slot is booked, the agent should say it is only a proposal. Cancellation, expiry or a reconnect takes the proposal out of the pending state."
+      },
+      {
+        "q": "How should a voice agent handle reconnects without repeating actions?",
+        "a": "In the capstone's domain module, a reconnect invalidates any pending proposal and advances the session generation, so an approval issued under the old session can no longer be committed. Retrying the same valid approval returns the earlier simulated receipt instead of a second booking, and a different token is rejected. In production you also need durable idempotency in a transactional database, reauthentication, and reconciliation before any new write."
+      },
+      {
+        "q": "Does passing unit tests mean my voice agent is ready for production?",
+        "a": "No. The capstone's offline unit tests check state transitions, authorization preconditions, tenant isolation, expiry and idempotent retries, but they never touch a microphone, a provider or the network. Provider integration, real audio with accents, noise and interruptions, WebRTC and TURN behavior, security review and production operations each need their own validation, from staging tests through a supervised canary with rollback."
+      },
+      {
+        "q": "What do I need before putting a voice agent in front of real users?",
+        "a": "At minimum: a secret manager with credential rotation, authenticated session-bound actions with durable idempotency, data minimization and retention limits, separate staging and production with reviewed migrations and tested rollback, TLS and TURN where needed, privacy-safe traces with defined SLOs and alerts, and human evaluation with real speakers, accents, background noise and interruptions. The capstone's in-memory demo provides none of these on its own."
+      }
+    ],
+    "ar": [
+      {
+        "q": "كيف أبني وكيلاً صوتياً متكاملاً (Voice Agent) باستخدام Pipecat؟",
+        "a": "يربط المشروع النهائي Pipeline متسلسلاً في Pipecat: دخل الـTransport، ثم Deepgram STT، ثم مجمّع سياق المستخدم مع Silero VAD، ثم نموذج OpenAI، ثم Cartesia TTS وخرج الـTransport، وأخيراً مجمّع ردود المساعد. ثبّت pipecat-ai مع إضافات deepgram وopenai وcartesia وsilero وrunner وwebrtc، وضع مفاتيح المزوّدين الثلاثة في ملف .env محلي، ثم افتح عميل المتصفح الذي يعرضه Pipecat Runner، وغالباً يكون على localhost:7860/client/."
+      },
+      {
+        "q": "كيف أمنع الوكيل الصوتي من تنفيذ حجز دون موافقة المستخدم؟",
+        "a": "افصل الاقتراح عن التنفيذ. في المشروع النهائي لا يستطيع الـLLM إلا استدعاء propose_slot، وهي تنشئ طلباً مؤقتاً في الذاكرة ينتهي بعد مدة. دالة التأكيد ليست مسجلة كأداة، لذلك لا يؤدي سوء فهم كلمة «نعم» أو تعليمات مدسوسة في محتوى مسترجَع (Prompt Injection) إلى أي كتابة. الحجز الحقيقي يحتاج موافقة موثّقة من التطبيق يتحقق منها الخادم مقابل جيل الجلسة وإصدار الحالة ووقت الانتهاء."
+      },
+      {
+        "q": "ما الفرق بين اقتراح الحجز (Proposal) والحجز المؤكد في الوكيل الصوتي؟",
+        "a": "الاقتراح طلب معلّق ومؤقت ينشئه الوكيل بعد أن يختار المستخدم موعداً، ولا يترك أي أثر خارجي. أما الحجز المؤكد فيتطلب موافقة موثوقة من التطبيق مع دليل صالح، ثم تنفيذاً لا يتكرر عند إعادة المحاولة (Idempotent). وإذا سأل المستخدم هل تم الحجز، يجب أن يجيب الوكيل بأنه مجرد اقتراح. ويخرج الاقتراح من حالة الانتظار عند الإلغاء أو انتهاء المهلة أو إعادة الاتصال."
+      },
+      {
+        "q": "كيف يتعامل الوكيل الصوتي مع إعادة الاتصال دون تكرار الإجراءات؟",
+        "a": "في وحدة المجال الخاصة بالمشروع، تُبطل إعادة الاتصال أي اقتراح معلّق وتزيد رقم جيل الجلسة (generation)، فلا يمكن اعتماد موافقة صدرت في الجلسة القديمة. وتكرار الموافقة الصحيحة نفسها يعيد الإيصال السابق بدلاً من حجز ثانٍ، بينما يُرفض أي رمز مختلف. في الإنتاج تحتاج أيضاً إلى Idempotency دائمة في قاعدة بيانات بمعاملات، وإعادة مصادقة، ومطابقة الحالة قبل أي كتابة جديدة."
+      },
+      {
+        "q": "هل نجاح اختبارات الوحدة (Unit Tests) يعني أن الوكيل الصوتي جاهز للإنتاج؟",
+        "a": "لا. تتحقق اختبارات المشروع المحلية من انتقالات الحالة وشروط الصلاحية وعزل الـTenant وانتهاء المهلة ومنع التكرار، لكنها لا تلمس الميكروفون أو المزوّدين أو الشبكة. التكامل مع المزوّدين، والصوت الحقيقي باللهجات والضجيج والمقاطعات، وسلوك WebRTC وTURN، ومراجعة الأمان، وتشغيل الإنتاج، كلها تحتاج تحققاً مستقلاً يبدأ من Staging وينتهي بـCanary مراقَب مع خطة Rollback."
+      },
+      {
+        "q": "ما الذي يحتاجه الوكيل الصوتي قبل إتاحته لمستخدمين حقيقيين؟",
+        "a": "كحد أدنى: Secrets Manager مع تدوير المفاتيح، وإجراءات مرتبطة بجلسة موثّقة مع Idempotency دائمة، وتقليل البيانات وتحديد مدة الاحتفاظ بها، وفصل Staging عن الإنتاج مع مراجعة الـMigrations وتجربة الـRollback، وTLS وTURN عند الحاجة، وTraces لا تكشف الخصوصية مع SLOs وتنبيهات محددة، وتقييم بشري بمتحدثين حقيقيين ولهجات وضجيج ومقاطعات. النسخة التجريبية في الذاكرة لا توفر أياً من ذلك وحدها."
+      }
+    ]
+  }
+}

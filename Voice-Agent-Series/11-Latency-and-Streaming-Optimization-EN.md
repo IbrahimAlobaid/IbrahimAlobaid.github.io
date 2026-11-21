@@ -33,11 +33,11 @@ cover: "assets/latency-streaming-cover.png"
 ![[assets/latency-streaming-cover.png]]
 
 > [!abstract] The engineering question
-> Your LLM produces its first token quickly. Your TTS provider returns audio promptly. Yet the agent still feels sluggish. **What latency should we measure, where does waiting accumulate, and how can streaming reduce perceived delay without damaging turn-taking or speech quality?**
+> Your LLM returns its first token quickly and your TTS provider starts sending audio promptly, yet the agent still feels sluggish. This article works out which latency to measure, where the waiting accumulates between the end of the user's speech and the first audible reply, and how streaming can cut perceived delay without damaging turn-taking or speech quality.
 
 ## 1. The model can be fast while the conversation is slow
 
-Imagine a voice assistant helping someone schedule an appointment. The user says, “Book an appointment for Thursday.” After the user stops speaking, the system must make a series of decisions. Delay may arise because it:
+Imagine a voice assistant helping someone schedule an appointment. The user says, “Book an appointment for Thursday.” Once the user stops speaking, the system still has several decisions to make, and any of them can add delay. It may:
 
 1. Waits too long to decide the user has finished (**endpointing**).
 2. Waits for final STT output even where early processing could prepare useful work.
@@ -45,7 +45,7 @@ Imagine a voice assistant helping someone schedule an appointment. The user says
 4. Generates a complete audio file instead of streaming its early output.
 5. Buffers too much audio on the client before beginning audible playback.
 
-In [[09-VAD-Endpointing-and-Turn-Detection-EN|Article 09]], we distinguished silence from the end of a user turn. In [[10-Interruptions-Barge-In-and-Playback-State-EN|Article 10]], we distinguished generated audio from played audio. Latency engineering combines both lessons: the user cares about **the time until a useful spoken answer begins**, not merely the model's internal processing time.[^openai-voice][^livekit-benchmark]
+In [[09-VAD-Endpointing-and-Turn-Detection-EN|Article 09]], we distinguished silence from the end of a user turn. In [[10-Interruptions-Barge-In-and-Playback-State-EN|Article 10]], we distinguished generated audio from played audio. Latency work builds on both. What the user notices is **the time until a useful spoken answer begins**; the model's internal processing time is only one part of it.[^openai-voice][^livekit-benchmark]
 
 > [!important] Define the boundaries first
 > Did you start your timer at the end of speech or when the server committed the turn? Did you stop it at the first TTS byte, the first non-silent sample, or the beginning of client playback? **Do not compare two metrics that use different boundaries.**
@@ -67,7 +67,7 @@ flowchart LR
 
 *Figure 1. A conceptual path from the end of user speech to the first audible answer. Real systems may overlap stages or use a native speech-to-speech model instead.*
 
-The **critical path** is the longest chain of dependencies between the start and end of a turn. Imagine that endpointing takes 200 ms and STT finalization takes 150 ms, but both start when speech ends. Adding them together produces a misleading 350 ms. The next stage may only wait for whichever dependency completes last. A correctly instrumented trace reveals this overlap instead of adding unrelated per-service metrics.[^livekit-traces]
+The **critical path** is the longest chain of dependencies between the start and end of a turn. Suppose endpointing takes 200 ms and STT finalization takes 150 ms, and both start when speech ends. Adding them gives a misleading 350 ms, because the next stage may only need to wait for whichever dependency finishes last. A properly instrumented trace shows this overlap; summing unrelated per-service metrics hides it.[^livekit-traces]
 
 ![[assets/latency-stage-overlap.png]]
 
@@ -96,7 +96,7 @@ End-to-first-audible latency
   = client_first_audible_ms - user_speech_end_ms
 ```
 
-Even “audible” is a playback-side approximation: the system cannot verify that a person heard an unmuted speaker. It also matters whether the first output contains leading silence. Report audio playback estimates honestly rather than describing them as direct measurements of human perception.
+Even “audible” is a playback-side approximation: the system cannot verify that a person heard an unmuted speaker. It also matters whether the first output contains leading silence. Report playback timestamps as estimates, not as direct measurements of what a person perceived.
 
 ### First token is not first useful answer
 
@@ -104,7 +104,7 @@ An LLM may output “Let me check...” after 250 ms, then block on a two-second
 
 ## 4. What streaming changes
 
-A **batch** pipeline may wait for a full transcript, a complete LLM response, a fully synthesized file, and only then initiate playback. A **streaming** pipeline forwards partially completed work whenever the next stage has enough trustworthy input to proceed.
+A **batch** pipeline may wait for a full transcript, a complete LLM response, a fully synthesized file, and only then start playback. A **streaming** pipeline forwards partially completed work whenever the next stage has enough trustworthy input to proceed.
 
 ```mermaid
 flowchart TD
@@ -126,7 +126,7 @@ flowchart TD
 
 **Benefits:** The user may hear the first segment before the entire answer is generated; the system can transmit audio while the LLM creates later sentences; and long answers no longer require one giant TTS output file.
 
-**Costs:** Excessively small text chunks can damage prosody, multiply requests, and produce awkward pauses. Aggressive pre-generation may require cancellation when an interim transcript changes. A tiny audio buffer can reduce initial wait yet increase underruns and glitches under network jitter. The goal is not “minimum buffer at any cost” but **responsive, stable, and correct conversation**.
+**Costs:** Excessively small text chunks can damage prosody, multiply requests, and produce awkward pauses. Aggressive pre-generation may require cancellation when an interim transcript changes. A tiny audio buffer can shorten the initial wait but increase underruns and glitches under network jitter. What you want is a **responsive, stable, and correct conversation**; the smallest possible buffer is not a goal in itself.
 
 ## 5. Six optimization levers
 
@@ -136,7 +136,7 @@ Measure endpointing delay and false early turn endings. Shorter silence windows 
 
 ### B. Use streaming STT without treating interim text as settled fact
 
-Partial transcripts can trigger speculative preparation, but do not commit high-impact data such as an ID number, date, or name before confirmation. Design a clear distinction between **tentative work** and **committed user intent**, and cancel early work when the user corrects their utterance.
+Partial transcripts can trigger speculative preparation, but do not commit high-impact data such as an ID number, date, or name before confirmation. Keep **tentative work** clearly separate from **committed user intent**, and cancel early work when the user corrects their utterance.
 
 ### C. Produce speech-friendly LLM segments
 
@@ -182,7 +182,7 @@ The lab uses the **nearest-rank percentile**: sort the samples and select rank `
 
 ## 7. Correct instrumentation requires consistent clocks
 
-Assign each user turn a `turn_id`, instrument clear event boundaries, and preserve correlation across the client and server. On the server, use a monotonic clock such as Python's `time.monotonic_ns()`; in the browser, use `performance.now()`. **Never directly subtract raw timestamps from independent clocks** without synchronization or an explicit correlation method, even if both values are denominated in milliseconds.[^mdn-timing]
+Assign each user turn a `turn_id`, instrument clear event boundaries, and preserve correlation across the client and server. On the server, use a monotonic clock such as Python's `time.monotonic_ns()`; in the browser, use `performance.now()`. **Never directly subtract raw timestamps from independent clocks** without synchronization or an explicit correlation method, even if both values are expressed in milliseconds.[^mdn-timing]
 
 ```mermaid
 sequenceDiagram
@@ -226,7 +226,7 @@ In production, use trace/span identifiers, clock alignment or separate duration 
 
 ## 8. The Python lab: 36 simulated voice turns
 
-This lab requires **no LLM, STT/TTS service, microphone, or API key**. It is designed to test telemetry logic before integrating real pipeline events.
+This lab requires **no LLM, STT/TTS service, microphone, or API key**. Its job is to let you test the telemetry logic before you wire in real pipeline events.
 
 | File | Purpose |
 |---|---|
@@ -258,7 +258,7 @@ The lab rejects missing timestamps, impossible causal order, negative/non-finite
 
 ## 9. What a useful production dashboard shows
 
-A dashboard with one number labeled “Latency = 450 ms” is insufficient. Report a set of metrics:
+A single number labeled “Latency = 450 ms” tells you very little. Report a set of metrics instead:
 
 | Area | Report | Why |
 |---|---|---|
@@ -302,7 +302,7 @@ Benchmark WebRTC and telephony/SIP separately. Keep prompt, user audio, transpor
 **Step 6 — Roll out progressively.** Watch P95, stability and error rates. Keep rollback available if the change harms actual conversations.
 
 > [!success] Key takeaway
-> A fast voice agent is not simply an agent with a fast first token. It is one that begins delivering a **useful, intelligible spoken response** quickly and consistently, while preserving the user's turn, the correctness of actions, and playback continuity. **Instrument first, optimize the critical path, and track the slow tail together with quality.**
+> A fast first token does not by itself make a fast voice agent. What counts is how quickly and how consistently the agent starts a **useful, intelligible spoken response**, while still respecting the user's turn, the correctness of actions, and playback continuity. **Instrument first, optimize the critical path, and track the slow tail together with quality.**
 
 ## Reader exercise
 

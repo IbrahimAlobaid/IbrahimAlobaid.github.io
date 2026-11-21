@@ -1,0 +1,95 @@
+{
+  "slug": "vad-endpointing-turn-detection",
+  "keywords": [
+    "voice activity detection",
+    "VAD for voice agents",
+    "endpointing in speech recognition",
+    "turn detection voice AI",
+    "end of turn detection",
+    "Silero VAD threshold",
+    "Pipecat Smart Turn",
+    "silence timeout voice agent",
+    "voice agent interrupts user too early"
+  ],
+  "keywords_ar": [
+    "كشف النشاط الصوتي VAD",
+    "اكتشاف نهاية دور المستخدم في الوكيل الصوتي",
+    "Endpointing في التعرف على الكلام",
+    "متى يرد الوكيل الصوتي على المستخدم",
+    "شرح Turn Detection بالعربي",
+    "ضبط عتبات Silero VAD",
+    "مهلة الصمت في المساعد الصوتي"
+  ],
+  "summary": {
+    "en": [
+      "VAD estimates whether each audio frame contains speech, but it cannot tell whether the speaker has finished their thought.",
+      "Endpointing decides that a spoken segment has ended, while turn detection decides whether it is now the agent's turn to respond.",
+      "A fixed silence timeout is simple but fails both ways: it cuts off hesitant speakers and makes the agent wait after clear requests.",
+      "Separate start and continue thresholds, plus minimum speech and silence durations, stop a VAD from flipping state on noise or short gaps.",
+      "Speech during agent playback may be a barge-in, a backchannel, echo, or noise, so VAD alone should not cancel the agent's response.",
+      "Evaluate turn-taking on labeled real recordings, tracking premature-end rate, P95 end-of-turn latency, false barge-ins, and missed interruptions."
+    ],
+    "ar": [
+      "يقدّر VAD هل يحتوي كل إطار صوتي على كلام، لكنه لا يعرف هل أنهى المتحدث فكرته.",
+      "يحدد Endpointing انتهاء المقطع الصوتي الحالي، أما Turn Detection فيقرر هل حان دور الوكيل في الرد.",
+      "مهلة الصمت الثابتة سهلة التنفيذ لكنها تخطئ في الاتجاهين: تقاطع المتحدث المتردد، وتؤخر الرد بعد الطلبات الواضحة.",
+      "استخدام عتبتين مختلفتين للبدء والاستمرار، مع حد أدنى لمدة الكلام والصمت، يمنع VAD من التذبذب بسبب الضجيج أو التوقفات القصيرة.",
+      "الكلام أثناء رد الوكيل قد يكون مقاطعة حقيقية أو Backchannel أو صدى أو ضجيجاً، فلا يكفي VAD وحده لإيقاف الوكيل.",
+      "قيّم إدارة الأدوار على تسجيلات حقيقية معلَّمة يدوياً، بمقاييس مثل معدل الإغلاق المبكر وP95 لتأخير نهاية الدور والمقاطعات الخاطئة والفائتة."
+    ]
+  },
+  "faq": {
+    "en": [
+      {
+        "q": "What is voice activity detection (VAD) in a voice agent?",
+        "a": "Voice activity detection (VAD) reads incoming audio in short frames and estimates, usually as a probability, whether each frame contains speech. Simple energy-based VADs are easily fooled by background noise or the agent's own echo, while learned models such as Silero VAD give better estimates. VAD tells the agent that someone is speaking. It does not tell it whether the speaker has finished their thought."
+      },
+      {
+        "q": "What's the difference between VAD, endpointing, and turn detection?",
+        "a": "VAD answers whether speech is happening right now. Endpointing decides that the current spoken segment has ended, usually from silence duration and sometimes from STT signals. Turn detection makes the higher-level decision of whether it is the agent's turn to respond, and can combine VAD with transcript text, prosody, and conversation context. A user can stop speaking, ending a segment, while still holding the turn."
+      },
+      {
+        "q": "Why does my voice agent interrupt users before they finish speaking?",
+        "a": "This is premature endpointing: the system treats a pause as the end of the user's turn. A fixed silence timeout that is too short closes the turn while the user is still thinking or searching for a word. Possible fixes include a longer or adaptive timeout, semantic turn detection that uses the transcript and prosody, and checking what your STT provider's final events actually mean."
+      },
+      {
+        "q": "How do I choose a silence timeout for endpointing?",
+        "a": "There is no universal value. A short timeout makes the agent responsive but cuts off hesitant speakers, and a long one makes it feel slow after clear requests. Numbers in documentation, such as the 0.6-second example in Pipecat's speech timeout strategy, are examples only. Tune the endpointing timeout on labeled recordings from your own users, languages, and devices, and track premature-end rate and P95 end-of-turn latency."
+      },
+      {
+        "q": "Does an STT final transcript mean the user has finished their turn?",
+        "a": "Not necessarily. A speech-to-text provider may mark a transcript as final once a segment's text is stable, even if the user is about to continue speaking. Some recognizers also emit separate end-of-utterance or turn-completion events. Read your provider's event definitions carefully and do not treat every final transcript as a sign that the user has handed the conversational turn to the agent."
+      },
+      {
+        "q": "How does a voice agent tell a real interruption from a backchannel or echo?",
+        "a": "VAD alone cannot do it. While the agent is speaking, captured sound may be a genuine barge-in such as 'stop', a backchannel such as 'uh-huh', echo of the agent's own voice from the speakers, or background noise. Production systems combine acoustic echo cancellation, STT, user-voice isolation, adaptive interruption handling, and playback-position tracking before deciding that the agent should stop talking."
+      }
+    ],
+    "ar": [
+      {
+        "q": "ما هو كشف النشاط الصوتي (VAD) في الوكيل الصوتي؟",
+        "a": "كشف النشاط الصوتي (Voice Activity Detection) مكوّن يقرأ الصوت الوارد على شكل إطارات قصيرة، ويقدّر لكل إطار احتمال وجود كلام. الكواشف البسيطة المعتمدة على طاقة الإشارة يخدعها الضجيج وصدى صوت الوكيل، أما النماذج المتعلّمة مثل Silero VAD فتعطي تقديراً أدق. لكن VAD يخبر الوكيل أن هناك من يتكلم، ولا يخبره هل أنهى المتحدث فكرته."
+      },
+      {
+        "q": "ما الفرق بين VAD وEndpointing وTurn Detection؟",
+        "a": "يجيب VAD عن سؤال: هل يوجد كلام الآن؟ ويحدد Endpointing أن المقطع الصوتي الحالي انتهى، غالباً من مدة الصمت وأحياناً من إشارات STT. أما Turn Detection فيتخذ القرار الأعلى: هل حان دور الوكيل في الرد؟ وقد يجمع بين VAD والنص ونبرة الكلام وسياق المحادثة. فقد يتوقف المستخدم عن الكلام وينتهي المقطع، بينما لا يزال الدور دوره."
+      },
+      {
+        "q": "لماذا يقاطع الوكيل الصوتي المستخدم قبل أن يكمل كلامه؟",
+        "a": "هذه حالة Premature endpointing، أي أن النظام يعدّ فترة صمت نهايةً لدور المستخدم. إذا كانت مهلة الصمت الثابتة قصيرة، يُغلق الدور والمستخدم لا يزال يفكر أو يبحث عن كلمة. من الحلول الممكنة: مهلة أطول أو تكيفية، أو كشف دلالي للدور يستفيد من النص والنبرة، والتحقق مما تعنيه فعلاً أحداث final في خدمة STT التي تستخدمها."
+      },
+      {
+        "q": "كيف أختار مهلة الصمت المناسبة في Endpointing؟",
+        "a": "لا توجد قيمة تصلح لكل الأنظمة. المهلة القصيرة تجعل الوكيل سريعاً لكنها تقاطع المتحدث المتردد، والطويلة تجعله بطيئاً بعد الطلبات الواضحة. القيم الواردة في التوثيق، مثل مثال 0.6 ثانية في استراتيجية Pipecat، أمثلة فقط. اضبط مهلة Endpointing على تسجيلات معلَّمة من مستخدميك ولغاتهم وأجهزتهم، وراقب معدل الإغلاق المبكر وP95 لتأخير نهاية الدور."
+      },
+      {
+        "q": "هل يعني النص النهائي (Final Transcript) في STT أن المستخدم أنهى كلامه؟",
+        "a": "ليس بالضرورة. قد تعلّم خدمة تحويل الكلام إلى نص المقطع بأنه نهائي عندما يستقر نصه، حتى لو كان المستخدم على وشك أن يكمل. وبعض الخدمات ترسل أحداثاً منفصلة خاصة بنهاية اللفظ أو باكتمال الدور. اقرأ تعريف كل حدث في توثيق مزوّدك، ولا تعامل كل Final Transcript على أنه إشارة إلى أن المستخدم سلّم الدور للوكيل."
+      },
+      {
+        "q": "كيف يميّز الوكيل الصوتي بين المقاطعة الحقيقية (Barge-In) والـBackchannel والصدى؟",
+        "a": "لا يستطيع VAD وحده ذلك. أثناء حديث الوكيل قد يكون الصوت الملتقط مقاطعة حقيقية مثل «توقف»، أو Backchannel مثل «آها»، أو صدى صوت الوكيل نفسه عائداً من السماعة إلى الميكروفون، أو ضجيجاً خارجياً. لذلك تجمع الأنظمة الإنتاجية بين إلغاء الصدى (AEC) وSTT وعزل صوت المستخدم والتعامل التكيفي مع المقاطعات وتتبع موضع التشغيل قبل إيقاف الوكيل."
+      }
+    ]
+  }
+}

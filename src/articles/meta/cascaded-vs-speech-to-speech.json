@@ -1,0 +1,93 @@
+{
+  "slug": "cascaded-vs-speech-to-speech",
+  "keywords": [
+    "cascaded vs speech-to-speech",
+    "speech to speech model for voice agents",
+    "stt llm tts pipeline",
+    "realtime voice ai architecture",
+    "full duplex voice ai",
+    "hybrid voice agent architecture",
+    "how to measure voice agent latency",
+    "voice agent interruption handling"
+  ],
+  "keywords_ar": [
+    "معمارية الوكيل الصوتي",
+    "الفرق بين Cascaded و Speech-to-Speech",
+    "نموذج تحويل الكلام إلى كلام",
+    "خط معالجة STT LLM TTS",
+    "زمن استجابة الوكيل الصوتي",
+    "المساعد الصوتي الآني Realtime"
+  ],
+  "summary": {
+    "en": [
+      "A cascaded STT, LLM and TTS pipeline has clear text boundaries that make debugging, auditing, provider swaps and exact scripted wording easier.",
+      "A speech-to-speech model takes audio in and produces audio out, which can keep tone and timing cues and reduce hand-offs between stages.",
+      "Realtime does not automatically mean full-duplex, and hybrid support with a separate TTS varies between models, so check the provider's current implementation.",
+      "Measure latency from the end of the user's speech to the first audible agent audio, and report P50 and P95 on realistic scenarios.",
+      "Interruptions are a system concern: keep generated, sent and actually played audio separate, and reconcile history and task state after the user barges in.",
+      "Choose the architecture from product constraints and measurements on real tasks, because architecture labels alone say nothing reliable about speed or cost."
+    ],
+    "ar": [
+      "تتميز معمارية Cascaded بحدود نصية واضحة بين STT وLLM وTTS، ما يسهّل تتبع الأخطاء والتدقيق وتبديل المزود والتحكم بالصياغة الحرفية.",
+      "يستقبل نموذج Speech-to-Speech الصوت ويولّد صوتاً، فقد يحافظ على النبرة والإيقاع ويقلل عمليات التسليم بين المراحل.",
+      "كلمة Realtime لا تعني Full-Duplex تلقائياً، ودعم Hybrid مع TTS مستقل يختلف من نموذج إلى آخر، فراجع تنفيذ المزود الحالي.",
+      "يُقاس زمن الاستجابة من نهاية كلام المستخدم حتى أول صوت مسموع من الوكيل، مع تسجيل P50 وP95 في سيناريوهات واقعية.",
+      "المقاطعة مسؤولية المنظومة كلها: افصل بين الصوت المولَّد والمرسَل والمشغَّل فعلاً، وطابق السجل وحالة المهمة بعد كل مقاطعة.",
+      "اختر المعمارية من قيود المنتج ومن القياس على مهام حقيقية، فاسم المعمارية وحده لا يخبرك بشيء موثوق عن السرعة أو التكلفة."
+    ]
+  },
+  "faq": {
+    "en": [
+      {
+        "q": "What's the difference between a cascaded voice agent and a speech-to-speech model?",
+        "a": "A cascaded voice agent chains three components: speech-to-text produces a transcript, an LLM reasons over it, and text-to-speech speaks the reply. A speech-to-speech model accepts audio and produces audio through one realtime interface. Cascaded gives clear text boundaries for debugging and scripted wording, while speech-to-speech can keep tone, hesitation and timing cues and reduce hand-offs between stages."
+      },
+      {
+        "q": "Is a cascaded STT-LLM-TTS pipeline always slower than speech-to-speech?",
+        "a": "Not necessarily. A cascaded pipeline has more hand-offs, but streaming lets STT, the LLM and TTS overlap instead of each waiting for the previous stage to finish. Speech-to-speech may cut transitions, yet real latency depends on the model, language, network, device and turn pattern. “Always faster” or “always cheaper” cannot be inferred from architecture labels, so measure your own scenarios."
+      },
+      {
+        "q": "What is a hybrid voice agent architecture?",
+        "a": "In one hybrid design, a speech-native realtime model listens to the user's audio but returns text instead of audio. The application validates that text and sends it to a separate TTS engine, and an optional independent STT can supply captions or an audit transcript. This keeps acoustic understanding on the input side and gives more control over voice and wording, but not every realtime model supports it."
+      },
+      {
+        "q": "What does full-duplex mean in realtime voice AI?",
+        "a": "A full-duplex model can process incoming speech while it is still producing outgoing speech, provided its implementation and session behavior support that overlap. Turn-based realtime models generally wait for the user to finish before replying, though they can still support interruptions. Realtime does not automatically mean full-duplex, and full-duplex support is a separate property from support for a hybrid setup with separate TTS."
+      },
+      {
+        "q": "How do I measure voice agent latency correctly?",
+        "a": "Measure the time from the end of the user's speech to the first audible agent audio, because that is what the user actually waits for. It differs from LLM time to first token, TTS time to first byte, or the first bytes reaching the client. Report P50 and P95 alongside interruption-stop latency, turn detection errors, task completion rate and cost per successful task, under realistic conditions."
+      },
+      {
+        "q": "Why does my voice agent keep talking after the user interrupts?",
+        "a": "Interruption handling depends on the whole system, not just the model. When the user barges in, the client has to stop playback and clear queued audio, notify the orchestrator, cancel or truncate generation where the API supports it, and reconcile history with what was actually played. A VAD trigger alone does not prove interruptions work well, so test the specific API and client you use."
+      }
+    ],
+    "ar": [
+      {
+        "q": "ما الفرق بين معمارية Cascaded ونموذج Speech-to-Speech في الوكلاء الصوتيين؟",
+        "a": "في معمارية Cascaded تعمل ثلاثة مكونات على التوالي: STT يحوّل الكلام إلى نص، ثم LLM يفهم النص ويصوغ الرد، ثم TTS ينطقه. أما نموذج Speech-to-Speech فيستقبل الصوت ويولّد صوتاً عبر واجهة آنية واحدة. تمنحك الأولى حدوداً نصية واضحة تسهّل تتبع الأخطاء والتحكم بالصياغة، بينما قد يحافظ الثاني على النبرة والتردد والإيقاع ويقلل التسليم بين المراحل."
+      },
+      {
+        "q": "هل خط STT ثم LLM ثم TTS أبطأ دائماً من Speech-to-Speech؟",
+        "a": "ليس بالضرورة. صحيح أن المعمارية المتسلسلة فيها مراحل تسليم أكثر، لكن العمل بأسلوب Streaming يسمح بتداخل المراحل بدل أن تنتظر كل مرحلة انتهاء التي قبلها. وقد يقلل Speech-to-Speech عدد التحويلات، غير أن زمن الاستجابة الفعلي يتوقف على النموذج واللغة والشبكة والجهاز ونمط المحادثة. لا يمكن استنتاج «الأسرع» أو «الأرخص» من اسم المعمارية، فقِس على سيناريوهاتك أنت."
+      },
+      {
+        "q": "ما هي المعمارية الهجينة (Hybrid) في الوكيل الصوتي؟",
+        "a": "في أحد تصاميم Hybrid يستمع نموذج صوتي آني إلى صوت المستخدم، لكنه يُخرج نصاً بدلاً من الصوت. يتحقق التطبيق من هذا النص ثم يرسله إلى محرك TTS مستقل، ويمكن إضافة STT منفصل لعرض النص المباشر أو لسجل التدقيق. بهذا يبقى فهم الصوت عند المدخل مع تحكم أكبر بصوت الرد وألفاظه، لكن هذا النمط غير مدعوم في كل نماذج Realtime."
+      },
+      {
+        "q": "ما معنى Full-Duplex في الذكاء الاصطناعي الصوتي الآني؟",
+        "a": "النموذج Full-Duplex يستطيع معالجة كلام المستخدم الوارد بينما يُنتج كلامه هو، إذا كان تنفيذه وسلوك الجلسة يدعمان هذا التداخل فعلاً. أما نماذج Turn-based Realtime فتنتظر عادة انتهاء المستخدم من الكلام قبل الرد، مع إمكان دعم المقاطعات. كلمة Realtime لا تعني Full-Duplex تلقائياً، ودعم Full-Duplex خاصية منفصلة عن دعم تصميم Hybrid مع TTS مستقل."
+      },
+      {
+        "q": "كيف أقيس زمن استجابة الوكيل الصوتي (Latency) بطريقة صحيحة؟",
+        "a": "قِس الزمن من لحظة انتهاء المستخدم من الكلام حتى أول صوت مسموع من الوكيل، فهذا ما ينتظره المستخدم فعلاً. وهو يختلف عن LLM TTFT وTTS TTFB وعن وصول أول حزمة بيانات إلى العميل. سجّل قيم P50 وP95، وزمن توقف الصوت بعد المقاطعة، وأخطاء كشف نهاية الدور، ومعدل إتمام المهام، وتكلفة كل مهمة ناجحة، في ظروف استخدام واقعية."
+      },
+      {
+        "q": "لماذا يستمر الوكيل الصوتي في الكلام بعد أن يقاطعه المستخدم؟",
+        "a": "لأن المقاطعة مسؤولية المنظومة كلها لا النموذج وحده. عندما يقاطع المستخدم يجب أن يوقف العميل التشغيل ويحذف الصوت المنتظر، ثم يُبلغ منسّق الجلسة (Orchestrator) الذي يلغي التوليد أو يقتطعه حين تدعم الواجهة ذلك، ويطابق سجل المحادثة مع ما شُغّل فعلاً. كشف VAD وحده لا يثبت أن المقاطعة تعمل جيداً، فاختبر الواجهة والعميل اللذين تستخدمهما."
+      }
+    ]
+  }
+}

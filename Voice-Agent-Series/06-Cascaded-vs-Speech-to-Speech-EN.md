@@ -33,7 +33,7 @@ cover: "assets/voice-architectures-cover.png"
 ![[assets/voice-architectures-cover.png]]
 
 > [!abstract] In one minute
-> In earlier articles, we learned how **STT** turns speech into text, how an **LLM** creates a response, and how **TTS** gives that response a voice. But a voice agent does not always need three separately connected models. This article compares **cascaded STT–LLM–TTS**, **realtime speech-to-speech (S2S)**, and **hybrid** architectures, then shows how to make a decision using product requirements and measurable behavior rather than hype.
+> Earlier articles covered how **STT** turns speech into text, how an **LLM** writes a response, and how **TTS** gives that response a voice, but a voice agent does not always need three separately connected models. This article compares **cascaded STT–LLM–TTS**, **realtime speech-to-speech (S2S)**, and **hybrid** architectures. It then shows how to choose between them from product requirements and measured behavior instead of hype.
 
 ## 1. The question to ask before choosing a model
 
@@ -45,12 +45,12 @@ Imagine a scheduling assistant:
 
 The application must stop its current audio, understand that the time has changed, invalidate any earlier confirmation, and request fresh approval before taking action. You might also need an inspectable transcript to investigate errors.
 
-Now consider a language-learning companion. It is judged on whether it responds to hesitation, emphasis, emotional tone, and overlapping speech naturally—not only on whether it fills a booking form correctly.
+Now consider a language-learning companion. It is judged on how naturally it responds to hesitation, emphasis, emotional tone, and overlapping speech, and only partly on whether it fills in a booking form correctly.
 
-These are different product requirements. They may call for different systems.
+These are different product requirements, and they may call for different systems.
 
 > [!question] The engineering question
-> Do we value explicit stage-level control and auditability most, or do we need direct acoustic understanding and expressive, low-latency interaction? Select an **architecture for the job**, not a model solely because it produced an impressive demo.
+> Do we value explicit stage-level control and auditability most, or do we need direct acoustic understanding and expressive, low-latency interaction? Pick an **architecture for the job** rather than a model chosen only because its demo was impressive.
 
 ## 2. Cascaded architecture: STT → LLM → TTS
 
@@ -73,10 +73,10 @@ A **cascaded pipeline** connects three specialist components: STT produces text 
 
 - **Debuggability:** inspect the transcript, the model's generated response, and the spoken audio separately.
 - **Provider flexibility:** replace an STT or TTS provider without rebuilding the entire interaction model.
-- **Visible text boundaries:** create captions, searchable transcripts, and structured action validation—while remembering that STT can make errors.
+- **Visible text boundaries:** create captions, searchable transcripts, and structured action validation. Keep in mind that STT can make errors.
 - **Script control:** ask a TTS model to read validated wording, especially useful for confirmations or prescribed disclosures.
 
-The tradeoff is additional hand-offs and processing stages. A text transcript may also discard acoustic information such as hesitation, prosody, emphasis, or emotional cues. Additional acoustic classifiers can enrich a cascaded setup, but they add complexity.[^livekit-pipelines]
+The price is more hand-offs and more processing stages. A text transcript may also discard acoustic information such as hesitation, prosody, emphasis, or emotional cues. Additional acoustic classifiers can enrich a cascaded setup, but they add complexity.[^livekit-pipelines]
 
 > [!tip] Cascaded does not mean batch processing
 > A good cascaded agent can be **streaming**: STT streams interim hypotheses, the LLM emits partial output, and TTS begins synthesizing chunks before the whole answer has been written. The stages can overlap in time rather than blocking one another until completion.
@@ -124,7 +124,7 @@ flowchart LR
 
 In one **hybrid** design, a speech-native realtime model receives audio and produces **text output**. The application can validate that text, then send it to a separate TTS engine. An additional STT component may provide captions or an inspectable transcript when the realtime model does not offer adequate interim transcriptions.[^livekit-realtime]
 
-This can preserve input-side acoustic understanding while improving output voice choice and wording control. But it may require more integration work, cost more, and—crucially—is **not supported in the same way by every realtime model**. Full-duplex capability and separate-TTS hybrid support are different properties; check the provider's current implementation before committing to a design.
+This can keep acoustic understanding on the input side while giving you more control over the output voice and wording. It may also mean more integration work and higher cost, and it is **not supported in the same way by every realtime model**. Full-duplex capability and separate-TTS hybrid support are different properties; check the provider's current implementation before committing to a design.
 
 ![[assets/voice-architecture-comparison.png]]
 
@@ -197,12 +197,12 @@ sequenceDiagram
 
 Regardless of the architecture, keep **generated**, **sent**, and **actually played** audio conceptually separate. When a user interrupts, the client may need to stop playback immediately, discard buffered output, notify the orchestrator, and reconcile conversation history. OpenAI Realtime documents `conversation.item.truncate` for synchronizing context with played output, while noting that exact audio-to-text alignment can be imperfect.[^openai-interruptions]
 
-A VAD trigger alone is not proof of excellent interruption behavior. Nor does full-duplex support guarantee that cancelling external audio stops the model's own internal speech generation immediately. Test the specific API and client behavior you are using.[^livekit-realtime]
+A VAD trigger on its own does not prove that interruptions are handled well. Nor does full-duplex support guarantee that cancelling external audio stops the model's own internal speech generation immediately. Test the specific API and client behavior you are using.[^livekit-realtime]
 
 ## 8. Which design fits which product?
 
 **A. Identity verification or other high-assurance workflows**  
-If you need precise confirmations, auditable user-facing text, and independent verification of tool outcomes, start by evaluating a cascaded architecture—or a hybrid model with tightly controlled text output. Architecture alone does not enforce authorization, privacy, or policy compliance.
+If you need precise confirmations, auditable user-facing text, and independent verification of tool outcomes, start by evaluating a cascaded architecture, or a hybrid with tightly controlled text output. Architecture alone does not enforce authorization, privacy, or policy compliance.
 
 **B. Language tutoring or expressive conversation**  
 If hearing hesitation, tone, and overlapping speech is central to the experience, test speech-native realtime models. Evaluate the languages and accents you will actually support, not only polished promotional samples.
@@ -254,7 +254,7 @@ print(trace.interruption_stop_latency_ms) # 110 ms
 
 - [ ] Do users or supervisors need interim captions or reliable textual transcripts?
 - [ ] Must the assistant deliver exact legal, procedural, or confirmation text?
-- [ ] Are emotional tone, timing, and prosody critical to the task?
+- [ ] Are emotional tone, timing, and prosody central to the task?
 - [ ] Must components run locally or be replaceable across providers?
 - [ ] How quickly does playback stop after an interruption?
 - [ ] How do we know how much of an answer the user heard?
@@ -274,7 +274,7 @@ print(trace.interruption_stop_latency_ms) # 110 ms
 
 ## Conclusion
 
-There is no universal winner. **Cascaded pipelines** provide strong modularity and visible boundaries. **Realtime speech-to-speech** can preserve vocal nuance and reduce hand-offs. **Hybrids** may combine acoustic understanding and controlled speech output where supported. The right architecture emerges from testing real tasks and understanding the full audio journey—from the microphone to the user's ear.
+No architecture wins everywhere. **Cascaded pipelines** give you modularity and visible boundaries between stages, while **realtime speech-to-speech** can keep vocal nuance and cut hand-offs. Where the provider supports it, a **hybrid** can pair acoustic understanding with controlled speech output. You find the right choice by testing real tasks and following the audio all the way from the microphone to the user's ear.
 
 **Next (Article 07):** [[07-Build-First-Voice-Agent-with-Pipecat-EN|Your First Voice Agent with Python & Pipecat]]. We will implement a real pipeline and connect the choices discussed here to executable software.
 

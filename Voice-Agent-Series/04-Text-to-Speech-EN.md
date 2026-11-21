@@ -33,7 +33,7 @@ cover: "assets/tts-cover.png"
 ![[assets/tts-cover.png]]
 
 > [!abstract] The one-minute idea
-> In [[03-Speech-to-Text-EN|Article 03]], we explored how a speech recognizer converts audio into text. Now we reverse that direction. How can an agent turn its answer into **speech that is intelligible, natural, low latency, and stoppable on interruption**? Real-world TTS is not merely writing an MP3 file: it also involves pronunciation, prosody, incremental synthesis, audio transport, playback buffers, and cancellation.
+> In [[03-Speech-to-Text-EN|Article 03]], we saw how a speech recognizer turns audio into text; this article goes the other way, from the agent's answer to **speech that is intelligible, natural, low-latency, and stops when the user interrupts**. In a real voice agent, TTS is much more than writing an MP3 file. It covers pronunciation, prosody, incremental synthesis, audio transport, playback buffers, and cancellation.
 
 ## A deceptively simple sentence
 
@@ -41,7 +41,7 @@ Imagine an appointment agent saying:
 
 > “Your appointment is confirmed for Thursday at ten thirty in the morning.”
 
-The information may be correct, but the experience can still fail. The model might pronounce a date ambiguously, speak in a robotic rhythm, wait several seconds before starting, or keep talking after the caller interrupts it. These are different failures involving **language, sound quality, latency, and conversation management**.
+The information may be correct and the experience can still fail. The system might pronounce the date ambiguously, speak in a robotic rhythm, wait several seconds before starting, or keep talking after the caller interrupts it. Each of those is a different kind of failure: **language, sound quality, latency, and conversation management**.
 
 > [!question] Our guiding question
 > How do we take text from an LLM and turn it into audio the user can hear promptly, without sacrificing clarity or the ability to stop speaking?
@@ -111,7 +111,7 @@ Imagine two agents:
 - **Agent A:** Excellent voice quality, but it waits for an entire paragraph before speaking.
 - **Agent B:** Good voice quality, but it begins after the first sensible phrase and continues streaming the answer.
 
-The second may feel more conversational. Yet aggressive early synthesis can make speech fragmented or damage pronunciation. Designing an agent therefore means balancing **naturalness, first-audio latency, and steady playback**.
+Agent B may feel more conversational. Starting early has a cost, though: aggressive early synthesis can fragment the speech or hurt pronunciation. In practice you are trading off **naturalness, first-audio latency, and steady playback**.
 
 ### Batch versus streaming TTS
 
@@ -153,7 +153,7 @@ An LLM may stream text like:
 
 `"Your" → " appointment" → " is" → " confirmed" → "."`
 
-Forwarding each token separately can destroy prosody, increase request overhead, and create audible gaps. Often, it is better to wait for a **linguistically coherent phrase** or short sentence, while imposing a maximum waiting period. Optimal granularity depends on the synthesis model, language, and latency requirements.
+Forwarding each token separately can destroy prosody, increase request overhead, and create audible gaps. It usually works better to wait for a **linguistically coherent phrase** or short sentence, while imposing a maximum waiting period. Optimal granularity depends on the synthesis model, language, and latency requirements.
 
 ## 5. What does time to first audio actually mean?
 
@@ -199,11 +199,11 @@ flowchart LR
   G -.->|stop or clear| E
 ```
 
-Crucially, **generated**, **queued**, **sent**, and **played** are different states. A robust agent tracks the playback cursor where possible and prevents obsolete audio from continuing after a new turn starts. We will examine playback-aware interruption in Article 10.
+Keep in mind that **generated**, **queued**, **sent**, and **played** are four different states. A well-built agent tracks the playback cursor where possible and stops obsolete audio from continuing after a new turn starts. We will examine playback-aware interruption in Article 10.
 
 ## 7. Your first local TTS experiment with Piper
 
-[Piper](https://github.com/OHF-Voice/piper1-gpl) is a local neural text-to-speech engine. Its Python interface can produce WAV files or iterable audio chunks. Once a voice has been downloaded, synthesis does not require a cloud API key.[^piper-readme][^piper-py]
+[Piper](https://github.com/OHF-Voice/piper1-gpl) is a local neural text-to-speech engine. Its Python interface can write WAV files or yield audio chunks you iterate over. Once a voice has been downloaded, synthesis does not need a cloud API key.[^piper-readme][^piper-py]
 
 > [!important] Practical prerequisites
 > This experiment **requires installing Piper and downloading a voice model**. The example uses an English voice documented by the project; it does **not** imply that this voice supports Arabic. Check the available voices and **both engine and voice licenses** before distribution or commercial use.
@@ -260,11 +260,11 @@ python -m unittest discover -s examples -p 'test_*.py' -v
 | **Runtime and cost** | Can it run locally? What hardware, connectivity, and quotas are required? |
 | **Privacy and licensing** | Who receives the text and audio, and what rights govern the voice? |
 
-For local use, Piper is one possible starting point. Cloud providers require careful reading of their **current** API contracts. **As of November 21, 2026**, OpenAI's official TTS guide says `tts-1`, `tts-1-hd`, and `gpt-4o-mini-tts` are scheduled for shutdown on **January 6, 2027**, with a migration path to a different Realtime API workflow. We therefore avoid building the core lab around those sunset models.[^openai-tts]
+For local work, Piper is one reasonable starting point. With cloud providers, read the **current** API contract carefully. **As of November 21, 2026**, OpenAI's official TTS guide says `tts-1`, `tts-1-hd`, and `gpt-4o-mini-tts` are scheduled for shutdown on **January 6, 2027**, with a migration path to a different Realtime API workflow. We therefore avoid building the core lab around those sunset models.[^openai-tts]
 
 ## 9. Arabic and multilingual speech synthesis
 
-For Arabic-language voice agents, several difficulties deserve individual tests:
+For Arabic voice agents, test each of these difficulties separately:
 
 - **Diacritics and ambiguity:** an unvowelled word can have multiple pronunciations or meanings.
 - **Numbers and dates:** date conventions should be resolved by the application first.
@@ -331,7 +331,7 @@ A single studio-quality sentence is not a benchmark. Evaluate names, digits, lon
 > 6. Design a way to discard remaining output chunks if the user starts speaking again.
 
 > [!success] Key takeaway
-> TTS is not merely “text into an MP3 file.” In a voice agent it is part of a **real-time conversational system**. Good engineering aligns clear input text, correct pronunciation, prosody, early playback, reliable buffering, and interruption controls. The next article addresses **what the agent decides to say and what it remembers**: [[05-LLM-and-Conversation-State-EN|LLM & Conversation State]].
+> In a voice agent, TTS is more than “text into an MP3 file”; it is one part of a **real-time conversational system**. Getting it right takes clear input text, correct pronunciation, good prosody, early playback, reliable buffering, and interruption controls that actually work. The next article addresses **what the agent decides to say and what it remembers**: [[05-LLM-and-Conversation-State-EN|LLM & Conversation State]].
 
 ---
 

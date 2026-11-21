@@ -1,0 +1,96 @@
+{
+  "slug": "speech-to-text",
+  "keywords": [
+    "speech to text",
+    "what is automatic speech recognition",
+    "streaming speech to text",
+    "partial vs final transcript",
+    "word error rate",
+    "how to calculate WER",
+    "whisper speech to text python",
+    "faster-whisper tutorial",
+    "speech to text for voice agents",
+    "ASR vs STT"
+  ],
+  "keywords_ar": [
+    "تحويل الكلام إلى نص",
+    "التعرف الآلي على الكلام ASR",
+    "تحويل الصوت إلى نص بالعربي",
+    "معدل خطأ الكلمات WER",
+    "Whisper للغة العربية",
+    "تفريغ الصوت إلى نص بايثون",
+    "Speech to Text للوكيل الصوتي"
+  ],
+  "summary": {
+    "en": [
+      "Speech-to-text (ASR) turns audio into a transcript, not into intent; a separate component interprets what the user wants and decides which action to take.",
+      "Streaming STT emits revisable partial hypotheses while the user speaks, so replace them by segment instead of appending each one as new text.",
+      "A final segment is not the end of a user turn, and vendor fields such as Deepgram's is_final and speech_final mean different things.",
+      "WER counts substitutions, deletions and insertions against a reference, yet one wrong date can break a booking while barely moving the score.",
+      "Test names, numbers, dates, dialects and Arabic-English code-switching on consented recordings of your own users instead of trusting aggregate benchmarks.",
+      "Transcribing repeated fixed windows with Whisper or faster-whisper is not the same as a truly incremental streaming recognizer."
+    ],
+    "ar": [
+      "يحوّل STT الصوت إلى نص ولا يفهم النية؛ فهم الطلب واتخاذ القرار مسؤولية مكوّن آخر مثل النموذج اللغوي.",
+      "في التفريغ المتدفق تصل نصوص مؤقتة قابلة للتغيير، فاستبدلها بحسب معرّف المقطع ولا تُلصقها بالنص السابق.",
+      "المقطع النهائي ليس نهاية دور المستخدم، وحقول مثل is_final و speech_final لدى Deepgram لها معانٍ مختلفة وخاصة بهذا المزود.",
+      "يحسب WER الاستبدالات والحذف والإضافات نسبةً إلى المرجع، لكن خطأً واحداً في التاريخ قد يُفسد الحجز مع أن أثره في الرقم صغير.",
+      "اختبر الأسماء والأرقام والتواريخ واللهجات وخلط العربية بالإنجليزية على تسجيلات حقيقية بموافقة أصحابها، بدل الاعتماد على متوسطات عامة منشورة.",
+      "تفريغ نوافذ ثابتة متكررة باستخدام Whisper أو faster-whisper يختلف عن محرك Streaming يُصدر فرضيات متجددة مع وصول الصوت."
+    ]
+  },
+  "faq": {
+    "en": [
+      {
+        "q": "What is speech-to-text (STT), and is it the same as ASR?",
+        "a": "Speech-to-text (STT) and automatic speech recognition (ASR) name the same task: mapping spoken audio to text, sometimes with timestamps, language labels or segments. In a voice agent, STT is usually the first stage, but it only recognizes words. Understanding intent is a separate job for an NLU component or an LLM, and the transcript itself can still be wrong about names, dates and numbers."
+      },
+      {
+        "q": "What's the difference between batch and streaming speech-to-text?",
+        "a": "Batch speech-to-text transcribes a completed recording or clip; some APIs stream the resulting text back, but the audio already exists. Streaming STT receives live audio while the person is speaking and often emits interim hypotheses before final results. Batch is easier to test and reproduce, so it suits interviews, lectures and voicemail. Streaming needs connection, event and timing management, and it is what live voice agents use."
+      },
+      {
+        "q": "What are partial and final transcripts in streaming STT?",
+        "a": "A partial (interim) transcript is a revisable hypothesis that can change as more audio arrives. A final result is, under that provider's contract, settled for a specific region of audio. Track segment IDs or timestamps so each new partial replaces the previous one instead of being appended. A final segment also does not mean the user has finished their turn, so never take irreversible actions based on partials."
+      },
+      {
+        "q": "How do I calculate word error rate (WER) for speech recognition?",
+        "a": "Word error rate is WER = (S + D + I) / N, where S, D and I are substitutions, deletions and insertions, and N is the number of words in the reference transcript. Normalize both texts with a documented policy first. If one word out of five is substituted, WER is 20%. WER can exceed 100% when there are many insertions, and it treats a wrong date the same as a minor error."
+      },
+      {
+        "q": "Why does my voice agent respond before the user has finished speaking?",
+        "a": "Usually because silence was treated as the end of the turn. VAD detects likely speech, endpointing decides where a segment boundary goes, and turn detection estimates whether the user will continue. A short pause after \"I'd like an appointment on...\" is silence, not a finished request. Keep final segments, turn completion and tool execution as separate events, and do not respond only because silence crossed a fixed threshold."
+      },
+      {
+        "q": "Should I use Whisper locally or a cloud streaming STT service?",
+        "a": "Local models such as Whisper or faster-whisper give you more control over data and can run offline once the model weights are downloaded, but you own compute, model files and monitoring. Managed streaming services usually deliver interim results through events, with usage-based pricing and provider policies. Transcribing short fixed windows locally is not true incremental streaming. Compare both on your own audio: dialects, names, noise and code-switching."
+      }
+    ],
+    "ar": [
+      {
+        "q": "ما هو تحويل الكلام إلى نص (Speech-to-Text)، وهل هو نفسه ASR؟",
+        "a": "تحويل الكلام إلى نص (STT) والتعرف الآلي على الكلام (ASR) اسمان للمهمة نفسها: تحويل الصوت المنطوق إلى نص، وأحياناً مع طوابع زمنية أو حدود مقاطع أو وسم للغة. وهو غالباً أول مرحلة في الوكيل الصوتي، لكنه يتعرف على الكلمات فقط، أما فهم نية المستخدم فمهمة مكوّن آخر مثل النموذج اللغوي. والنص الناتج نفسه قد يخطئ في الأسماء والتواريخ والأرقام."
+      },
+      {
+        "q": "ما الفرق بين التفريغ الدفعي (Batch) والتفريغ المتدفق (Streaming STT)؟",
+        "a": "التفريغ الدفعي يعالج تسجيلاً أو مقطعاً مكتملاً، وقد تُرجع بعض الواجهات النص تدريجياً، لكن الصوت نفسه جاهز مسبقاً. أما Streaming STT فيستقبل الصوت الحي أثناء الكلام، وكثيراً ما يُصدر فرضيات مؤقتة قبل النتائج النهائية. الأول أسهل في الاختبار وإعادة التجربة ويناسب المقابلات والمحاضرات والرسائل الصوتية، والثاني يحتاج إلى إدارة الاتصال والأحداث والتوقيت، وهو ما يستخدمه الوكيل الصوتي المباشر."
+      },
+      {
+        "q": "ما الفرق بين النص المؤقت (Partial) والنص النهائي (Final) في STT؟",
+        "a": "النص المؤقت فرضية قابلة للتغيير مع وصول مزيد من الصوت، أما النص النهائي فنتيجة ثبّتتها الخدمة لجزء معين من الصوت بحسب عقدها. تتبّع معرّف المقطع أو الطوابع الزمنية كي يحل كل Partial جديد محل ما قبله بدل أن يُضاف إليه فتتكرر الكلمات. والمقطع النهائي لا يعني أن المستخدم أنهى دوره، لذلك لا تنفّذ إجراءً لا رجعة فيه اعتماداً على نص مؤقت."
+      },
+      {
+        "q": "كيف أحسب معدل خطأ الكلمات (WER) في التعرف على الكلام؟",
+        "a": "يُحسب معدل خطأ الكلمات بالعلاقة WER = (S + D + I) / N، إذ تمثل S عدد الاستبدالات، و D عدد الكلمات المحذوفة، و I عدد الكلمات المضافة، و N عدد كلمات النص المرجعي، بعد تطبيع النصين بطريقة موثّقة. في جملة «أريد موعد يوم الثلاثاء» يعطي استبدال كلمة واحدة WER = 25%. وقد يتجاوز المعدل 100% عند كثرة الإضافات، ولا يفرّق بين خطأ في تاريخ وخطأ بسيط."
+      },
+      {
+        "q": "لماذا يرد الوكيل الصوتي قبل أن ينهي المستخدم كلامه؟",
+        "a": "السبب غالباً أن الصمت عومل كأنه نهاية الدور. كشف النشاط الصوتي (VAD) يحدد وجود كلام محتمل، و Endpointing يحدد حدود المقطع، أما Turn Detection فيقدّر هل سيكمل المستخدم كلامه. فالتوقف بعد «أريد حجز موعد يوم...» صمت وليس طلباً مكتملاً. افصل بين المقطع النهائي ونهاية الدور وتنفيذ الأداة، ولا تجعل الوكيل يرد لمجرد أن الصمت تجاوز عتبة ثابتة."
+      },
+      {
+        "q": "هل أستخدم Whisper محلياً أم خدمة STT سحابية متدفقة؟",
+        "a": "النماذج المحلية مثل Whisper و faster-whisper تمنحك تحكماً أكبر بالبيانات، ويمكن تشغيلها دون إنترنت بعد تنزيل أوزان النموذج، لكنك تتولى الحوسبة وملفات النموذج والمراقبة. أما الخدمات المُدارة فتوفر النتائج المؤقتة غالباً عبر الأحداث، بكلفة مرتبطة بالاستخدام ووفق سياسات المزود. وتفريغ نوافذ قصيرة ثابتة محلياً ليس Streaming حقيقياً. قارن الخيارين على تسجيلاتك أنت: اللهجات والأسماء والضجيج وخلط اللغات."
+      }
+    ]
+  }
+}

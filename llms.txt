@@ -15,13 +15,25 @@
 - [English profile](https://ibrahim-dev.me/): experience, community, selected work, talks, Q&A
 - [Arabic profile](https://ibrahim-dev.me/ar/): الصفحة العربية
 
-## Articles — Voice AI Engineering series (English / العربية)
-- [Articles hub](https://ibrahim-dev.me/articles/) · [صفحة المقالات](https://ibrahim-dev.me/ar/articles/)
-- [01 · What Is a Voice AI Agent?](https://ibrahim-dev.me/articles/what-is-a-voice-ai-agent/) · [ما هو الوكيل الصوتي الذكي؟](https://ibrahim-dev.me/ar/articles/what-is-a-voice-ai-agent/)
-- [02 · Digital Audio for Developers](https://ibrahim-dev.me/articles/digital-audio-for-developers/) · [الصوت الرقمي للمطورين](https://ibrahim-dev.me/ar/articles/digital-audio-for-developers/)
-- [03 · Speech-to-Text](https://ibrahim-dev.me/articles/speech-to-text/) · [تحويل الكلام إلى نص](https://ibrahim-dev.me/ar/articles/speech-to-text/)
-- [04 · Text-to-Speech](https://ibrahim-dev.me/articles/text-to-speech/) · [تحويل النص إلى كلام](https://ibrahim-dev.me/ar/articles/text-to-speech/)
-- [05 · LLM & Conversation State](https://ibrahim-dev.me/articles/llm-conversation-state/) · [النموذج اللغوي وحالة المحادثة](https://ibrahim-dev.me/ar/articles/llm-conversation-state/)
+## Articles — Voice AI Engineering: the complete 16-part guide (English / العربية)
+- [Series hub](https://ibrahim-dev.me/articles/) · [صفحة السلسلة](https://ibrahim-dev.me/ar/articles/)
+- [Voice AI glossary](https://ibrahim-dev.me/articles/glossary/) · [مصطلحات الوكلاء الصوتيين](https://ibrahim-dev.me/ar/articles/glossary/)
+- [01 · What Is a Voice AI Agent? From Speech to Natural Conversation](https://ibrahim-dev.me/articles/what-is-a-voice-ai-agent/) · [ما هو الوكيل الصوتي الذكي؟ من الكلام إلى المحادثة الطبيعية](https://ibrahim-dev.me/ar/articles/what-is-a-voice-ai-agent/)
+- [02 · Digital Audio for Developers: The Foundation of Every Voice AI Agent](https://ibrahim-dev.me/articles/digital-audio-for-developers/) · [الصوت الرقمي للمطورين: الأساس الذي يقوم عليه كل Voice AI Agent](https://ibrahim-dev.me/ar/articles/digital-audio-for-developers/)
+- [03 · Speech-to-Text: How Machines Turn Spoken Language into Text](https://ibrahim-dev.me/articles/speech-to-text/) · [من الصوت إلى النص: كيف تتعرف الآلة على كلام الإنسان؟](https://ibrahim-dev.me/ar/articles/speech-to-text/)
+- [04 · Text-to-Speech: How to Make a Voice Agent Sound Natural](https://ibrahim-dev.me/articles/text-to-speech/) · [من النص إلى الصوت: كيف نجعل الوكيل الذكي يتحدث بصورة طبيعية؟](https://ibrahim-dev.me/ar/articles/text-to-speech/)
+- [05 · The Voice Agent's Brain: LLMs and Conversation State](https://ibrahim-dev.me/articles/llm-conversation-state/) · [عقل الوكيل الصوتي: كيف يفهم LLM المحادثة ويحافظ على سياقها؟](https://ibrahim-dev.me/ar/articles/llm-conversation-state/)
+- [06 · Choosing a Voice-Agent Architecture: Cascaded vs Speech-to-Speech](https://ibrahim-dev.me/articles/cascaded-vs-speech-to-speech/) · [كيف نختار معمارية الوكيل الصوتي؟ Cascaded vs Speech-to-Speech](https://ibrahim-dev.me/ar/articles/cascaded-vs-speech-to-speech/)
+- [07 · Build Your First Voice Agent with Python and Pipecat: From Components to Conversation](https://ibrahim-dev.me/articles/build-first-voice-agent-pipecat/) · [ابنِ أول وكيل صوتي باستخدام Python وPipecat: من الفكرة إلى محادثة تعمل](https://ibrahim-dev.me/ar/articles/build-first-voice-agent-pipecat/)
+- [08 · Real-Time Audio Transport for Voice Agents: WebRTC vs WebSockets](https://ibrahim-dev.me/articles/real-time-audio-transport-webrtc-websockets/) · [كيف ينتقل الصوت في الزمن الحقيقي؟ WebRTC مقابل WebSockets في هندسة الوكلاء الصوتيين](https://ibrahim-dev.me/ar/articles/real-time-audio-transport-webrtc-websockets/)
+- [09 · How Does a Voice Agent Know When to Listen and When to Reply? VAD, Endpointing & Turn Detection](https://ibrahim-dev.me/articles/vad-endpointing-turn-detection/) · [كيف يعرف الوكيل الصوتي متى نتحدث ومتى ننتهي؟ VAD وEndpointing وTurn Detection](https://ibrahim-dev.me/ar/articles/vad-endpointing-turn-detection/)
+- [10 · When Users Interrupt: Barge-In, Playback State, and Context Synchronization](https://ibrahim-dev.me/articles/interruptions-barge-in-playback-state/) · [عندما يقاطعنا المستخدم: هندسة المقاطعات ومزامنة الصوت في الوكلاء الصوتيين](https://ibrahim-dev.me/ar/articles/interruptions-barge-in-playback-state/)
+- [11 · Voice Agent Latency Engineering: From First Token to First Audible Response](https://ibrahim-dev.me/articles/latency-streaming-optimization/) · [هندسة السرعة في الوكلاء الصوتيين: قياس Latency وتحسين Streaming](https://ibrahim-dev.me/ar/articles/latency-streaming-optimization/)
+- [12 · Robust Voice AI in the Wild: Noise, Echo, Accents & Recovery](https://ibrahim-dev.me/articles/robust-voice-ai-in-the-wild/) · [الوكيل الصوتي في العالم الحقيقي: الضجيج والصدى واللهجات والتعافي من الأخطاء](https://ibrahim-dev.me/ar/articles/robust-voice-ai-in-the-wild/)
+- [13 · From Conversation to Action: Tools, RAG & Agent Workflows for Voice AI](https://ibrahim-dev.me/articles/tools-rag-agent-workflows/) · [من المحادثة إلى التنفيذ: Tools وRAG وAgent Workflows في الوكلاء الصوتيين](https://ibrahim-dev.me/ar/articles/tools-rag-agent-workflows/)
+- [14 · Voice AI Security, Privacy & Safety: Trust Boundaries, Consent, and Safe Tools](https://ibrahim-dev.me/articles/voice-ai-security-privacy-safety/) · [أمن الوكلاء الصوتيين وخصوصيتهم: من إذن الميكروفون إلى تنفيذ الأدوات بأمان](https://ibrahim-dev.me/ar/articles/voice-ai-security-privacy-safety/)
+- [15 · How to Evaluate, Observe, and Deploy a Voice AI Agent](https://ibrahim-dev.me/articles/evaluation-observability-deployment/) · [كيف نقيس جودة الوكيل الصوتي ونراقبه وننشره بأمان؟](https://ibrahim-dev.me/ar/articles/evaluation-observability-deployment/)
+- [16 · Capstone: Engineering a Complete Voice AI Agent — From Browser to Production](https://ibrahim-dev.me/articles/production-voice-agent-capstone/) · [مشروع التخرج: هندسة وكيل صوتي متكامل من المتصفح إلى الإنتاج](https://ibrahim-dev.me/ar/articles/production-voice-agent-capstone/)
 - RSS: https://ibrahim-dev.me/articles/feed.xml · https://ibrahim-dev.me/ar/articles/feed.xml
 
 ## Contact

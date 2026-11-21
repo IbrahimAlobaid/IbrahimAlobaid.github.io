@@ -31,20 +31,20 @@ cover: "assets/digital-audio-cover.png"
 ![[assets/digital-audio-cover.png]]
 
 > [!abstract] The idea in one minute
-> Before your user's speech reaches a speech recognition model, it has already become numbers. Without a working understanding of **sampling, sample rate, bit depth, PCM, channels, chunks, and codecs**, you can misinterpret those numbers, feed a model the wrong audio format, or add avoidable latency. This article gives you the signal-processing foundation you need to build reliable real-time voice agents.
+> Before your user's speech reaches a speech recognition model, it has already become numbers. Without a working understanding of **sampling, sample rate, bit depth, PCM, channels, chunks, and codecs**, you can misinterpret those numbers, feed a model the wrong audio format, or add avoidable latency. This article covers the signal-processing basics that every reliable real-time voice agent depends on.
 
 ## The opening problem: why does good-sounding audio fail inside an agent?
 
 Suppose you record a clear sentence: “Hello, I'd like to check my appointment.”
 
-It plays perfectly on your laptop. Yet when you send it to an STT service, the transcript is nonsense—or the audio sounds strangely slow or fast—or the service rejects the request entirely.
+It plays perfectly on your laptop. Yet when you send it to an STT service, the transcript is nonsense, the audio sounds strangely slow or fast, or the service rejects the request entirely.
 
-The model may be working correctly. The issue may be that **you labeled a 48 kHz stream as 16 kHz**, or you sent Opus-compressed audio to an endpoint that expects raw PCM. A speech model cannot compensate for an arbitrary format mismatch.
+The model may be working fine. The problem could be that **you labeled a 48 kHz stream as 16 kHz**, or you sent Opus-compressed audio to an endpoint that expects raw PCM. A speech model cannot compensate for an arbitrary format mismatch.
 
-**Our first engineering principle:** Audio is not just a file. It is a time-ordered signal with an agreed representation, channel layout, encoding, and timing.
+**Our first engineering principle:** Audio is more than a file. It is a time-ordered signal with an agreed representation, channel layout, encoding, and timing.
 
 > [!question] The question we're answering
-> What happens between the microphone and an AI model—and how can we verify that the bytes we send actually represent the intended speech?
+> What happens between the microphone and an AI model, and how can we verify that the bytes we send actually represent the intended speech?
 
 ## 1. Turning sound waves into numbers
 
@@ -56,12 +56,12 @@ A useful mental model is to take regularly spaced “snapshots” of the signal'
 
 *Figure 1 — The cyan curve is a continuous waveform; the yellow dots are discrete measurements. This is a conceptual illustration, not an actual speech recording.*
 
-Two ideas are involved:
+Digitizing a signal involves two separate steps:
 
 1. **Sampling** decides *when* signal measurements are taken.
 2. **Quantization** decides which digital value represents each measured amplitude.
 
-To store or transmit the results, we also need an agreed byte representation. That's where **PCM** comes in.
+To store or transmit the results, we also need an agreed byte representation. For uncompressed audio, that representation is usually **PCM**.
 
 ## 2. Sample rate: how often are we measuring the signal?
 
@@ -78,12 +78,12 @@ A **one-second, mono recording at 16 kHz** contains **16,000 samples**.
 
 ### Why not always use 192 kHz?
 
-A higher rate provides more samples, but not necessarily better recognition. The relevant factors include signal bandwidth, input quality, model requirements, processing cost, and whether the pipeline is correctly resampling.
+A higher rate gives you more samples, but not necessarily better recognition. What matters is signal bandwidth, input quality, model requirements, processing cost, and whether the pipeline is correctly resampling.
 
 The Nyquist principle says that a sufficiently band-limited signal requires a sampling rate greater than twice its highest frequency for ideal reconstruction, given appropriate anti-aliasing filtering. At 16 kHz, the theoretical Nyquist frequency is 8 kHz. That does *not* mean that every 16 kHz recording perfectly preserves all frequencies below 8 kHz.[^mdn-audio]
 
 > [!warning] A common engineering mistake
-> If the source is 48 kHz, replacing its metadata with `sample_rate = 16000` does **not** resample it. You have changed how its timing is interpreted, not the samples themselves. Use an actual resampling process with appropriate filtering.
+> If the source is 48 kHz, replacing its metadata with `sample_rate = 16000` does **not** resample it. The samples stay exactly the same; only the way their timing is interpreted changes. Use an actual resampling process with appropriate filtering.
 
 ## 3. Bit depth, quantization, and PCM
 
@@ -100,16 +100,16 @@ The Nyquist principle says that a sufficiently band-limited signal requires a sa
 
 **PCM** stands for **Pulse-Code Modulation**. It represents the digital values of a sampled signal. A statement like `PCM / 16-bit / mono / 16 kHz` describes essential aspects of an audio stream. You may also need to specify **byte order (endianness)** and **channel ordering**.
 
-A common local representation for uncompressed speech data is **signed 16-bit little-endian PCM**, but you should not assume that every API accepts this format. The endpoint's published contract is authoritative.
+A common local representation for uncompressed speech data is **signed 16-bit little-endian PCM**, but don't assume every API accepts it. What the endpoint documents is what counts.
 
 ## 4. Mono vs. stereo: sample frames matter
 
 - **Mono:** One sample at a given time instant.
-- **Stereo:** Two samples—one per channel—at that time instant.
+- **Stereo:** Two samples at that time instant, one per channel.
 
-This distinction leads to an important technical term: a **sample frame** is the set of values for *all channels* at a single time. In stereo, one frame therefore contains two individual samples. The Web Audio documentation uses the same distinction.[^mdn-audio]
+This is where the term **sample frame** comes from. A sample frame is the set of values for *all channels* at a single time. In stereo, one frame therefore contains two individual samples. The Web Audio documentation uses the same distinction.[^mdn-audio]
 
-For a single-speaker voice agent, mono is often sufficient. But converting stereo to mono requires deliberate downmixing. Dropping every other **byte** is not downmixing; it corrupts the sample representation.
+For a single-speaker voice agent, mono is often enough. Converting stereo to mono, however, requires deliberate downmixing. Dropping every other **byte** is not downmixing; it corrupts the sample representation.
 
 ## 5. Calculate the size of uncompressed audio
 
@@ -119,7 +119,7 @@ For fixed-width integer PCM, the payload size is:
 
 One second of `16 kHz / mono / 16-bit PCM`:
 
-`1 × 16000 × 1 × 2 = 32000 bytes` (approximately **32 KB**, using decimal units).
+`1 × 16000 × 1 × 2 = 32000 bytes` (exactly **32 kB** in decimal units, or about 31.25 KiB).
 
 One second of `48 kHz / stereo / 16-bit PCM`:
 
@@ -134,11 +134,11 @@ These values describe **raw PCM data**. They exclude WAV headers, transport over
 | 48 kHz, mono, 16-bit | 20 ms | 1,920 B |
 | 48 kHz, stereo, 16-bit | 20 ms | 3,840 B |
 
-This simple calculation is surprisingly useful when debugging audio buffers, request limits, and packet throughput.
+Keep this calculation close at hand when debugging audio buffers, request limits, and packet throughput.
 
 ## 6. PCM vs. WAV vs. Opus: three different layers
 
-These terms are not interchangeable:
+These three terms are often used as if they meant the same thing. They don't:
 
 | Layer | Example | Purpose |
 |---|---|---|
@@ -167,7 +167,7 @@ flowchart LR
 
 ## 7. Audio frames, chunks, and streaming
 
-A real-time voice agent rarely wants to wait for a complete long recording. Instead, it consumes or produces short segments.
+A real-time voice agent rarely wants to wait for a complete long recording. It consumes and produces audio in short segments.
 
 - **Sample:** One channel's numerical amplitude at a given instant.
 - **Sample frame:** All channel samples associated with that instant.
@@ -205,7 +205,7 @@ flowchart TD
     O --> U[Listener]
 ```
 
-*Figure 5 — Format compatibility is a correctness requirement, not a cosmetic implementation detail.*
+*Figure 5 — If the format does not match, the pipeline is wrong, so treat format compatibility as a correctness requirement.*
 
 | Symptom | Possible cause | What to check |
 |---|---|---|
@@ -231,7 +231,7 @@ python examples/digital_audio_lab.py
 python -m unittest discover -s examples -p 'test_*.py' -v
 ```
 
-The core inspection is straightforward:
+The core of the inspection takes only a few lines:
 
 ```python
 import wave
@@ -252,7 +252,7 @@ print(duration_s, len(first_chunk))
 # 1.0 640
 ```
 
-Those numbers describe the generated demo file, not arbitrary WAV files. This exercise deliberately supports uncompressed **mono signed 16-bit PCM WAV** only, rather than silently misinterpreting other encodings.[^python-wave]
+Those numbers describe the generated demo file, not arbitrary WAV files. The exercise deliberately accepts only uncompressed **mono signed 16-bit PCM WAV**, so that other encodings are rejected instead of being silently misread.[^python-wave]
 
 ```mermaid
 sequenceDiagram
@@ -300,7 +300,7 @@ Neither is a substitute for **voice activity detection**. A loud fan may produce
 
 ## Conclusion
 
-Voice-agent engineering doesn't begin with an impressive LLM prompt. It begins with reliable input and output streams. Your models operate on data whose interpretation depends on sampling, formats, and timing. When these assumptions are wrong, even an excellent model can appear broken.
+Voice-agent engineering starts with reliable input and output streams, well before anyone writes an LLM prompt. Your models operate on data whose interpretation depends on sampling, formats, and timing. When these assumptions are wrong, even an excellent model can appear broken.
 
 **Next: Article 03 — Speech-to-Text (STT).** We'll build on these ideas to explain how streaming audio becomes words, why **partial** and **final transcripts** differ, and how noise, accents, and latency shape recognition quality.
 

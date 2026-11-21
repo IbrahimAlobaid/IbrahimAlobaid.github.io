@@ -4,15 +4,103 @@
   <title>Ibrahim Alobaid — Articles</title>
   <link>https://ibrahim-dev.me/articles/</link>
   <atom:link href="https://ibrahim-dev.me/articles/feed.xml" rel="self" type="application/rss+xml" />
-  <description>A progressive engineering series on building natural, interruption-aware, production-ready voice AI agents — from digital audio and speech recognition to LLM conversation state.</description>
+  <description>A complete 16-part engineering guide to voice AI agents: digital audio, speech-to-text, text-to-speech, LLM conversation state, real-time transport, turn detection, interruptions, latency, tools and RAG, security, evaluation and a production capstone.</description>
   <language>en</language>
-  <lastBuildDate>Sat, 21 Nov 2026 02:10:47 +0000</lastBuildDate>
+  <lastBuildDate>Sat, 21 Nov 2026 04:24:14 +0000</lastBuildDate>
+  <item>
+    <title>Capstone: Engineering a Complete Voice AI Agent — From Browser to Production</title>
+    <link>https://ibrahim-dev.me/articles/production-voice-agent-capstone/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/articles/production-voice-agent-capstone/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>Over the previous 15 articles we covered audio fundamentals, STT, LLMs, TTS, WebRTC, interruptions, tool execution, privacy and production evaluation. This final article puts those pieces together in a fictional scheduling voice assistant that listens in a browser…</description>
+    <category>Voice AI Engineering</category>
+  </item>
+  <item>
+    <title>How to Evaluate, Observe, and Deploy a Voice AI Agent</title>
+    <link>https://ibrahim-dev.me/articles/evaluation-observability-deployment/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/articles/evaluation-observability-deployment/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>A voice agent that works in a local demo is not yet ready for real callers. Under real traffic it can lose a WebRTC connection, stall during TTS playback, misread a correction, or repeat an external action after a reconnect.</description>
+    <category>Voice AI Engineering</category>
+  </item>
+  <item>
+    <title>Voice AI Security, Privacy &amp; Safety: Trust Boundaries, Consent, and Safe Tools</title>
+    <link>https://ibrahim-dev.me/articles/voice-ai-security-privacy-safety/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/articles/voice-ai-security-privacy-safety/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>A user talks into a microphone, a speech provider transcribes the audio, the model reads documents and conversation history, and a tool can change an external system. Making sure the right user authorized each action, that sensitive data is not kept without need…</description>
+    <category>Voice AI Engineering</category>
+  </item>
+  <item>
+    <title>From Conversation to Action: Tools, RAG &amp; Agent Workflows for Voice AI</title>
+    <link>https://ibrahim-dev.me/articles/tools-rag-agent-workflows/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/articles/tools-rag-agent-workflows/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>When a user asks, “What is your cancellation policy?”, the agent needs reliable evidence. When they say, “Book an appointment at ten tomorrow,” it has to take an action in a real system.</description>
+    <category>Voice AI Engineering</category>
+  </item>
+  <item>
+    <title>Robust Voice AI in the Wild: Noise, Echo, Accents &amp; Recovery</title>
+    <link>https://ibrahim-dev.me/articles/robust-voice-ai-in-the-wild/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/articles/robust-voice-ai-in-the-wild/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>A voice agent that works well with a headset in a quiet demo room can break down once someone uses it near a road, a second person speaks, its own output leaks into the microphone, the user switches languages mid-sentence, or the network drops just as a reservation is being confirmed.</description>
+    <category>Voice AI Engineering</category>
+  </item>
+  <item>
+    <title>Voice Agent Latency Engineering: From First Token to First Audible Response</title>
+    <link>https://ibrahim-dev.me/articles/latency-streaming-optimization/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/articles/latency-streaming-optimization/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>Your LLM returns its first token quickly and your TTS provider starts sending audio promptly, yet the agent still feels sluggish. This article works out which latency to measure, where the waiting accumulates between the end of the user&#x27;s speech and the first audible reply…</description>
+    <category>Voice AI Engineering</category>
+  </item>
+  <item>
+    <title>When Users Interrupt: Barge-In, Playback State, and Context Synchronization</title>
+    <link>https://ibrahim-dev.me/articles/interruptions-barge-in-playback-state/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/articles/interruptions-barge-in-playback-state/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>When a user starts talking while the agent is still speaking, calling stop() on the audio player is not enough. Asynchronous generation, audio queues, client playback, cancellation, and conversation state all have to be coordinated so the agent never treats unplayed words as spoken.</description>
+    <category>Voice AI Engineering</category>
+  </item>
+  <item>
+    <title>How Does a Voice Agent Know When to Listen and When to Reply? VAD, Endpointing &amp; Turn Detection</title>
+    <link>https://ibrahim-dev.me/articles/vad-endpointing-turn-detection/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/articles/vad-endpointing-turn-detection/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>A voice agent can tell when its microphone is picking up speech, but that alone does not tell it whether the speaker has finished their thought. This article separates Voice Activity Detection (VAD), endpointing, and turn detection…</description>
+    <category>Voice AI Engineering</category>
+  </item>
+  <item>
+    <title>Real-Time Audio Transport for Voice Agents: WebRTC vs WebSockets</title>
+    <link>https://ibrahim-dev.me/articles/real-time-audio-transport-webrtc-websockets/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/articles/real-time-audio-transport-webrtc-websockets/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>A voice agent with good STT, LLM and TTS models can still feel slow or choppy when its audio arrives late or unevenly, and the cause is often the real-time transport layer. This article compares WebRTC and WebSockets for voice agents, explains ICE/STUN/TURN…</description>
+    <category>Voice AI Engineering</category>
+  </item>
+  <item>
+    <title>Build Your First Voice Agent with Python and Pipecat: From Components to Conversation</title>
+    <link>https://ibrahim-dev.me/articles/build-first-voice-agent-pipecat/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/articles/build-first-voice-agent-pipecat/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>This article wires speech-to-text (STT), a language model (LLM) and text-to-speech (TTS) into a first browser-based voice agent: you speak into the microphone, and the agent transcribes what you said, generates an answer and speaks it back.</description>
+    <category>Voice AI Engineering</category>
+  </item>
+  <item>
+    <title>Choosing a Voice-Agent Architecture: Cascaded vs Speech-to-Speech</title>
+    <link>https://ibrahim-dev.me/articles/cascaded-vs-speech-to-speech/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/articles/cascaded-vs-speech-to-speech/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>Earlier articles covered how STT turns speech into text, how an LLM writes a response, and how TTS gives that response a voice, but a voice agent does not always need three separately connected models.</description>
+    <category>Voice AI Engineering</category>
+  </item>
   <item>
     <title>The Voice Agent&#x27;s Brain: LLMs and Conversation State</title>
     <link>https://ibrahim-dev.me/articles/llm-conversation-state/</link>
     <guid isPermaLink="true">https://ibrahim-dev.me/articles/llm-conversation-state/</guid>
     <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
-    <description>We now know how STT transcribes speech and how TTS speaks a reply. Between those stages sits the large language model (LLM). It interprets what the user wants and produces an appropriate response.</description>
+    <description>The previous two articles covered how STT transcribes speech and how TTS speaks a reply. Between them sits the large language model (LLM), which works out what the user wants and decides how to answer.</description>
     <category>Voice AI Engineering</category>
   </item>
   <item>
@@ -20,7 +108,7 @@
     <link>https://ibrahim-dev.me/articles/text-to-speech/</link>
     <guid isPermaLink="true">https://ibrahim-dev.me/articles/text-to-speech/</guid>
     <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
-    <description>In Article 03, we explored how a speech recognizer converts audio into text. Now we reverse that direction. How can an agent turn its answer into speech that is intelligible, natural, low latency…</description>
+    <description>In Article 03, we saw how a speech recognizer turns audio into text; this article goes the other way, from the agent&#x27;s answer to speech that is intelligible, natural, low-latency, and stops when the user interrupts. In a real voice agent, TTS is much more than writing an MP3 file.</description>
     <category>Voice AI Engineering</category>
   </item>
   <item>
@@ -28,7 +116,7 @@
     <link>https://ibrahim-dev.me/articles/speech-to-text/</link>
     <guid isPermaLink="true">https://ibrahim-dev.me/articles/speech-to-text/</guid>
     <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
-    <description>In many voice-agent architectures, the first step toward “understanding speech” is actually Automatic Speech Recognition (ASR): mapping incoming audio to text. That transcript is not an infallible record.</description>
+    <description>In many voice-agent architectures, “understanding speech” starts with Automatic Speech Recognition (ASR), which maps incoming audio to text. That transcript is not an infallible record: it can change while someone is still speaking, and it can get names, dates, numbers, and accented speech wrong.</description>
     <category>Voice AI Engineering</category>
   </item>
   <item>
@@ -44,7 +132,7 @@
     <link>https://ibrahim-dev.me/articles/what-is-a-voice-ai-agent/</link>
     <guid isPermaLink="true">https://ibrahim-dev.me/articles/what-is-a-voice-ai-agent/</guid>
     <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
-    <description>A Voice AI Agent is not simply a speech recognition model, nor is it a synthetic voice reading an LLM&#x27;s answer. It is an end-to-end interactive system that receives audio, interprets a user&#x27;s intent, decides what to do next, responds through speech, and manages timing, context, and interruptions.</description>
+    <description>A Voice AI Agent is an end-to-end interactive system: it receives audio, works out what the user wants, decides what to do next, and answers in speech while managing timing, context, and interruptions. That makes it much more than a speech recognizer or a synthetic voice reading an LLM&#x27;s answer.</description>
     <category>Voice AI Engineering</category>
   </item>
 </channel>

@@ -35,10 +35,10 @@ cover: "assets/evaluation-observability-cover.png"
 ![[assets/evaluation-observability-cover.png]]
 
 > [!abstract] The central argument
-> A voice agent that works in a local demonstration is not necessarily ready to handle real people. Under real traffic, it may lose a WebRTC connection, stall at TTS playback, misunderstand a correction, or repeat an external action after reconnecting. **Production readiness begins before deployment: define success, evaluate it, enforce release gates, instrument the system, and make rollback possible.**
+> A voice agent that works in a local demo is not yet ready for real callers. Under real traffic it can lose a WebRTC connection, stall during TTS playback, misread a correction, or repeat an external action after a reconnect. **Production readiness starts before deployment: define what success means, measure it, enforce release gates, instrument the system, and keep rollback possible.**
 
 > [!warning] Scope and evidence
-> The evaluation datasets, thresholds and figures in this article are **synthetic teaching examples**, not benchmarks of Pipecat, LiveKit, OpenAI, or any provider. The Docker demo is a standalone diagnostics server—not a deployed voice agent. Do not load real patient records, calls, or identifiable user transcripts into this lab.
+> The evaluation datasets, thresholds and figures in this article are **synthetic teaching examples**, not benchmarks of Pipecat, LiveKit, OpenAI, or any provider. The Docker demo is a standalone diagnostics server, not a deployed voice agent. Do not load real patient records, calls, or identifiable user transcripts into this lab.
 
 ## Learning objectives
 
@@ -55,13 +55,13 @@ By the end, you should be able to:
 
 Consider a scheduling agent. In a perfect demo, the caller asks for an appointment tomorrow and receives a coherent response. What happens when the caller changes the date mid-sentence? When STT mishears a number? When a booking completes but the network disconnects before the agent confirms it? Or when the response is accurate but the first audible speech takes several seconds?
 
-The HTTP process may still return status `200` in every case. That is why we must distinguish three questions:
+The HTTP process may still return status `200` in every one of these cases. So we need to keep three questions apart:
 
 - **Does the software run?** Process health, dependency availability, connectivity.
 - **Does the conversation behave correctly?** Intent recognition, turn handling, state and tool use.
 - **Is the behavior reliable and safe enough for the intended users?** Tail latency, recovery, privacy and release safety.
 
-We explored latency in [[11-Latency-and-Streaming-Optimization-EN|Article 11]], tool execution in [[13-Tools-RAG-and-Agent-Workflows-EN|Article 13]], and trust boundaries in [[14-Voice-AI-Security-Privacy-and-Safety-EN|Article 14]]. Now we turn these pieces into a closed engineering loop.
+We explored latency in [[11-Latency-and-Streaming-Optimization-EN|Article 11]], tool execution in [[13-Tools-RAG-and-Agent-Workflows-EN|Article 13]], and trust boundaries in [[14-Voice-AI-Security-Privacy-and-Safety-EN|Article 14]]. This article connects those pieces into one closed engineering loop.
 
 ```mermaid
 flowchart LR
@@ -152,7 +152,7 @@ The **first played-audio latency is 920 ms**, not the sum of all processor delay
 
 *Figure 1 — Synthetic latency waterfall. Values are illustrations, not real vendor measurements.*
 
-Three details matter in actual instrumentation:
+When you instrument a real system, three details matter:
 
 1. **Component latency and user experience are not interchangeable.** Include client buffering, packet delivery and playback acknowledgments where available.
 2. **The average hides slow experiences.** Report P50, P95 and P99 alongside sample counts and measurement windows; pay attention to failures and missing timing events.
@@ -164,7 +164,7 @@ Three details matter in actual instrumentation:
 
 **Logs** record useful discrete events (`session_started`, `tool_denied`, `provider_timeout`, `session_ended`) without routinely storing raw transcripts, audio, secret keys, authentication headers or other unnecessary sensitive content.
 
-**Traces** connect spans across a single turn: endpointing, STT, LLM, tools, TTS, network and client playback. They make it possible to diagnose the actual critical path instead of guessing from a single service average.
+**Traces** connect spans across a single turn: endpointing, STT, LLM, tools, TTS, network and client playback. With them you can find the actual critical path instead of guessing from one service's average.
 
 ```mermaid
 flowchart TB
@@ -196,7 +196,7 @@ OpenTelemetry supplies common tracing, metrics and instrumentation concepts, inc
 
 ## 6. Release quality gates: when *not* to ship
 
-A deployment pipeline needs a small number of hard release conditions. Here is a deliberately illustrative set used by our lab:
+A deployment pipeline needs a small number of hard release conditions. The set below is the illustrative one the lab uses:
 
 | Gate | Example threshold | Reason |
 |---|---:|---|
@@ -213,7 +213,7 @@ These thresholds are **not universal industry requirements**. Set real targets u
 
 *Figure 3 — A passing baseline compared with a deliberately defective synthetic regression set.*
 
-The lab contains 24 passing baseline cases and 8 intentionally regressed cases. The regression set includes authorization and confirmation failures, one privacy leak flag, and high first-played-audio latency. The purpose is to confirm that the **gate blocks release**.
+The lab contains 24 passing baseline cases and 8 intentionally regressed cases. The regression set includes authorization and confirmation failures, one privacy leak flag, and high first-played-audio latency. The point of this set is to check that the **gate blocks the release**.
 
 ## 7. Practical lab: deterministic Python release evaluation
 
@@ -253,7 +253,7 @@ flowchart LR
     CAN --> MON[Monitor and rollback if needed]
 ```
 
-The file `examples/15-deployment-demo/ci-evaluation.yml` shows a GitHub Actions structure for unit checks, the baseline release gate and building an isolated diagnostics image. This is a **template only**: no GitHub workflow was triggered or repository modified. Copy it into `.github/workflows/` only after reviewing paths, permissions, artifact policy and dependency trust. Pin external Actions to reviewed immutable commit hashes and keep `GITHUB_TOKEN` permissions minimal [^gh-actions].
+The file `examples/15-deployment-demo/ci-evaluation.yml` shows a GitHub Actions structure for unit checks, the baseline release gate and building an isolated diagnostics image. Treat it as a **template**: I have not run it as a GitHub workflow against a real repository. Copy it into `.github/workflows/` only after reviewing paths, permissions, artifact policy and dependency trust. Pin external Actions to reviewed immutable commit hashes and keep `GITHUB_TOKEN` permissions minimal [^gh-actions].
 
 ## 9. Deployment: liveness is not agent readiness
 
@@ -279,7 +279,7 @@ docker compose down
 ```
 
 > [!warning] This is not a deployed voice agent
-> The readiness response checks only the demonstration process. It does **not** probe STT, LLM, TTS, WebRTC/TURN, databases or real audio. Docker execution was not verified in this offline environment. A real deployment requires actual dependency checks, authenticated access, resource isolation, secrets management, monitoring, staging and rollback controls.
+> The readiness response checks only the demonstration process. It does **not** probe STT, LLM, TTS, WebRTC/TURN, databases or real audio. I have not verified the Docker build and run steps for this article, so treat the commands above as untested. A real deployment requires actual dependency checks, authenticated access, resource isolation, secrets management, monitoring, staging and rollback controls.
 
 A more complete production plan includes: building an immutable image for a specific commit; promoting a reviewed artifact through a trusted registry; validating backups and restore procedures before disruptive data changes; upgrading staging; testing WebRTC and TURN, all model providers and tool integrations; reviewing risks and approvals; launching a canary; watching SLOs; then continuing or rolling back. Do not assume a database migration can be reversed just because an image tag can.
 
@@ -295,7 +295,7 @@ A more complete production plan includes: building an immutable image for a spec
 | WebRTC quality | RTT, jitter, loss, reconnects | Transport degradation |
 | Privacy and audit | Unauthorized sensitive log exposure | Immediate incident response |
 
-Avoid paging on every tiny fluctuation. Set severity, time windows and a clear owner for each alert; distinguish ordinary transient quality degradation from a security event. A helpful workflow is: **P95 trend → affected release/segment → a privacy-safe session trace → actionable remediation**.
+Avoid paging on every tiny fluctuation. Set severity, time windows and a clear owner for each alert; distinguish ordinary transient quality degradation from a security event. A drill-down path that works well: **P95 trend → affected release/segment → a privacy-safe session trace → actionable remediation**.
 
 Also measure the cost per session or audio minute, concurrent session capacity, model/token and speech usage, TURN egress, and storage footprint. Cost optimization should not silently increase task errors or compromise safety.
 
@@ -330,9 +330,9 @@ As an advanced exercise, instrument your Pipecat project from [[07-Build-First-V
 
 ## Conclusion
 
-**A dependable voice agent is not one that works once; it is one whose behavior can be measured against explicit standards, monitored for degradation, and safely rolled back.** Start from user outcomes, establish evaluation coverage, integrate hard release gates, observe the production path, and keep a concrete response plan.
+**A dependable voice agent is one whose behavior you can measure against explicit standards, watch for degradation, and roll back safely.** Working once in a demo proves very little. Start from user outcomes, build evaluation coverage, wire hard release gates into the pipeline, observe the production path, and keep a concrete response plan ready.
 
-Continue with the completed [[16-Production-Grade-Voice-Agent-Capstone-EN|Article 16 — Voice Agent Capstone Project]], which combines architecture, real-time speech, safe tools, tests, and a roadmap to production.
+The final article, [[16-Production-Grade-Voice-Agent-Capstone-EN|Article 16 — Voice Agent Capstone Project]], puts architecture, real-time speech, safe tools and tests together and ends with a roadmap to production.
 
 ---
 

@@ -61,6 +61,11 @@ UI = {
         "series": "Series", "audience": "Who it's for", "allArticles": "All articles",
         "readArticle": "Read article", "references": "References", "share": "Share",
         "seriesHub": "Series hub", "breadcrumb": "Breadcrumb", "backHome": "Ibrahim Alobaid — home",
+        "summaryTitle": "Key takeaways", "glossary": "Glossary",
+        "glossaryTitle": "Voice AI <em>glossary.</em>",
+        "glossaryLede": "Plain-language definitions of the terms used across the Voice AI Engineering series — each linked to the article that explains it in depth.",
+        "explainedIn": "Explained in Article {n}", "completeSeries": "Complete series · {total} articles",
+        "browseGlossary": "Browse the glossary", "termsCount": "{n} terms", "labCount": "{n} lab files",
         "level_map": {}, "lang_name": "English",
     },
     "ar": {
@@ -85,8 +90,15 @@ UI = {
         "level_map": {
             "Beginner": "مبتدئ", "Beginner to Intermediate": "مبتدئ إلى متوسط",
             "Intermediate": "متوسط", "Advanced": "متقدم",
+            "Intermediate / Advanced": "متوسط إلى متقدم", "Advanced / Production": "متقدم · بيئة الإنتاج",
+            "Advanced / Systems": "متقدم · هندسة الأنظمة", "Advanced / Capstone": "متقدم · مشروع ختامي",
         },
         "lang_name": "العربية",
+        "summaryTitle": "أهم ما في المقالة", "glossary": "المصطلحات",
+        "glossaryTitle": "مصطلحات <em>الوكلاء الصوتيين.</em>",
+        "glossaryLede": "تعريفات واضحة لأهم المصطلحات المستخدمة في سلسلة هندسة الوكلاء الصوتيين، وكل مصطلح مرتبط بالمقالة التي تشرحه بالتفصيل.",
+        "explainedIn": "مشروح في المقالة {n}", "completeSeries": "سلسلة مكتملة · {total} مقالة",
+        "browseGlossary": "تصفح المصطلحات", "termsCount": "{n} مصطلحاً", "labCount": "{n} ملفات للمختبر",
     },
 }
 
@@ -97,6 +109,7 @@ CALLOUT_DEFAULTS = {
     "abstract": ("Summary", "الخلاصة"), "question": ("Question", "سؤال"), "important": ("Important", "مهم"),
     "tip": ("Tip", "نصيحة"), "warning": ("Warning", "تنبيه"), "success": ("Takeaway", "الخلاصة"),
     "info": ("Note", "ملاحظة"), "example": ("Example", "مثال"), "todo": ("Exercise", "تمرين"),
+    "note": ("Note", "ملاحظة"), "caution": ("Caution", "تحذير"), "check": ("Checklist", "قائمة تحقق"),
 }
 
 
@@ -187,6 +200,10 @@ class Article:
     words: int = 0
     minutes: int = 0
     tags: list = field(default_factory=list)
+    lab: list = field(default_factory=list)
+    keywords: list = field(default_factory=list)
+    summary: list = field(default_factory=list)
+    faq: list = field(default_factory=list)
 
     @property
     def path(self) -> str:
@@ -251,6 +268,15 @@ def img_tag(series: dict, name: str, alt: str, sizes: dict, *, eager: bool = Fal
 
 # --------------------------------------------------------------------------- conversion
 def link_for(stem: str, lang: str, series: dict) -> str:
+    if stem.startswith("examples/"):
+        name = stem.split("/", 1)[1].rstrip("/")
+        src = ROOT / series["source_dir"] / "examples" / name
+        if src.is_dir() or not src.suffix:
+            if not src.exists() and (src.with_suffix(".md")).exists():
+                name += ".md"
+            elif src.is_dir():
+                name += ".zip"
+        return f"/articles/code/{series['slug']}/{name}"
     if stem.startswith("00-"):
         return ("/ar" if lang == "ar" else "") + "/articles/#roadmap"
     for a in series["articles"]:
@@ -286,9 +312,9 @@ def preprocess(md: str, lang: str, series: dict, sizes: dict, blocks: list) -> s
     while i < len(lines):
         line = lines[i]
         s = line.strip()
-        if s.startswith("```mermaid") or s == "$$":
+        if s.startswith("```mermaid") or s == "$$" or s == "\\[":
             kind = "mermaid" if s.startswith("```") else "math"
-            end_marker = "```" if kind == "mermaid" else "$$"
+            end_marker = "```" if kind == "mermaid" else ("$$" if s == "$$" else "\\]")
             j = i + 1
             while j < len(lines) and lines[j].strip() != end_marker:
                 j += 1
@@ -309,12 +335,37 @@ def preprocess(md: str, lang: str, series: dict, sizes: dict, blocks: list) -> s
         i += 1
 
     text = "\n".join(out)
-    text = re.sub(
-        r"(?<!!)\[\[([^\]|]+)(?:\|([^\]]+))?\]\]",
-        lambda m: f"[{m.group(2) or m.group(1)}]({link_for(m.group(1).strip(), lang, series)})",
-        text,
-    )
-    return text
+
+    def wiki(m: re.Match) -> str:
+        target, label = m.group(1).strip(), m.group(2) or m.group(1)
+        n = article_number(label) if target.startswith("00-") else None
+        if n and any(a["n"] == n for a in series["articles"]):
+            slug = next(a["slug"] for a in series["articles"] if a["n"] == n)
+            url = ("/ar" if lang == "ar" else "") + f"/articles/{slug}/"
+        else:
+            url = link_for(target, lang, series)
+        return f"[{label}]({url})"
+
+    return re.sub(r"(?<!!)\[\[([^\]|]+)(?:\|([^\]]+))?\]\]", wiki, text)
+
+
+AR_ORDINALS = [
+    ("السادسة عشرة", 16), ("الخامسة عشرة", 15), ("الرابعة عشرة", 14), ("الثالثة عشرة", 13),
+    ("الثانية عشرة", 12), ("الحادية عشرة", 11), ("العاشرة", 10), ("التاسعة", 9), ("الثامنة", 8),
+    ("السابعة", 7), ("السادسة", 6), ("الخامسة", 5), ("الرابعة", 4), ("الثالثة", 3), ("الثانية", 2), ("الأولى", 1),
+]
+
+
+def article_number(label: str) -> int | None:
+    """'Article 09 — …' / 'المقالة 14' / 'المقالة التاسعة' → 9 / 14 / 9. Roadmap links that name an article go to it."""
+    m = re.search(r"(?:Article|المقالة)\s*0?(\d{1,2})\b", label)
+    if m:
+        return int(m.group(1))
+    if "المقالة" in label:
+        for word, n in AR_ORDINALS:
+            if word in label:
+                return n
+    return None
 
 
 def convert_callouts(h: str, lang: str) -> str:
@@ -392,6 +443,60 @@ def finish_html(h: str, art: Article, series: dict, sizes: dict, blocks: list, r
     return h
 
 
+LAB_EXT = (".py", ".md", ".json", ".jsonl", ".wav", ".example", ".yml", ".yaml", ".txt")
+
+
+def find_lab_files(text: str, series: dict) -> list[str]:
+    """Example files/folders an article references (`examples/x.py`, [[examples/x]]). Folders ship as .zip."""
+    ex = ROOT / series["source_dir"] / "examples"
+    found: list[str] = []
+    for m in re.finditer(r"examples/([A-Za-z0-9_.\-]+(?:/[A-Za-z0-9_.\-]+)*)", text):
+        rel = m.group(1).rstrip(".")
+        first = rel.split("/")[0]
+        cand = ex / first
+        if cand.is_dir():
+            name = first + ".zip"
+        elif cand.exists():
+            name = first
+        elif (ex / (first + ".md")).exists():
+            name = first + ".md"
+        else:
+            continue
+        if name not in found:
+            found.append(name)
+    # Files mentioned by bare name (e.g. `capstone_domain.py`), ordered by first mention.
+    hits = []
+    for f in ex.iterdir():
+        if f.name.startswith(".") or f.name == "__pycache__":
+            continue
+        m = re.search(r"(?<![\w/.-])" + re.escape(f.name) + (r"/" if f.is_dir() else r"(?![\w.-])"), text)
+        if m:
+            hits.append((m.start(), f.name + (".zip" if f.is_dir() else "")))
+    for _, name in sorted(hits):
+        if name not in found:
+            found.append(name)
+    return found
+
+
+def package_lab(series: dict, names: set[str]) -> None:
+    import zipfile
+
+    ex = ROOT / series["source_dir"] / "examples"
+    out = ROOT / "articles" / "code" / series["slug"]
+    if out.exists():
+        shutil.rmtree(out)
+    out.mkdir(parents=True)
+    for name in sorted(names):
+        if name.endswith(".zip") and (ex / name[:-4]).is_dir():
+            src = ex / name[:-4]
+            with zipfile.ZipFile(out / name, "w", zipfile.ZIP_DEFLATED) as z:
+                for f in sorted(src.rglob("*")):
+                    if f.is_file() and "__pycache__" not in f.parts:
+                        z.write(f, f.relative_to(ex))
+        elif (ex / name).is_file():
+            shutil.copy2(ex / name, out / name)
+
+
 def load_article(a: dict, lang: str, series: dict, sizes: dict) -> tuple[Article, list]:
     src = (ROOT / series["source_dir"] / a["files"][lang]).read_text(encoding="utf-8")
     _, fm_raw, body = src.split("---", 2)
@@ -404,6 +509,7 @@ def load_article(a: dict, lang: str, series: dict, sizes: dict) -> tuple[Article
         description=desc, level=level, date=str(fm.get("date", TODAY)),
         cover=Path(fm.get("cover", series["cover"])).name, tags=list(fm.get("tags", [])),
     )
+    art.lab = find_lab_files(body, series)
     if abstract:  # shown as the hero introduction — don't repeat it as the first callout
         body = body[: abstract.start()] + body[abstract.end() :]
     blocks: list = []
@@ -555,7 +661,7 @@ def article_page(art: Article, other: Article, series: dict, published: list[Art
         f'<span class="faq__icon" aria-hidden="true"></span></summary><div class="faq__a"><p>{esc(f["a"])}</p></div></details>'
         for i, f in enumerate(faqs)
     )
-    code_files = next(a for a in series["articles"] if a["slug"] == art.slug)["code"]
+    code_files = art.lab
     lab = ""
     if code_files:
         rows = "".join(
@@ -580,6 +686,13 @@ def article_page(art: Article, other: Article, series: dict, published: list[Art
     roadmap_html = roadmap_list(series, lang, {a.n: a for a in published}, current=art.n)
 
     toc = "".join(f'<li><a href="#{hid}">{esc(text)}</a></li>' for hid, text in art.toc)
+    takeaways = ""
+    if art.summary:
+        items = "".join(f"<li>{esc(x)}</li>" for x in art.summary)
+        takeaways = (
+            f'<aside class="takeaways" aria-labelledby="takeaways-title">'
+            f'<p class="takeaways__title caps" id="takeaways-title">{t["summaryTitle"]}</p><ol>{items}</ol></aside>'
+        )
     level = f'<span class="meta-chip">{t["level"]}: {esc(art.level)}</span>' if art.level else ""
 
     article_ld = {
@@ -599,7 +712,8 @@ def article_page(art: Article, other: Article, series: dict, published: list[Art
         "wordCount": art.words,
         "timeRequired": f"PT{art.minutes}M",
         "proficiencyLevel": str(art.meta.get("level", "")),
-        "keywords": ", ".join(dict.fromkeys(next(a for a in series["articles"] if a["slug"] == art.slug)["keywords"] + art.tags)),
+        "keywords": ", ".join(dict.fromkeys(art.keywords + art.tags)),
+        "abstract": " ".join(art.summary),
         "isPartOf": series_ld(series, lang),
         "position": art.n,
         "translationOfWork" if lang == "ar" else "workTranslation": {"@id": other.url + "#article"},
@@ -661,6 +775,7 @@ def article_page(art: Article, other: Article, series: dict, published: list[Art
         </aside>
 
         <div class="prose" data-copy="{t['copy']}" data-copied="{t['copied']}">
+{takeaways}
 {art.body_html}
           {lab}
           <section class="post-faq" id="faq" aria-labelledby="faq-title">
@@ -721,14 +836,12 @@ def roadmap_list(series: dict, lang: str, published: dict, current: int | None =
 
 
 # --------------------------------------------------------------------------- index page
-def index_page(series: dict, lang: str, published: list[Article], sizes: dict) -> str:
-    t = UI[lang]
-    p = "/ar" if lang == "ar" else ""
-    alt = "/articles/" if lang == "ar" else "/ar/articles/"
-    path = f"{p}/articles/"
-    total = len(series["roadmap"])
-    cards = "".join(
-        f"""<article class="acard">
+def series_status(t: dict, n: int, total: int) -> str:
+    return t["completeSeries"].format(total=total) if n >= total else t["publishedCount"].format(n=n, total=total)
+
+
+def acard(a: "Article", series: dict, sizes: dict, t: dict, total: int) -> str:
+    return f"""<article class="acard">
           <a class="acard__link" href="{a.path}">
             <div class="acard__img">{img_tag(series, a.cover, a.title, sizes, sizes_attr="(max-width: 720px) 100vw, 400px")}</div>
             <div class="acard__body">
@@ -739,27 +852,55 @@ def index_page(series: dict, lang: str, published: list[Article], sizes: dict) -
             </div>
           </a>
         </article>"""
-        for a in published
-    )
+
+
+def index_page(series: dict, lang: str, published: list[Article], sizes: dict, n_terms: int) -> str:
+    t = UI[lang]
+    p = "/ar" if lang == "ar" else ""
+    alt = "/articles/" if lang == "ar" else "/ar/articles/"
+    path = f"{p}/articles/"
+    total = len(series["roadmap"])
+    by_n = {a.n: a for a in published}
+    groups = ""
+    for lvl, names in series["levels"].items():
+        nums = [r["n"] for r in series["roadmap"] if str(r["level"]) == lvl]
+        cards = "".join(acard(by_n[n], series, sizes, t, total) for n in nums if n in by_n)
+        if not cards:
+            continue
+        rng = f"{min(nums):02d}–{max(nums):02d}"
+        groups += f"""
+      <section class="level-group" aria-labelledby="level-{lvl}">
+        <header class="level-group__head">
+          <span class="level-group__n">{lvl}</span>
+          <h2 id="level-{lvl}" class="level-group__title">{esc(names[lang])}</h2>
+          <span class="level-group__range caps">{rng}</span>
+        </header>
+        <div class="acards">{cards}</div>
+      </section>"""
     first = published[0]
     desc = clip(series["description"][lang])
+    status = series_status(t, len(published), total)
     item_list = {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
         "@id": SITE + path + "#page",
         "url": SITE + path,
-        "name": f"{t['articles']} — Ibrahim Alobaid",
+        "name": f"{series['name'][lang]} — {t['articles']}",
         "description": desc,
         "inLanguage": lang,
         "author": PERSON,
         "hasPart": series_ld(series, lang),
         "mainEntity": {
             "@type": "ItemList",
+            "numberOfItems": len(published),
             "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": a.url, "name": a.title} for i, a in enumerate(published)],
         },
     }
     crumbs = [(t["home"], f"{p}/"), (t["articles"], path)]
-    title = f"{t['articles']} — {series['short'][lang]} | {'إبراهيم العبيد' if lang == 'ar' else 'Ibrahim Alobaid'}"
+    title = (
+        "دليل الوكلاء الصوتيين الكامل — ١٦ مقالة هندسية | إبراهيم العبيد"
+        if lang == "ar" else "Voice AI Agents: The Complete Engineering Guide (16 Articles) | Ibrahim Alobaid"
+    )
     page = head(
         lang=lang, title=title, description=desc, path=path, alt_path=alt,
         image=f"/articles/assets/{series['slug']}/{Path(series['cover']).stem}-og.jpg", image_alt=series["name"][lang],
@@ -781,24 +922,95 @@ def index_page(series: dict, lang: str, published: list[Article], sizes: dict) -
     <section class="wrap series-feature" aria-labelledby="series-title">
       <a class="series-feature__img" href="{first.path}">{img_tag(series, series['cover'], series['name'][lang], sizes, eager=True, sizes_attr="(max-width: 920px) 100vw, 640px")}</a>
       <div class="series-feature__body">
-        <p class="caps gold">{t['series']} · {t['publishedCount'].format(n=len(published), total=total)}</p>
+        <p class="caps gold">{t['series']} · {status}</p>
         <h2 id="series-title" class="series-feature__title">{esc(series['name'][lang])}</h2>
         <p class="series-feature__desc">{esc(series['description'][lang])}</p>
         <p class="series-feature__aud"><span class="caps">{t['audience']}</span>{esc(series['audience'][lang])}</p>
-        <div class="series-feature__progress" role="img" aria-label="{t['publishedCount'].format(n=len(published), total=total)}"><span style="width:{len(published) / total * 100:.1f}%"></span></div>
-        <a class="btn btn--solid" href="{first.path}"><span>{t['start']}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg></a>
+        <div class="series-feature__progress" role="img" aria-label="{status}"><span style="width:{len(published) / total * 100:.1f}%"></span></div>
+        <div class="series-feature__cta">
+          <a class="btn btn--solid" href="{first.path}"><span>{t['start']}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg></a>
+          <a class="btn btn--ghost" href="{p}/articles/glossary/"><span>{t['browseGlossary']}</span></a>
+        </div>
       </div>
     </section>
 
-    <section class="wrap acards-wrap" aria-labelledby="all-title">
-      <h2 id="all-title" class="caps acards-wrap__title">{t['allArticles']}</h2>
-      <div class="acards">{cards}</div>
-    </section>
+    <div class="wrap levels" id="roadmap">{groups}
+    </div>
 
-    <section class="wrap series-box" id="roadmap" aria-labelledby="roadmap-title">
-      <p class="caps gold">{t['roadmap']}</p>
-      <h2 id="roadmap-title" class="series-box__title">{esc(series['name'][lang])}</h2>
-      {roadmap_list(series, lang, {a.n: a for a in published})}
+    <section class="wrap glossary-teaser" aria-labelledby="gt-title">
+      <div>
+        <p class="caps gold">{t['glossary']} · {t['termsCount'].format(n=n_terms)}</p>
+        <h2 id="gt-title" class="glossary-teaser__title">{t['glossaryTitle']}</h2>
+        <p class="glossary-teaser__lede">{t['glossaryLede']}</p>
+      </div>
+      <a class="btn btn--ghost" href="{p}/articles/glossary/"><span>{t['browseGlossary']}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg></a>
+    </section>
+  </main>"""
+    page += footer(lang)
+    return page
+
+
+def glossary_page(series: dict, lang: str, published: list[Article], terms: list) -> str:
+    t = UI[lang]
+    p = "/ar" if lang == "ar" else ""
+    path = f"{p}/articles/glossary/"
+    alt = "/articles/glossary/" if lang == "ar" else "/ar/articles/glossary/"
+    by_n = {a.n: a for a in published}
+    key = (lambda x: x["ar"]) if lang == "ar" else (lambda x: x["term"].lower())
+    items = sorted(terms, key=key)
+    rows, defined = "", []
+    for x in items:
+        name = x["ar"] if lang == "ar" else x["term"]
+        other = x["term"] if lang == "ar" else ""
+        definition = x["ar_def"] if lang == "ar" else x["en_def"]
+        anchor = slugify(x["term"])
+        art = by_n.get(x["n"])
+        num = f"{x['n']:02d}"
+        link = f'<a class="gl__link" href="{art.path}">{t["explainedIn"].format(n=num)} →</a>' if art else ""
+        alt_name = f'<span class="gl__alt" lang="en" dir="ltr">{esc(other)}</span>' if other and other not in name else ""
+        rows += (
+            f'<div class="gl__item" id="{anchor}"><dt><span class="gl__term">{esc(name)}</span>{alt_name}</dt>'
+            f'<dd><p>{esc(definition)}</p>{link}</dd></div>'
+        )
+        defined.append({
+            "@type": "DefinedTerm", "name": name, "description": definition, "url": f"{SITE}{path}#{anchor}",
+            "inDefinedTermSet": f"{SITE}{path}#set",
+        })
+    ld = {
+        "@context": "https://schema.org",
+        "@type": "DefinedTermSet",
+        "@id": f"{SITE}{path}#set",
+        "name": "مصطلحات الوكلاء الصوتيين" if lang == "ar" else "Voice AI Agent Glossary",
+        "description": t["glossaryLede"],
+        "inLanguage": lang,
+        "url": SITE + path,
+        "author": PERSON,
+        "hasDefinedTerm": defined,
+    }
+    crumbs = [(t["home"], f"{p}/"), (t["articles"], f"{p}/articles/"), (t["glossary"], path)]
+    title = (
+        "مصطلحات الوكلاء الصوتيين: قاموس الذكاء الاصطناعي الصوتي | إبراهيم العبيد"
+        if lang == "ar" else "Voice AI Glossary: 50+ Voice Agent Terms Explained | Ibrahim Alobaid"
+    )
+    page = head(
+        lang=lang, title=title, description=clip(t["glossaryLede"]), path=path, alt_path=alt,
+        image=f"/articles/assets/{series['slug']}/{Path(series['cover']).stem}-og.jpg", image_alt=title,
+        og_type="website", jsonld=[ld, breadcrumb_ld(crumbs)], feed=f"{p}/articles/feed.xml",
+    )
+    page += nav(lang, alt)
+    page += f"""
+  <main id="main">
+    <header class="ahub-hero" id="top">
+      <div class="post-hero__pattern pattern" aria-hidden="true"></div>
+      <div class="wrap">
+        <nav class="crumbs" aria-label="{t['breadcrumb']}"><ol><li><a href="{p}/">{t['home']}</a></li><li><a href="{p}/articles/">{t['articles']}</a></li><li aria-current="page">{t['glossary']}</li></ol></nav>
+        <p class="caps gold">{esc(series['short'][lang])} · {t['termsCount'].format(n=len(items))}</p>
+        <h1 class="ahub-hero__title display">{t['glossaryTitle']}</h1>
+        <p class="ahub-hero__lede">{t['glossaryLede']}</p>
+      </div>
+    </header>
+    <section class="wrap gl-wrap" aria-label="{t['glossary']}">
+      <dl class="gl">{rows}</dl>
     </section>
   </main>"""
     page += footer(lang)
@@ -812,14 +1024,14 @@ def home_cards(series: dict, lang: str, published: list[Article], sizes: dict) -
     total = len(series["roadmap"])
     rows = "".join(
         f'<li><a href="{a.path}"><span class="wl__n">{a.n:02d}</span><span class="wl__t">{esc(a.title)}</span>'
-        f'<span class="wl__m">{a.minutes} {t["minRead"]}</span></a></li>'
-        for a in published
+        f'<span class="wl__m">{a.minutes} {t["minRead"]} · {esc(a.level)}</span></a></li>'
+        for a in published[:5]
     )
     return f"""<div class="writing">
           <a class="writing__feature reveal" href="{p}/articles/">
             <div class="writing__img">{img_tag(series, series['cover'], series['name'][lang], sizes, sizes_attr="(max-width: 920px) 100vw, 560px")}</div>
             <div class="writing__body">
-              <p class="caps gold">{t['series']} · {t['publishedCount'].format(n=len(published), total=total)}</p>
+              <p class="caps gold">{t['series']} · {series_status(t, len(published), total)}</p>
               <h3 class="writing__title">{esc(series['name'][lang])}</h3>
               <p class="writing__desc">{esc(series['description'][lang])}</p>
             </div>
@@ -860,24 +1072,28 @@ def feed(series: dict, lang: str, published: list[Article]) -> str:
 # --------------------------------------------------------------------------- entry point
 def build() -> dict:
     series = json.loads((ROOT / "src" / "articles" / "series.json").read_text(encoding="utf-8"))
-    faqs = json.loads((ROOT / "src" / "articles" / "faqs.json").read_text(encoding="utf-8"))
-    sizes = process_images(series)
-
-    # Lab files
-    code_dir = ROOT / "articles" / "code" / series["slug"]
-    code_dir.mkdir(parents=True, exist_ok=True)
+    legacy_faqs = json.loads((ROOT / "src" / "articles" / "faqs.json").read_text(encoding="utf-8"))
+    terms = json.loads((ROOT / "src" / "articles" / "glossary.json").read_text(encoding="utf-8"))
+    meta_dir = ROOT / "src" / "articles" / "meta"
+    metas = {}
     for a in series["articles"]:
-        for f in a["code"]:
-            shutil.copy2(ROOT / series["source_dir"] / "examples" / f, code_dir / f)
+        mp = meta_dir / f"{a['slug']}.json"
+        metas[a["slug"]] = json.loads(mp.read_text(encoding="utf-8")) if mp.exists() else {}
+    sizes = process_images(series)
 
     loaded: dict[str, list[tuple[Article, list]]] = {"en": [], "ar": []}
     render_items = []
     for a in series["articles"]:
         for lang in ("en", "ar"):
             art, (pre, blocks) = load_article(a, lang, series, sizes)
+            meta = metas[a["slug"]]
+            art.summary = meta.get("summary", {}).get(lang, [])
+            art.faq = meta.get("faq", {}).get(lang) or legacy_faqs.get(a["slug"], {}).get(lang, [])
+            art.keywords = meta.get("keywords" if lang == "en" else "keywords_ar", []) or a.get("keywords", [])
             loaded[lang].append((art, [pre, blocks]))
             render_items += [(b["kind"], b["source"]) for b in blocks if b["kind"] in ("mermaid", "math")]
     rendered = render_all(render_items)
+    package_lab(series, {f for lang in loaded for art, _ in loaded[lang] for f in art.lab})
 
     published: dict[str, list[Article]] = {"en": [], "ar": []}
     for lang in ("en", "ar"):
@@ -900,14 +1116,17 @@ def build() -> dict:
             out = base / art.slug / "index.html"
             out.parent.mkdir(parents=True, exist_ok=True)
             out.write_text(
-                article_page(art, by_slug[other][art.slug], series, published[lang], faqs[art.slug][lang], sizes),
+                article_page(art, by_slug[other][art.slug], series, published[lang], art.faq, sizes),
                 encoding="utf-8",
             )
         base.mkdir(parents=True, exist_ok=True)
-        (base / "index.html").write_text(index_page(series, lang, published[lang], sizes), encoding="utf-8")
+        (base / "index.html").write_text(index_page(series, lang, published[lang], sizes, len(terms)), encoding="utf-8")
         (base / "feed.xml").write_text(feed(series, lang, published[lang]), encoding="utf-8")
+        (base / "glossary").mkdir(exist_ok=True)
+        (base / "glossary" / "index.html").write_text(glossary_page(series, lang, published[lang], terms), encoding="utf-8")
 
-    pages = [("/articles/", "/ar/articles/", f"/articles/assets/{series['slug']}/{Path(series['cover']).stem}-og.jpg")]
+    cover_og = f"/articles/assets/{series['slug']}/{Path(series['cover']).stem}-og.jpg"
+    pages = [("/articles/", "/ar/articles/", cover_og), ("/articles/glossary/", "/ar/articles/glossary/", cover_og)]
     pages += [
         (a.path, by_slug["ar"][a.slug].path, f"/articles/assets/{series['slug']}/{Path(a.cover).stem}-og.jpg")
         for a in published["en"]

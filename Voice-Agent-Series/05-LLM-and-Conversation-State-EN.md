@@ -32,7 +32,7 @@ cover: "assets/llm-conversation-cover.png"
 ![[assets/llm-conversation-cover.png]]
 
 > [!abstract] In one minute
-> We now know how [[03-Speech-to-Text-EN|STT transcribes speech]] and how [[04-Text-to-Speech-EN|TTS speaks a reply]]. Between those stages sits the **large language model (LLM)**. It interprets what the user wants and produces an appropriate response. Yet a natural voice conversation requires more than passing the latest transcript to a model: it also needs instructions, reliable history, structured task state, and a precise approach to corrections and interrupted speech.
+> The previous two articles covered how [[03-Speech-to-Text-EN|STT transcribes speech]] and how [[04-Text-to-Speech-EN|TTS speaks a reply]]. Between them sits the **large language model (LLM)**, which works out what the user wants and decides how to answer. A natural voice conversation needs more than the latest transcript sent to a model: it also needs clear instructions, a trustworthy history, structured task state, and a careful way to handle corrections and interrupted speech.
 
 ## A simple conversation with a hidden engineering problem
 
@@ -43,17 +43,17 @@ Consider a voice assistant that schedules appointments:
 > **User, interrupting:** Actually, make it three in the afternoon.  
 > **Good agent:** Understood, three in the afternoon instead of ten. Can you confirm the new time?
 
-That last line seems trivial. Behind it, the system must answer four difficult questions:
+That last line looks trivial, but to produce it the system has to answer four hard questions:
 
 1. Did “three” replace the old time or create a second appointment?
 2. Which part of the previous reply did the user actually hear?
 3. Where is the corrected time stored and validated?
 4. Can the assistant truthfully say “booked” before an external booking system confirms success?
 
-These are not just prompt-writing questions. They form the foundation of **conversation state management**.
+Prompt wording alone won't settle any of them. Together they are what **conversation state management** is about.
 
 > [!question] The central question
-> How do we give a voice agent reliable working context—what was said, what was corrected, and what actually happened—without delegating the application's entire state to probabilistic text generation?
+> How do we give a voice agent reliable working context (what was said, what was corrected, and what actually happened) without handing the application's entire state over to probabilistic text generation?
 
 ## 1. The LLM's position in the voice pipeline
 
@@ -87,7 +87,7 @@ Some speech-to-speech systems collapse multiple stages into one multimodal model
 
 ## 2. A model is not the same as memory
 
-These three concepts are often confused:
+Three concepts get mixed up all the time:
 
 **LLM:** the inference engine producing the current response from the input presented to it.
 
@@ -114,7 +114,7 @@ Imagine that a user has corrected a consultation from `10:00` to `15:00`. Instea
 
 *Illustrative data only. A real appointment requires a validated calendar date, timezone, availability, and explicit approval.*
 
-The model can read this object when preparing its next answer. The application—not the model's wording—must verify external actions and their outcomes.
+The model can read this object when preparing its next answer. Verifying external actions and their outcomes is the application's job; the model's wording cannot do it.
 
 ## 3. Four layers of reliable context
 
@@ -138,7 +138,7 @@ Fields such as `service`, `date`, `time`, timezone, user approval, and action st
 
 Calendar availability, authorized account data, policy rules, and tool results. Track their origin and freshness. Content retrieved from a webpage or an untrusted tool may contain malicious instructions, so **data must not be promoted into trusted instructions**.[^owasp]
 
-> [!important] The central design rule
+> [!important] The design rule to remember
 > Let the LLM propose what to say or what tool to request. Let application logic establish the current facts, authorization, and the result of any external operation.
 
 ## 4. A conversation turn has a lifecycle
@@ -185,11 +185,11 @@ stateDiagram-v2
 | User confirms the correction | `15:00` | Yes | Request booking through an authorized API |
 | API confirms success | `15:00` | Yes | Now, and only now, report success |
 
-An approval for one set of details should not automatically carry forward to a changed set. This is an application rule, not an LLM personality setting.
+Approval given for one set of details should not carry over automatically to a changed set. That is an application rule; it does not belong in the LLM's persona.
 
 ## 6. Prompt instructions for spoken responses
 
-A good voice prompt is not simply a traditional chatbot prompt with “speak naturally” added at the end. It should enforce short, sayable outputs and honest status reporting.
+A good voice prompt is more than a chatbot prompt with “speak naturally” tacked on at the end. It should steer the model toward short replies that sound right when spoken, and toward honest reporting of what has and hasn't happened.
 
 ```text
 ROLE
@@ -220,9 +220,9 @@ One caution: prompting by itself is not a security boundary. Tool permissions, i
 
 ## 7. What happens as conversations get longer?
 
-Keeping every message forever in every prompt is not a scalability strategy. As the conversation grows, you may increase cost and include outdated or contradictory statements.
+Putting every message into every prompt does not scale. As the conversation grows, cost can climb and the prompt starts to carry outdated or contradictory statements.
 
-Use three complementary mechanisms:
+Three mechanisms work together here:
 
 1. **Recent-turn window:** include only the most useful recent committed messages.
 2. **Structured state:** retain current, validated task facts outside that window.
@@ -281,9 +281,9 @@ state.commit_user_turn(
 )
 ```
 
-**Crucial boundary:** `commit_user_turn` takes *already extracted and validated* slot values. The demo does not parse time from natural speech, perform timezone handling, check calendar availability, call an LLM, or execute booking operations.
+**What the demo leaves out:** `commit_user_turn` takes *already extracted and validated* slot values. The demo does not parse time from natural speech, perform timezone handling, check calendar availability, call an LLM, or execute booking operations.
 
-The resulting state looks like:
+The resulting state looks like this:
 
 ```json
 {
@@ -313,7 +313,7 @@ The conversation also preserves only the first acknowledged spoken segment. The 
 
 ## 9. Preparing the architecture for production
 
-A teaching demo does not include all of the controls required by a reliable real-time application:
+A teaching demo leaves out many of the controls a reliable real-time application needs:
 
 | Requirement | Production implication |
 |---|---|
@@ -326,7 +326,7 @@ A teaching demo does not include all of the controls required by a reliable real
 | Monitoring | Track changes, failures, and latency without unnecessary PII |
 | Recovery | Handle reconnection, handoffs, retries, and tool errors safely |
 
-This distinction is especially important in identity verification, healthcare, and financial workflows, where conversation quality alone cannot establish a safe or valid decision.
+This matters most in identity verification, healthcare, and financial workflows, where a well-run conversation is not enough to establish that a decision is safe or valid.
 
 ## 10. Common questions and mistakes
 
@@ -353,7 +353,7 @@ Only data necessary for the task, permitted by policy, and protected appropriate
 - **Exercise 4:** Try mixed Arabic/English user instructions while keeping extraction, state, and spoken output separate.
 
 > [!success] Key takeaway
-> **An LLM is not the only owner of conversation state.** A reliable voice agent knows the difference between interim text and finalized user speech, generated replies and played audio, user-provided details and externally verified outcomes. Those distinctions make interruption handling testable and conversations genuinely more trustworthy.
+> **An LLM is not the only owner of conversation state.** A reliable voice agent knows the difference between interim text and finalized user speech, generated replies and played audio, user-provided details and externally verified outcomes. Keeping those distinctions explicit is what makes interruption handling testable and the conversation more trustworthy.
 
 ## Coming next
 
