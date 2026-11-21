@@ -15,6 +15,15 @@
 - [English profile](https://ibrahim-dev.me/): experience, community, selected work, talks, Q&A
 - [Arabic profile](https://ibrahim-dev.me/ar/): الصفحة العربية
 
+## Articles — Voice AI Engineering series (English / العربية)
+- [Articles hub](https://ibrahim-dev.me/articles/) · [صفحة المقالات](https://ibrahim-dev.me/ar/articles/)
+- [01 · What Is a Voice AI Agent?](https://ibrahim-dev.me/articles/what-is-a-voice-ai-agent/) · [ما هو الوكيل الصوتي الذكي؟](https://ibrahim-dev.me/ar/articles/what-is-a-voice-ai-agent/)
+- [02 · Digital Audio for Developers](https://ibrahim-dev.me/articles/digital-audio-for-developers/) · [الصوت الرقمي للمطورين](https://ibrahim-dev.me/ar/articles/digital-audio-for-developers/)
+- [03 · Speech-to-Text](https://ibrahim-dev.me/articles/speech-to-text/) · [تحويل الكلام إلى نص](https://ibrahim-dev.me/ar/articles/speech-to-text/)
+- [04 · Text-to-Speech](https://ibrahim-dev.me/articles/text-to-speech/) · [تحويل النص إلى كلام](https://ibrahim-dev.me/ar/articles/text-to-speech/)
+- [05 · LLM & Conversation State](https://ibrahim-dev.me/articles/llm-conversation-state/) · [النموذج اللغوي وحالة المحادثة](https://ibrahim-dev.me/ar/articles/llm-conversation-state/)
+- RSS: https://ibrahim-dev.me/articles/feed.xml · https://ibrahim-dev.me/ar/articles/feed.xml
+
 ## Contact
 - Email: ibrahim.alobid44@gmail.com
 - LinkedIn: https://www.linkedin.com/in/ibrahimalobaid44/

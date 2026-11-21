@@ -1,0 +1,82 @@
+{
+  "slug": "voice-ai-engineering",
+  "source_dir": "Voice-Agent-Series",
+  "name": {
+    "en": "Voice AI Engineering — From Zero to Production",
+    "ar": "هندسة الوكلاء الصوتيين — من الصفر إلى الإنتاج"
+  },
+  "short": {
+    "en": "Voice AI Engineering",
+    "ar": "هندسة الوكلاء الصوتيين"
+  },
+  "description": {
+    "en": "A progressive engineering series on building natural, interruption-aware, production-ready voice AI agents — from digital audio and speech recognition to LLM conversation state.",
+    "ar": "سلسلة هندسية متدرجة لبناء وكلاء صوتيين أذكياء يتحدثون بطبيعية ويتعاملون مع المقاطعة وجاهزين للإنتاج — من الصوت الرقمي والتعرف على الكلام إلى إدارة حالة المحادثة."
+  },
+  "audience": {
+    "en": "Students, Python developers and AI engineers moving into voice-agent engineering.",
+    "ar": "الطلاب ومطورو Python ومهندسو الذكاء الاصطناعي الراغبون في دخول هندسة الوكلاء الصوتيين."
+  },
+  "cover": "voice-agent-cover.png",
+  "articles": [
+    {
+      "n": 1,
+      "slug": "what-is-a-voice-ai-agent",
+      "files": { "en": "01-What-is-a-Voice-Agent-EN.md", "ar": "01-What-is-a-Voice-Agent-AR.md" },
+      "keywords": ["voice AI agent", "voice agent architecture", "STT LLM TTS", "barge-in", "turn detection", "cascaded vs speech-to-speech"],
+      "code": []
+    },
+    {
+      "n": 2,
+      "slug": "digital-audio-for-developers",
+      "files": { "en": "02-Digital-Audio-for-Developers-EN.md", "ar": "02-Digital-Audio-for-Developers-AR.md" },
+      "keywords": ["digital audio", "PCM", "sample rate", "bit depth", "audio chunks", "Opus", "WAV"],
+      "code": ["digital_audio_lab.py", "test_digital_audio_lab.py", "demo_16k_mono.wav"]
+    },
+    {
+      "n": 3,
+      "slug": "speech-to-text",
+      "files": { "en": "03-Speech-to-Text-EN.md", "ar": "03-Speech-to-Text-AR.md" },
+      "keywords": ["speech to text", "ASR", "streaming STT", "partial transcripts", "WER", "Whisper", "faster-whisper"],
+      "code": ["stt_event_lab.py", "test_stt_event_lab.py", "stt_microphone_demo.py"]
+    },
+    {
+      "n": 4,
+      "slug": "text-to-speech",
+      "files": { "en": "04-Text-to-Speech-EN.md", "ar": "04-Text-to-Speech-AR.md" },
+      "keywords": ["text to speech", "TTS", "streaming TTS", "prosody", "time to first audio", "RTF", "Piper"],
+      "code": ["tts_metrics_lab.py", "test_tts_metrics_lab.py", "tts_piper_demo.py"]
+    },
+    {
+      "n": 5,
+      "slug": "llm-conversation-state",
+      "files": { "en": "05-LLM-and-Conversation-State-EN.md", "ar": "05-LLM-and-Conversation-State-AR.md" },
+      "keywords": ["LLM conversation state", "voice agent memory", "context management", "interruption handling", "structured task state"],
+      "code": ["voice_context_lab.py", "test_voice_context_lab.py", "make_context_figures.py"]
+    }
+  ],
+  "roadmap": [
+    { "n": 1,  "en": "What Is a Voice AI Agent?", "ar": "ما هو الوكيل الصوتي الذكي؟", "level": 1 },
+    { "n": 2,  "en": "Digital Audio for Developers", "ar": "الصوت الرقمي للمطورين", "level": 1 },
+    { "n": 3,  "en": "Speech-to-Text (STT)", "ar": "تحويل الكلام إلى نص", "level": 1 },
+    { "n": 4,  "en": "Text-to-Speech (TTS)", "ar": "تحويل النص إلى كلام", "level": 1 },
+    { "n": 5,  "en": "LLM & Conversation State", "ar": "النموذج اللغوي وحالة المحادثة", "level": 2 },
+    { "n": 6,  "en": "Cascaded vs. Speech-to-Speech", "ar": "المعمارية المتسلسلة مقابل الصوت المباشر", "level": 2 },
+    { "n": 7,  "en": "Your First Voice Agent with Python & Pipecat", "ar": "أول وكيل صوتي باستخدام Python وPipecat", "level": 2 },
+    { "n": 8,  "en": "Real-Time Transport: WebRTC & WebSockets", "ar": "النقل الفوري: WebRTC وWebSockets", "level": 2 },
+    { "n": 9,  "en": "VAD, Endpointing & Turn Detection", "ar": "كشف الكلام ونهاية الدور", "level": 3 },
+    { "n": 10, "en": "Interruptions, Barge-In & Playback State", "ar": "المقاطعة وحالة التشغيل", "level": 3 },
+    { "n": 11, "en": "Latency & Streaming Optimization", "ar": "تحسين زمن الاستجابة والتدفق", "level": 3 },
+    { "n": 12, "en": "Robust Voice AI in the Wild", "ar": "وكلاء صوتيون متينون في الواقع", "level": 3 },
+    { "n": 13, "en": "Tools, RAG & Agent Workflows", "ar": "الأدوات وRAG ومسارات عمل الوكيل", "level": 4 },
+    { "n": 14, "en": "Safety, Privacy & Security", "ar": "السلامة والخصوصية والأمان", "level": 4 },
+    { "n": 15, "en": "Evaluation, Observability & Deployment", "ar": "التقييم والمراقبة والنشر", "level": 4 },
+    { "n": 16, "en": "Capstone: Production-Grade Multimodal Agent", "ar": "المشروع الختامي: وكيل متعدد الوسائط للإنتاج", "level": 4 }
+  ],
+  "levels": {
+    "1": { "en": "Foundations", "ar": "الأساسيات" },
+    "2": { "en": "Build the Agent", "ar": "بناء الوكيل" },
+    "3": { "en": "Natural, Real-Time Conversation", "ar": "محادثة طبيعية وفورية" },
+    "4": { "en": "Production & Advanced Systems", "ar": "الإنتاج والأنظمة المتقدمة" }
+  }
+}

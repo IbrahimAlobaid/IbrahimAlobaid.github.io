@@ -69,7 +69,7 @@
         "inLanguage": "ar",
         "isPartOf": { "@id": "https://ibrahim-dev.me/#website" },
         "mainEntity": { "@id": "https://ibrahim-dev.me/#person" },
-        "dateModified": "2026-11-20"
+        "dateModified": "2026-11-21"
       },
       {
         "@type": "Person",
@@ -224,7 +224,7 @@
           <li><a href="#community" data-i18n="nav.community">المجتمع</a></li>
           <li><a href="#work" data-i18n="nav.work">الأعمال</a></li>
           <li><a href="#talks" data-i18n="nav.talks">المحاضرات</a></li>
-          <li><a href="#notes" data-i18n="nav.notes">خواطر</a></li>
+          <li><a href="/ar/articles/" data-ar-href="/ar/articles/" data-i18n="nav.articles">المقالات</a></li>
           <li><a href="#faq" data-i18n="nav.faq">أسئلة</a></li>
           <li><a href="#contact" data-i18n="nav.contact">تواصل</a></li>
         </ul>
@@ -651,11 +651,39 @@
       </div>
     </section>
 
-    <!-- ============================== NOTES ============================== -->
-    <section class="section section--umber" id="notes" aria-labelledby="notes-title">
+    <!-- ============================== WRITING ============================== -->
+    <section class="section section--umber" id="writing" aria-labelledby="writing-title">
       <div class="wrap">
         <header class="section-head">
-          <p class="section-head__index caps reveal"><span data-i18n="notes.index">٠٦ — خواطر</span></p>
+          <p class="section-head__index caps reveal"><span data-i18n="writing.index">٠٦ — الكتابة</span></p>
+          <h2 class="section-head__title display reveal" id="writing-title" data-delay="1" data-i18n="writing.title">الهندسة، <em>مكتوبة.</em></h2>
+          <p class="section-head__lede reveal" data-delay="2" data-i18n="writing.lede">سلسلة مقالات بالعربية والإنجليزية عن بناء الوكلاء الصوتيين الأذكياء — من الصوت الرقمي إلى حالة المحادثة، مع مخططات وأكواد قابلة للتشغيل.</p>
+        </header>
+        <div class="writing">
+          <a class="writing__feature reveal" href="/ar/articles/">
+            <div class="writing__img"><img src="/articles/assets/voice-ai-engineering/voice-agent-cover-1600.webp" srcset="/articles/assets/voice-ai-engineering/voice-agent-cover-800.webp 800w, /articles/assets/voice-ai-engineering/voice-agent-cover-1600.webp 1600w" sizes="(max-width: 920px) 100vw, 560px" width="1600" height="900" alt="هندسة الوكلاء الصوتيين — من الصفر إلى الإنتاج" loading="lazy" decoding="async" /></div>
+            <div class="writing__body">
+              <p class="caps gold">السلسلة · 5 من 16 مقالة منشورة</p>
+              <h3 class="writing__title">هندسة الوكلاء الصوتيين — من الصفر إلى الإنتاج</h3>
+              <p class="writing__desc">سلسلة هندسية متدرجة لبناء وكلاء صوتيين أذكياء يتحدثون بطبيعية ويتعاملون مع المقاطعة وجاهزين للإنتاج — من الصوت الرقمي والتعرف على الكلام إلى إدارة حالة المحادثة.</p>
+            </div>
+          </a>
+          <ol class="writing__list reveal" data-delay="1"><li><a href="/ar/articles/what-is-a-voice-ai-agent/"><span class="wl__n">01</span><span class="wl__t">ما هو الوكيل الصوتي الذكي؟ من الكلام إلى المحادثة الطبيعية</span><span class="wl__m">11 دقيقة قراءة</span></a></li><li><a href="/ar/articles/digital-audio-for-developers/"><span class="wl__n">02</span><span class="wl__t">الصوت الرقمي للمطورين: الأساس الذي يقوم عليه كل Voice AI Agent</span><span class="wl__m">11 دقيقة قراءة</span></a></li><li><a href="/ar/articles/speech-to-text/"><span class="wl__n">03</span><span class="wl__t">من الصوت إلى النص: كيف تتعرف الآلة على كلام الإنسان؟</span><span class="wl__m">12 دقيقة قراءة</span></a></li><li><a href="/ar/articles/text-to-speech/"><span class="wl__n">04</span><span class="wl__t">من النص إلى الصوت: كيف نجعل الوكيل الذكي يتحدث بصورة طبيعية؟</span><span class="wl__m">12 دقيقة قراءة</span></a></li><li><a href="/ar/articles/llm-conversation-state/"><span class="wl__n">05</span><span class="wl__t">عقل الوكيل الصوتي: كيف يفهم LLM المحادثة ويحافظ على سياقها؟</span><span class="wl__m">10 دقيقة قراءة</span></a></li></ol>
+        </div>
+        <div class="writing__cta reveal">
+          <a class="btn btn--ghost" href="/ar/articles/" data-ar-href="/ar/articles/">
+            <span data-i18n="writing.cta">كل المقالات</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== NOTES ============================== -->
+    <section class="section" id="notes" aria-labelledby="notes-title">
+      <div class="wrap">
+        <header class="section-head">
+          <p class="section-head__index caps reveal"><span data-i18n="notes.index">٠٧ — خواطر</span></p>
           <h2 class="section-head__title display reveal" id="notes-title" data-delay="1" data-i18n="notes.title">خواطر في <em>القيادة.</em></h2>
           <p class="section-head__lede reveal" data-delay="2" data-i18n="notes.lede">أفكار قصيرة عن بناء الذكاء الاصطناعي، وتعليمه، وقيادة من يحوّلونه إلى واقع.</p>
         </header>
@@ -687,10 +715,10 @@
     </section>
 
     <!-- ============================== CREDENTIALS ============================== -->
-    <section class="section" id="credentials" aria-labelledby="cred-title">
+    <section class="section section--umber" id="credentials" aria-labelledby="cred-title">
       <div class="wrap">
         <header class="section-head">
-          <p class="section-head__index caps reveal"><span data-i18n="cred.index">٠٧ — المؤهلات</span></p>
+          <p class="section-head__index caps reveal"><span data-i18n="cred.index">٠٨ — المؤهلات</span></p>
           <h2 class="section-head__title display reveal" id="cred-title" data-delay="1" data-i18n="cred.title">الأساس <em>والحِرفة.</em></h2>
         </header>
 
@@ -746,7 +774,7 @@
     <section class="section" id="faq" aria-labelledby="faq-title">
       <div class="wrap">
         <header class="section-head">
-          <p class="section-head__index caps reveal"><span data-i18n="faq.index">٠٨ — سؤال وجواب</span></p>
+          <p class="section-head__index caps reveal"><span data-i18n="faq.index">٠٩ — سؤال وجواب</span></p>
           <h2 class="section-head__title display reveal" id="faq-title" data-delay="1" data-i18n="faq.title">أسئلة، <em>وأجوبتها.</em></h2>
           <p class="section-head__lede reveal" data-delay="2" data-i18n="faq.lede">كل ما يسأله الناس عادةً عنّي — عملي، ومجتمعي، وكيف تتواصل معي.</p>
         </header>
@@ -797,7 +825,7 @@
       <div class="contact__pattern pattern" aria-hidden="true"></div>
       <div class="wrap">
         <span class="monogram reveal" aria-hidden="true">IA</span>
-        <p class="caps gold reveal" data-i18n="contact.index">٠٩ — تواصل</p>
+        <p class="caps gold reveal" data-i18n="contact.index">١٠ — تواصل</p>
         <h2 class="contact__title display reveal" id="contact-title" data-delay="1" data-i18n="contact.title">لنبنِ <em>شيئاً ذكياً.</em></h2>
         <p class="contact__text reveal" data-delay="2" data-i18n="contact.text">منفتح على الحديث حول أنظمة الذكاء الاصطناعي، والذكاء الاصطناعي الطبي، والمحاضرات، والإرشاد، والشراكات المجتمعية.</p>
         <a class="contact__mail reveal" data-delay="3" href="mailto:ibrahim.alobid44@gmail.com">ibrahim.alobid44@gmail.com</a>

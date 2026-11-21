@@ -4,7 +4,7 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://ibrahim-dev.me/</loc>
-    <lastmod>2026-11-20</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://ibrahim-dev.me/" />
     <xhtml:link rel="alternate" hreflang="ar" href="https://ibrahim-dev.me/ar/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://ibrahim-dev.me/" />
@@ -12,10 +12,106 @@
   </url>
   <url>
     <loc>https://ibrahim-dev.me/ar/</loc>
-    <lastmod>2026-11-20</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://ibrahim-dev.me/" />
     <xhtml:link rel="alternate" hreflang="ar" href="https://ibrahim-dev.me/ar/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://ibrahim-dev.me/" />
     <image:image><image:loc>https://ibrahim-dev.me/assets/img/ibrahim-alobaid.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://ibrahim-dev.me/articles/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ibrahim-dev.me/articles/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://ibrahim-dev.me/ar/articles/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ibrahim-dev.me/articles/" />
+    <image:image><image:loc>https://ibrahim-dev.me/articles/assets/voice-ai-engineering/voice-agent-cover-og.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://ibrahim-dev.me/ar/articles/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ibrahim-dev.me/articles/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://ibrahim-dev.me/ar/articles/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ibrahim-dev.me/articles/" />
+    <image:image><image:loc>https://ibrahim-dev.me/articles/assets/voice-ai-engineering/voice-agent-cover-og.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://ibrahim-dev.me/articles/what-is-a-voice-ai-agent/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ibrahim-dev.me/articles/what-is-a-voice-ai-agent/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://ibrahim-dev.me/ar/articles/what-is-a-voice-ai-agent/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ibrahim-dev.me/articles/what-is-a-voice-ai-agent/" />
+    <image:image><image:loc>https://ibrahim-dev.me/articles/assets/voice-ai-engineering/voice-agent-cover-og.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://ibrahim-dev.me/ar/articles/what-is-a-voice-ai-agent/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ibrahim-dev.me/articles/what-is-a-voice-ai-agent/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://ibrahim-dev.me/ar/articles/what-is-a-voice-ai-agent/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ibrahim-dev.me/articles/what-is-a-voice-ai-agent/" />
+    <image:image><image:loc>https://ibrahim-dev.me/articles/assets/voice-ai-engineering/voice-agent-cover-og.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://ibrahim-dev.me/articles/digital-audio-for-developers/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ibrahim-dev.me/articles/digital-audio-for-developers/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://ibrahim-dev.me/ar/articles/digital-audio-for-developers/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ibrahim-dev.me/articles/digital-audio-for-developers/" />
+    <image:image><image:loc>https://ibrahim-dev.me/articles/assets/voice-ai-engineering/digital-audio-cover-og.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://ibrahim-dev.me/ar/articles/digital-audio-for-developers/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ibrahim-dev.me/articles/digital-audio-for-developers/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://ibrahim-dev.me/ar/articles/digital-audio-for-developers/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ibrahim-dev.me/articles/digital-audio-for-developers/" />
+    <image:image><image:loc>https://ibrahim-dev.me/articles/assets/voice-ai-engineering/digital-audio-cover-og.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://ibrahim-dev.me/articles/speech-to-text/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ibrahim-dev.me/articles/speech-to-text/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://ibrahim-dev.me/ar/articles/speech-to-text/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ibrahim-dev.me/articles/speech-to-text/" />
+    <image:image><image:loc>https://ibrahim-dev.me/articles/assets/voice-ai-engineering/stt-cover-og.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://ibrahim-dev.me/ar/articles/speech-to-text/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ibrahim-dev.me/articles/speech-to-text/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://ibrahim-dev.me/ar/articles/speech-to-text/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ibrahim-dev.me/articles/speech-to-text/" />
+    <image:image><image:loc>https://ibrahim-dev.me/articles/assets/voice-ai-engineering/stt-cover-og.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://ibrahim-dev.me/articles/text-to-speech/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ibrahim-dev.me/articles/text-to-speech/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://ibrahim-dev.me/ar/articles/text-to-speech/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ibrahim-dev.me/articles/text-to-speech/" />
+    <image:image><image:loc>https://ibrahim-dev.me/articles/assets/voice-ai-engineering/tts-cover-og.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://ibrahim-dev.me/ar/articles/text-to-speech/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ibrahim-dev.me/articles/text-to-speech/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://ibrahim-dev.me/ar/articles/text-to-speech/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ibrahim-dev.me/articles/text-to-speech/" />
+    <image:image><image:loc>https://ibrahim-dev.me/articles/assets/voice-ai-engineering/tts-cover-og.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://ibrahim-dev.me/articles/llm-conversation-state/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ibrahim-dev.me/articles/llm-conversation-state/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://ibrahim-dev.me/ar/articles/llm-conversation-state/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ibrahim-dev.me/articles/llm-conversation-state/" />
+    <image:image><image:loc>https://ibrahim-dev.me/articles/assets/voice-ai-engineering/llm-conversation-cover-og.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://ibrahim-dev.me/ar/articles/llm-conversation-state/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ibrahim-dev.me/articles/llm-conversation-state/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://ibrahim-dev.me/ar/articles/llm-conversation-state/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ibrahim-dev.me/articles/llm-conversation-state/" />
+    <image:image><image:loc>https://ibrahim-dev.me/articles/assets/voice-ai-engineering/llm-conversation-cover-og.jpg</image:loc></image:image>
   </url>
 </urlset>

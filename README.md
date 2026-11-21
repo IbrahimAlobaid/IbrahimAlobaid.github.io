@@ -28,6 +28,25 @@ git add -A && git commit -m "Update site" && git push
 - **Arabic text:** edit the matching key in `src/ar.json`. The build stops and lists any key that's missing.
 - **New Q&A item:** copy a `<details class="faq__item">` block in `src/index.html`, give it new `faq.qN` / `faq.aN` keys, and add both to `src/ar.json`. The FAQPage structured data is generated from the visible Q&A automatically.
 
+## Articles
+
+Source Markdown lives in `Voice-Agent-Series/` (Obsidian format: callouts, `[[wikilinks]]`, `![[images]]`,
+Mermaid, `$$math$$`, footnotes). The build turns it into:
+
+- `/articles/` and `/ar/articles/` — series hub, article cards, 16-part roadmap
+- `/articles/<slug>/` and `/ar/articles/<slug>/` — article pages with TOC, reading progress, copyable code,
+  pre-rendered SVG diagrams (no client-side Mermaid), MathML formulas, lab downloads, Q&A, author box, prev/next
+- `/articles/feed.xml`, `/ar/articles/feed.xml` — RSS
+
+**Add the next article (e.g. 06):**
+1. Put `06-…-EN.md`, `06-…-AR.md` and its images in `Voice-Agent-Series/`.
+2. Add an entry to `src/articles/series.json` → `articles` (slug, files, keywords, lab files).
+3. Add 5–6 Q&A pairs per language to `src/articles/faqs.json` under the same slug.
+4. `python tools/build.py`, then commit and push.
+
+Diagrams render once with headless Chrome (Playwright) and are cached in `tools/cache/render-cache.json`.
+Very wide left-to-right flowcharts are automatically re-oriented top-to-bottom so they stay readable.
+
 ## SEO in place
 
 - Separate, crawlable English and Arabic URLs with `hreflang` and canonical tags

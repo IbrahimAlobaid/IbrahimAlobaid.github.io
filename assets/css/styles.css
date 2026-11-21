@@ -743,6 +743,29 @@ em, .italic { font-style: italic; }
 .certs li span:nth-child(2) { color: var(--text-faint); font-size: 13px; white-space: nowrap; }
 .certs li small { grid-column: 1 / -1; color: var(--gilt); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; }
 
+/* ---------- Writing (home) ---------- */
+.writing { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.writing__feature { display: flex; flex-direction: column; background: var(--onyx); transition: background .4s var(--ease); }
+.writing__feature:hover { background: #12110e; }
+.writing__img { overflow: hidden; aspect-ratio: 16 / 9; }
+.writing__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+.writing__feature:hover .writing__img img { transform: scale(1.03); }
+.writing__body { padding: clamp(24px, 3vw, 40px); }
+.writing__title { margin-top: 12px; font-family: var(--f-display); font-weight: 400; font-size: clamp(28px, 2.8vw, 38px); line-height: 1.12; }
+.writing__desc { margin-top: 12px; color: var(--text-dim); font-size: 15.5px; }
+.writing__list { background: var(--onyx); display: flex; flex-direction: column; }
+.writing__list li { flex: 1; border-bottom: 1px solid var(--line); }
+.writing__list li:last-child { border-bottom: 0; }
+.writing__list a { height: 100%; display: grid; grid-template-columns: 44px 1fr; gap: 4px 14px; align-content: center; padding: 22px clamp(20px, 2.6vw, 34px); transition: background .3s; }
+.writing__list a:hover { background: var(--umber); }
+.writing__list a:hover .wl__t { color: var(--gilt); }
+.wl__n { font-family: var(--f-display); font-style: italic; font-size: 24px; color: var(--gilt); line-height: 1.2; }
+.wl__t { font-family: var(--f-display); font-size: clamp(19px, 1.7vw, 23px); line-height: 1.25; color: var(--ivory); transition: color .3s; }
+.wl__m { grid-column: 2; font-size: 12.5px; color: var(--text-faint); }
+.writing__cta { margin-top: 40px; display: flex; justify-content: center; }
+html[lang="ar"] .writing__title, html[lang="ar"] .wl__t { font-family: var(--f-ar-display); line-height: 1.5; }
+@media (max-width: 920px) { .writing { grid-template-columns: 1fr; } }
+
 /* ---------- Q&A ---------- */
 .faq {
   --gap: clamp(24px, 4vw, 64px);

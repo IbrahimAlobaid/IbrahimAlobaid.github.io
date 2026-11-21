@@ -140,17 +140,20 @@ def render(template: str, lang: str, strings: dict | None) -> str:
     return out.replace("<!doctype html>\n", "<!doctype html>\n" + banner, 1)
 
 
-def sitemap() -> str:
-    alts = (
-        f'    <xhtml:link rel="alternate" hreflang="en" href="{SITE}/" />\n'
-        f'    <xhtml:link rel="alternate" hreflang="ar" href="{SITE}/ar/" />\n'
-        f'    <xhtml:link rel="alternate" hreflang="x-default" href="{SITE}/" />\n'
-    )
-    urls = "".join(
-        f"  <url>\n    <loc>{SITE}{path}</loc>\n    <lastmod>{TODAY}</lastmod>\n{alts}"
-        f"    <image:image><image:loc>{SITE}/assets/img/ibrahim-alobaid.jpg</image:loc></image:image>\n  </url>\n"
-        for path in ("/", "/ar/")
-    )
+def sitemap(pairs: list[tuple[str, str, str]]) -> str:
+    """pairs: (english path, arabic path, image path) — each page is listed with its hreflang twin."""
+    urls = ""
+    for en, ar, image in pairs:
+        alts = (
+            f'    <xhtml:link rel="alternate" hreflang="en" href="{SITE}{en}" />\n'
+            f'    <xhtml:link rel="alternate" hreflang="ar" href="{SITE}{ar}" />\n'
+            f'    <xhtml:link rel="alternate" hreflang="x-default" href="{SITE}{en}" />\n'
+        )
+        for path in (en, ar):
+            urls += (
+                f"  <url>\n    <loc>{SITE}{path}</loc>\n    <lastmod>{TODAY}</lastmod>\n{alts}"
+                f"    <image:image><image:loc>{SITE}{image}</image:loc></image:image>\n  </url>\n"
+            )
     return (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n'
@@ -161,14 +164,24 @@ def sitemap() -> str:
 
 
 def main() -> None:
+    import articles  # tools/articles.py — article pipeline
+
     template = (ROOT / "src" / "index.html").read_text(encoding="utf-8")
     strings = json.loads((ROOT / "src" / "ar.json").read_text(encoding="utf-8"))
 
-    (ROOT / "index.html").write_text(render(template, "en", None), encoding="utf-8")
+    info = articles.build()
+    cards = info["home_cards"]
+
+    (ROOT / "index.html").write_text(
+        render(template.replace("<!--WRITING_CARDS-->", cards["en"]), "en", None), encoding="utf-8"
+    )
     (ROOT / "ar").mkdir(exist_ok=True)
-    (ROOT / "ar" / "index.html").write_text(render(template, "ar", strings), encoding="utf-8")
-    (ROOT / "sitemap.xml").write_text(sitemap(), encoding="utf-8")
-    print("Built index.html, ar/index.html, sitemap.xml")
+    (ROOT / "ar" / "index.html").write_text(
+        render(template.replace("<!--WRITING_CARDS-->", cards["ar"]), "ar", strings), encoding="utf-8"
+    )
+    pages = [("/", "/ar/", "/assets/img/ibrahim-alobaid.jpg")] + info["pages"]
+    (ROOT / "sitemap.xml").write_text(sitemap(pages), encoding="utf-8")
+    print(f"Built home (en/ar), {len(info['urls'])} article/hub pages, sitemap.xml ({len(pages) * 2} URLs)")
 
 
 if __name__ == "__main__":

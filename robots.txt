@@ -3,5 +3,6 @@ User-agent: *
 Allow: /
 Disallow: /src/
 Disallow: /tools/
+Disallow: /Voice-Agent-Series/
 
 Sitemap: https://ibrahim-dev.me/sitemap.xml

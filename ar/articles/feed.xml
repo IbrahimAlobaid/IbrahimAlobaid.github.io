@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>مقالات إبراهيم العبيد</title>
+  <link>https://ibrahim-dev.me/ar/articles/</link>
+  <atom:link href="https://ibrahim-dev.me/ar/articles/feed.xml" rel="self" type="application/rss+xml" />
+  <description>سلسلة هندسية متدرجة لبناء وكلاء صوتيين أذكياء يتحدثون بطبيعية ويتعاملون مع المقاطعة وجاهزين للإنتاج — من الصوت الرقمي والتعرف على الكلام إلى إدارة حالة المحادثة.</description>
+  <language>ar</language>
+  <lastBuildDate>Sat, 21 Nov 2026 02:10:47 +0000</lastBuildDate>
+  <item>
+    <title>عقل الوكيل الصوتي: كيف يفهم LLM المحادثة ويحافظ على سياقها؟</title>
+    <link>https://ibrahim-dev.me/ar/articles/llm-conversation-state/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/llm-conversation-state/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>بعد تعلم تحويل الكلام إلى نص وتحويل النص إلى كلام، نصل إلى قلب الوكيل: النموذج اللغوي الكبير (LLM). وظيفته أن يفهم طلب المستخدم ويقرر الرد المناسب؛ لكن المحادثة الطبيعية تتطلب أكثر من إرسال آخر جملة إلى النموذج.</description>
+    <category>هندسة الوكلاء الصوتيين</category>
+  </item>
+  <item>
+    <title>من النص إلى الصوت: كيف نجعل الوكيل الذكي يتحدث بصورة طبيعية؟</title>
+    <link>https://ibrahim-dev.me/ar/articles/text-to-speech/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/text-to-speech/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>تعلمنا في المقالة الثالثة كيف يُحوَّل الكلام إلى نص. الآن نعكس العملية: كيف تتحول إجابة الوكيل المكتوبة إلى صوت واضح، طبيعي، قليل التأخير، وقابل للإيقاف عند المقاطعة؟ ليست المهمة مجرد إنشاء ملف MP3؛ فالتطبيق الحقيقي يحتاج إلى ضبط النطق والإيقاع، وتوليد الصوت على دفعات، وإرساله وتشغيله وإدارة حالته.</description>
+    <category>هندسة الوكلاء الصوتيين</category>
+  </item>
+  <item>
+    <title>من الصوت إلى النص: كيف تتعرف الآلة على كلام الإنسان؟</title>
+    <link>https://ibrahim-dev.me/ar/articles/speech-to-text/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/speech-to-text/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>عندما نقول إن الوكيل الصوتي «يفهم كلام المستخدم»، فإن الخطوة الأولى في كثير من الأنظمة ليست الفهم الدلالي، بل التعرف على الكلام آلياً (ASR): تحويل الإشارة الصوتية إلى تسلسل كلمات. لا يُعد النص الناتج حقيقة مطلقة؛ فقد يتغير أثناء الكلام، وقد يخطئ في الأسماء والأرقام واللهجات.</description>
+    <category>هندسة الوكلاء الصوتيين</category>
+  </item>
+  <item>
+    <title>الصوت الرقمي للمطورين: الأساس الذي يقوم عليه كل Voice AI Agent</title>
+    <link>https://ibrahim-dev.me/ar/articles/digital-audio-for-developers/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/digital-audio-for-developers/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>قبل أن يصل صوت المستخدم إلى نموذج التعرف على الكلام (STT)، يكون قد تحول إلى أرقام. وإذا لم نفهم Sampling، Sample Rate، Bit Depth، PCM، Channels، Chunks، Codecs، فقد نرسل صوتاً بسرعة خاطئة، أو نفسر بايتات بصيغة غير صحيحة، أو نضيف زمناً غير ضروري إلى الاستجابة.</description>
+    <category>هندسة الوكلاء الصوتيين</category>
+  </item>
+  <item>
+    <title>ما هو الوكيل الصوتي الذكي؟ من الكلام إلى المحادثة الطبيعية</title>
+    <link>https://ibrahim-dev.me/ar/articles/what-is-a-voice-ai-agent/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/ar/articles/what-is-a-voice-ai-agent/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>الوكيل الصوتي الذكي (Voice AI Agent) ليس مجرد نموذج يتعرف على الكلام، ولا مجرد صوت يقرأ إجابة مولّدة. إنه نظام متكامل يستقبل صوت المستخدم، ويفهم المقصود، ويقرر ما الذي ينبغي فعله، ثم يستجيب صوتياً، مع إدارة التوقيت والسياق والمقاطعات.</description>
+    <category>هندسة الوكلاء الصوتيين</category>
+  </item>
+</channel>
+</rss>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Ibrahim Alobaid — Articles</title>
+  <link>https://ibrahim-dev.me/articles/</link>
+  <atom:link href="https://ibrahim-dev.me/articles/feed.xml" rel="self" type="application/rss+xml" />
+  <description>A progressive engineering series on building natural, interruption-aware, production-ready voice AI agents — from digital audio and speech recognition to LLM conversation state.</description>
+  <language>en</language>
+  <lastBuildDate>Sat, 21 Nov 2026 02:10:47 +0000</lastBuildDate>
+  <item>
+    <title>The Voice Agent&#x27;s Brain: LLMs and Conversation State</title>
+    <link>https://ibrahim-dev.me/articles/llm-conversation-state/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/articles/llm-conversation-state/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>We now know how STT transcribes speech and how TTS speaks a reply. Between those stages sits the large language model (LLM). It interprets what the user wants and produces an appropriate response.</description>
+    <category>Voice AI Engineering</category>
+  </item>
+  <item>
+    <title>Text-to-Speech: How to Make a Voice Agent Sound Natural</title>
+    <link>https://ibrahim-dev.me/articles/text-to-speech/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/articles/text-to-speech/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>In Article 03, we explored how a speech recognizer converts audio into text. Now we reverse that direction. How can an agent turn its answer into speech that is intelligible, natural, low latency…</description>
+    <category>Voice AI Engineering</category>
+  </item>
+  <item>
+    <title>Speech-to-Text: How Machines Turn Spoken Language into Text</title>
+    <link>https://ibrahim-dev.me/articles/speech-to-text/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/articles/speech-to-text/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>In many voice-agent architectures, the first step toward “understanding speech” is actually Automatic Speech Recognition (ASR): mapping incoming audio to text. That transcript is not an infallible record.</description>
+    <category>Voice AI Engineering</category>
+  </item>
+  <item>
+    <title>Digital Audio for Developers: The Foundation of Every Voice AI Agent</title>
+    <link>https://ibrahim-dev.me/articles/digital-audio-for-developers/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/articles/digital-audio-for-developers/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>Before your user&#x27;s speech reaches a speech recognition model, it has already become numbers. Without a working understanding of sampling, sample rate, bit depth, PCM, channels, chunks, and codecs, you can misinterpret those numbers, feed a model the wrong audio format, or add avoidable latency.</description>
+    <category>Voice AI Engineering</category>
+  </item>
+  <item>
+    <title>What Is a Voice AI Agent? From Speech to Natural Conversation</title>
+    <link>https://ibrahim-dev.me/articles/what-is-a-voice-ai-agent/</link>
+    <guid isPermaLink="true">https://ibrahim-dev.me/articles/what-is-a-voice-ai-agent/</guid>
+    <pubDate>Sat, 21 Nov 2026 09:00:00 +0000</pubDate>
+    <description>A Voice AI Agent is not simply a speech recognition model, nor is it a synthetic voice reading an LLM&#x27;s answer. It is an end-to-end interactive system that receives audio, interprets a user&#x27;s intent, decides what to do next, responds through speech, and manages timing, context, and interruptions.</description>
+    <category>Voice AI Engineering</category>
+  </item>
+</channel>
+</rss>
